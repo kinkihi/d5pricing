@@ -1,0 +1,8 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Globe">
+<path id="Vector" d="M6.5 12.5C9.81371 12.5 12.5 9.81371 12.5 6.5C12.5 3.18629 9.81371 0.5 6.5 0.5C3.18629 0.5 0.5 3.18629 0.5 6.5C0.5 9.81371 3.18629 12.5 6.5 12.5Z" stroke="white" stroke-miterlimit="10"/>
+<path id="Vector_2" d="M0.84375 4.5H12.1562" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_3" d="M0.84375 8.5H12.1562" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_4" d="M6.5 12.3376C7.88071 12.3376 9 9.72406 9 6.5001C9 3.27614 7.88071 0.662598 6.5 0.662598C5.11929 0.662598 4 3.27614 4 6.5001C4 9.72406 5.11929 12.3376 6.5 12.3376Z" stroke="white" stroke-miterlimit="10"/>
+</g>
+</svg>

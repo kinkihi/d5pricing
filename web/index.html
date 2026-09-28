@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="选择适合你的 D5 方案，比较个人版本、AI 用量与设计工作流权益。">
+  <title>D5 · 选择你的创作方案</title>
+  <link rel="icon" href="assets/d5-logo.png">
+  <link rel="stylesheet" href="styles.css?v=20260928-3">
+</head>
+<body>
+  <header class="global-nav">
+    <a class="brand" href="#pricing" aria-label="D5"><img src="assets/brand.webp" alt=""><span>D5</span></a>
+    <fieldset class="language-switch" aria-label="Language">
+      <button type="button" data-lang="zh" aria-pressed="true">中文</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </fieldset>
+  </header>
+
+  <main id="main">
+    <section class="hero container">
+      <h1 data-i18n="hero.title">找到适合你的 D5 方案</h1>
+      <p data-i18n="hero.subtitle">从第一次灵感探索，到下一次专业交付，更多创意，更大可能</p>
+    </section>
+
+    <section class="pricing container" id="pricing">
+      <div class="pricing-toolbar">
+        <div class="segmented" role="group" aria-label="选择用户类别">
+          <button type="button" data-audience="personal" aria-pressed="true" data-i18n="audience.personal">个人创作</button>
+          <button type="button" data-audience="team" aria-pressed="false" data-i18n="audience.team">团队协作</button>
+        </div>
+        <div class="billing">
+          <span data-i18n="billing.monthly">按月</span>
+          <button type="button" class="toggle" data-billing-toggle aria-pressed="false" aria-label="切换按年购买"><span></span></button>
+          <div class="billing-annual"><span data-i18n="billing.annual">按年</span><b data-i18n="billing.discount">享x折</b></div>
+        </div>
+      </div>
+      <div class="plan-grid" id="plan-grid"></div>
+      <div class="education">
+        <div class="education-inner">
+          <strong data-i18n="education.title">D5 for Education</strong>
+          <span data-i18n="education.subtitle">Best for students, educators, and academic institutions</span>
+          <a href="#pricing" data-i18n="education.button">Apply</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container" id="workflow" aria-labelledby="workflow-title">
+      <div class="section-head">
+        <h2 id="workflow-title" data-i18n="workflow.title">工作流对比</h2>
+        <p data-i18n="workflow.subtitle">找到最适合你的 D5 工作流</p>
+      </div>
+      <div class="section-placeholder" aria-hidden="true"></div>
+    </section>
+
+    <section class="section container" id="comparison" aria-labelledby="comparison-title">
+      <div class="section-head row">
+        <div>
+          <h2 id="comparison-title" data-i18n="comparison.title">完整功能对比</h2>
+          <p data-i18n="comparison.subtitle">详细对比套餐及功能权益</p>
+        </div>
+      </div>
+      <div class="compare-scroll" tabindex="0" role="region" aria-labelledby="comparison-title"><div class="compare" id="compare"></div></div>
+    </section>
+
+    <section class="faq" id="faq" aria-labelledby="faq-title">
+      <div class="container faq-inner">
+        <div class="faq-title"><h2 id="faq-title">FAQ</h2></div>
+        <div class="faq-list">
+          <details><summary><span data-i18n="faq.q1">D5 Pro 可以升级到 D5 团队版吗？</span><img src="assets/figma/caret-down-faq.svg" alt=""></summary><p data-i18n="faq.a1">团队版面向需要协作与统一管理的团队，具体开放时间和升级方式以后续产品公告为准。</p></details>
+          <details><summary><span data-i18n="faq.q2">D5 社区版授权可以做什么？</span><img src="assets/figma/caret-down-faq.svg" alt=""></summary><p data-i18n="faq.a2">社区版适合个人体验 D5 的 AI 创作能力，生成内容不可用于商业用途。</p></details>
+          <details><summary><span data-i18n="faq.q3">如何获取发票？</span><img src="assets/figma/caret-down-faq.svg" alt=""></summary><p data-i18n="faq.a3">完成购买后，可在账户订单页面申请和下载发票。</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="reference-footer">
+    <div class="footer-columns">
+      <div><h3 data-i18n="footer.product">产品</h3><a href="#pricing" data-i18n="footer.whyD5">为什么选择 D5</a><a href="#pricing" data-i18n="footer.whatsNew">最新动态</a><a href="#pricing" data-i18n="footer.pricing">价格</a><a href="#pricing" data-i18n="footer.download">下载</a><a href="#pricing" data-i18n="footer.teams">D5 团队版</a><a href="#pricing" data-i18n="footer.education">D5 教育版</a><a href="#pricing" data-i18n="footer.roadmap">开发路线图</a><a href="#pricing" data-i18n="footer.assets">素材库</a></div>
+      <div><h3 data-i18n="footer.support">支持</h3><a href="#pricing" data-i18n="footer.help">帮助中心</a><a href="#pricing" data-i18n="footer.requirements">系统要求</a><a href="#pricing" data-i18n="footer.space">我的空间</a></div>
+      <div><h3 data-i18n="footer.learn">学习</h3><a href="#pricing" data-i18n="footer.tutorial">教程</a><a href="#pricing" data-i18n="footer.sample">示例场景</a><a href="#pricing" data-i18n="footer.gallery">作品展示</a><a href="#pricing" data-i18n="footer.blog">博客</a><a href="#pricing" data-i18n="footer.webinars">线上研讨会</a><a href="#pricing" data-i18n="footer.certification">认证</a><a href="#pricing" data-i18n="footer.instructor">D5 讲师</a></div>
+      <div><h3 data-i18n="footer.community">社区</h3><a href="#pricing" data-i18n="footer.forum">论坛</a><a href="#pricing" data-i18n="footer.awards">D5 大奖</a><a href="#pricing" data-i18n="footer.creator">创作者计划</a><a href="#pricing" data-i18n="footer.campus">校园大使</a><a href="#pricing" data-i18n="footer.userGroup">用户社群</a><a href="#pricing" data-i18n="footer.winPro">赢取 D5 Pro</a></div>
+      <div><h3 data-i18n="footer.business">商务合作</h3><a href="#pricing" data-i18n="footer.reseller">成为经销商</a><a href="#pricing" data-i18n="footer.findReseller">寻找经销商</a><a href="#pricing" data-i18n="footer.affiliate">推广合作</a><a href="#pricing" data-i18n="footer.technology">技术合作伙伴</a><a href="#pricing" data-i18n="footer.brandKit">品牌资源</a><h3 class="company-heading" data-i18n="footer.company">公司</h3><a href="#pricing" data-i18n="footer.about">关于我们</a><a href="#pricing" data-i18n="footer.careers">加入我们</a></div>
+      <div class="footer-subscribe">
+        <h3 data-i18n="footer.subscribe">订阅动态</h3>
+        <p data-i18n="footer.newsletter">获取最新消息、文章、资源和设计灵感。</p>
+        <form class="newsletter-placeholder" id="newsletter-form"><label class="sr-only" for="newsletter-email" data-i18n="footer.emailLabel">邮箱地址</label><input id="newsletter-email" type="email" placeholder="输入邮箱" data-i18n-placeholder="footer.emailPlaceholder"><button type="submit" data-i18n="footer.next">下一步</button></form>
+        <h3 data-i18n="footer.followTitle">关注我们</h3>
+        <span class="social-labels">D5　Discord　Instagram</span>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <span data-i18n="footer.copyright">Dimension 5 Techs. © 2026 Dimension 5. 保留所有权利。</span>
+      <span><a href="#pricing" data-i18n="footer.privacy">隐私政策</a>　<a href="#pricing" data-i18n="footer.service">服务协议</a>　<a href="#pricing" data-i18n="footer.join">加入我们</a></span>
+      <fieldset class="language-switch" aria-label="Language">
+        <button type="button" data-lang="zh" aria-pressed="true">中文</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </fieldset>
+    </div>
+  </footer>
+
+  <div class="sr-only" id="announcer" role="status" aria-live="polite"></div>
+  <script src="app.js?v=20260928-3"></script>
+</body>
+</html>
