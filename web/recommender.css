@@ -1,0 +1,63 @@
+/* Figma 31992:11842: bordered container, 40px inset, 797:643 split. */
+#workflow .section-head p { font-weight: 400; line-height: 26px; max-width: 850px; }
+.plan-finder { display: grid; grid-template-columns: minmax(0, 797fr) minmax(0, 643fr); align-items: stretch; border: 2px solid var(--border-10); border-radius: 16px; }
+.finder-steps { display: flex; flex-direction: column; gap: 24px; min-width: 0; padding: 40px; }
+.finder-step { position: relative; padding-left: 50px; }
+.finder-step legend { padding: 0 0 16px; font-size: 16px; font-weight: 500; line-height: 32px; }
+.step-number { position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--border-10); border-radius: 32px; background: rgba(255, 255, 255, .1); font-size: 14px; font-weight: 700; }
+.step-connector { position: absolute; left: 16.75px; top: 34px; bottom: -24px; width: .5px; background: rgba(255, 255, 255, .1); overflow: hidden; }
+.step-connector img { max-width: none; }
+.finder-hint { color: var(--text-60); font-size: 12px; line-height: 20px; }
+.finder-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.finder-option { position: relative; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 11px 12px; border: 1px solid var(--border-6); border-radius: 8px; cursor: pointer; font-size: 14px; line-height: 20px; transition: border-color .16s, background-color .16s; }
+.finder-option:hover { border-color: rgba(255,255,255,.3); background: rgba(255,255,255,.03); }
+.finder-option:has(input:checked) { border-color: #af82ff; box-shadow: inset 0 0 0 1px #af82ff; }
+.finder-option:has(input:focus-visible) { outline: 2px solid #c9acff; outline-offset: 3px; }
+.finder-option input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.goal-icon { flex: none; }
+.usage-option small { display: block; margin-top: 3px; color: var(--text-60); font-size: 11px; line-height: 18px; }
+.finder-result { display: grid; place-items: center; min-width: 0; border-left: 1px solid var(--border-10); padding: 40px; }
+.finder-result-box { display: flex; flex-direction: column; gap: 24px; width: 100%; max-width: 400px; min-width: 0; text-align: left; }
+.finder-billing { display: flex; align-items: center; gap: 16px; font-size: 16px; line-height: 20px; flex-wrap: wrap; }
+.finder-result-content { display: flex; flex-direction: column; gap: 24px; }
+.finder-summary { display: flex; flex-direction: column; gap: 16px; }
+.finder-eyebrow { color: #fff; font-size: 12px; opacity: .6; font-weight: 500; line-height: 26px; }
+.finder-annual { display: flex; align-items: center; gap: 4px; }
+.finder-discount { padding: 2px 4px; border-radius: 4px; background: var(--ai); font-size: 11px; font-weight: 500; line-height: 16px; white-space: nowrap; }
+.finder-summary h3 { font-size: 32px; font-weight: 400; line-height: 40px; }
+.finder-star { display: grid; place-items: center; width: 16px; height: 16px; }
+.finder-star img { width: auto; height: auto; padding: 0; }
+.finder-ticks { position: absolute; right: 8px; top: 11px; left: 90px; overflow: hidden; height: 8px; pointer-events: none; }
+.finder-ticks img { max-width: none; }
+.finder-explanation { display: flex; flex-direction: column; gap: 16px; font-size: 12px; line-height: 21px; color: var(--text-60); }
+.finder-explanation h4 { margin: 0 0 6px; color: var(--text-80); font-size: 13px; font-weight: 500; }
+.finder-explanation p + p { margin-top: 6px; }
+.finder-offer-note { padding-top: 14px; border-top: 1px solid var(--border-6); }
+.finder-choose, .finder-dialog .plan-button { background: white; color: black; border: 1px solid var(--border-10); }
+.finder-choose:hover { background: #e6e6e6; }
+.finder-dialog { width: min(440px, calc(100% - 40px)); padding: 28px; border: 1px solid var(--border-10); border-radius: 16px; background: #161419; color: white; font: inherit; }
+.finder-dialog::backdrop { background: rgba(0,0,0,.75); backdrop-filter: blur(6px); }
+.finder-dialog h3 { font-size: 24px; margin-bottom: 20px; }
+.finder-dialog p { margin-bottom: 20px; color: var(--text-80); line-height: 26px; }
+#workflow :is(a, button):focus-visible { outline: 2px solid #c9acff; outline-offset: 4px; }
+@media (max-width: 1100px) {
+  .finder-steps { padding: 28px; }
+  .finder-step { padding-left: 44px; }
+  .goal-option { flex-wrap: wrap; }
+  .finder-result { padding: 28px; }
+  .finder-summary h3 { font-size: 28px; }
+}
+@media (max-width: 800px) {
+  .plan-finder { grid-template-columns: minmax(0, 1fr); }
+  .finder-result { border-left: 0; border-top: 1px solid var(--border-10); }
+  .finder-summary h3 { font-size: 28px; }
+}
+@media (max-width: 420px) {
+  #workflow .section-head h2 { font-size: 26px; }
+  .finder-step legend { font-size: 15px; line-height: 26px; }
+  .goal-option { width: 100%; }
+  .goal-option > span { flex: 1; }
+  .finder-steps, .finder-result { padding: 20px; }
+  .finder-step { padding-left: 40px; }
+  .usage-option { flex: 1 1 40%; padding: 10px; }
+}

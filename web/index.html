@@ -8,6 +8,7 @@
   <title>D5 · 选择你的创作方案</title>
   <link rel="icon" href="assets/d5-logo.png">
   <link rel="stylesheet" href="styles.css?v=20260928-3">
+  <link rel="stylesheet" href="recommender.css?v=20260929-7">
 </head>
 <body>
   <header class="global-nav">
@@ -48,10 +49,10 @@
 
     <section class="section container" id="workflow" aria-labelledby="workflow-title">
       <div class="section-head">
-        <h2 id="workflow-title" data-i18n="workflow.title">工作流对比</h2>
-        <p data-i18n="workflow.subtitle">找到最适合你的 D5 工作流</p>
+        <h2 id="workflow-title">选择适合你的方案</h2>
+        <p>让创作走的更远</p>
       </div>
-      <div class="section-placeholder" aria-hidden="true"></div>
+      <div class="plan-finder" id="plan-finder"></div>
     </section>
 
     <section class="section container" id="comparison" aria-labelledby="comparison-title">
@@ -103,5 +104,6 @@
 
   <div class="sr-only" id="announcer" role="status" aria-live="polite"></div>
   <script src="app.js?v=20260928-3"></script>
+  <script src="recommender.js?v=20260929-7"></script>
 </body>
 </html>

@@ -278,8 +278,6 @@ function renderPlans() {
             <p class="plan-desc">${b[id].desc}</p>
             <div class="plan-name"><h2>${b[id].name}</h2></div>
           </div>
-          <div class="plan-price"><span class="price-value">${b.contact}</span><span class="price-period">${b.period}</span></div>
-          <div class="plan-info"><p>${b[id].info}</p><p data-business-billing>${state.billing === 'annual' ? b.annualNote : b.monthlyNote}</p></div>
         </div>
         <button type="button" class="plan-button" data-contact-sales="${id}">${b.contact}</button>
         <ul class="plan-list">${listItems(b[id].list)}</ul>
@@ -419,7 +417,7 @@ document.addEventListener('click', e => {
     state.billing = state.billing === 'annual' ? 'monthly' : 'annual';
     syncTier();
     syncBillingToggle();
-    return;
+  return;
   }
   if (btn.hasAttribute('data-contact-sales')) {
     const b = businessPlans[state.lang];
