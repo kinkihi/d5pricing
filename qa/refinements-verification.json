@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "checks": [
+    "Recommendation section and its scripts/styles are absent; FAQ title follows the chosen language.",
+    "First and reverse billing changes keep the price baseline fixed and move digit widths/period labels continuously; six rapid reversals settle correctly.",
+    "All four cards lift, scale subtly and cast shadows; leaving restores geometry and preserves the background color. Team background no longer samples animated rear cards.",
+    "Reduced-motion billing updates settle immediately in both directions."
+  ],
+  "errors": [],
+  "safariVerification": "Not run: WebKit download blocked by the environment network policy."
+}

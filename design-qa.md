@@ -3,9 +3,8 @@
 final result: passed
 
 Scope: the supplied Personal and Teams tabs, hero, pricing cards, billing controls,
-education entry, comparison table and responsive behavior. The pre-existing plan
-recommendation, FAQ and footer remain available; the recommendation now follows
-the comparison so the supplied pricing and comparison composition stays together.
+education entry, comparison table and responsive behavior. The FAQ and footer
+remain available. The plan recommendation was removed in the October 22 follow-up.
 Those lower sections are not claimed as a clone of the supplied full-page frames.
 
 ## Evidence
@@ -31,6 +30,25 @@ Those lower sections are not claimed as a clone of the supplied full-page frames
 - Browser interaction report: `qa/verification.json`.
 
 ## Findings and fixes
+
+### October 22 follow-up, preview v20261022-2
+
+- Removed the recommendation section and its stylesheet/script includes.
+- Localized the FAQ heading to “常见问题” in Chinese and “FAQ” in English.
+- Initialized number wheels before the first interaction; extra leading digits
+  now expand/fade in and shrink/fade out, preserving baseline and period-label
+  position continuously. Six rapid billing reversals pass the regression check.
+- Replaced the team card's live backdrop sampling with an independent opaque
+  dark surface and its existing purple glow. This avoids Safari compositing the
+  animated rear cards differently when hover creates a new layer. Rest/hover
+  captures are `qa/team-background-rest.png` and `qa/team-background-hover.png`.
+- Added a 6px lift, 1.006 scale and soft shadow to all four active cards on hover.
+  These compose with tab motion and mobile centering without replacing them.
+- Both browser regression scripts pass in Chromium. The Safari-specific fix
+  has not been tested in Safari/WebKit: browser downloads return “Domain forbidden”
+  under the environment's network policy. It still needs Safari confirmation.
+
+The following findings describe the original implementation review.
 
 No actionable P0, P1 or P2 issues remain in the requested scope.
 

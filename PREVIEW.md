@@ -21,8 +21,9 @@ page and preserves the selected audience, billing cycle, language and scroll.
 The server uses Node's standard library; no install step is required.
 
 The new pricing layout lives in `web/pricing-experience.css` and
-`web/pricing-experience.js`. It reuses the existing pricing data and recommendation
-flow from `app.js` and `recommender.js`. Decorative assets are original Figma
+`web/pricing-experience.js`. It reuses the existing pricing data from `app.js`.
+The recommendation section is currently removed from the page; its standalone
+source files are retained for future use. Decorative assets are original Figma
 exports; the optional WebGPU backgrounds use the original shader programs.
 
 The Figma sources are the Personal frame `31951:32322` and Teams frame
@@ -34,3 +35,8 @@ See `design-qa.md` and `qa/verification.json` for verification evidence.
 `scripts/verify-pricing.cjs` runs the regression flow against the live server when
 Playwright is available. `PLAYWRIGHT_MODULE`, `BROWSER_PATH` and `PREVIEW_URL` can
 override its module, browser executable and target URL.
+
+`scripts/verify-pricing-refinements.cjs` checks billing animation continuity,
+rapid reversals, card hover geometry/background stability and FAQ localization.
+Safari/WebKit verification is still pending: this environment cannot download
+WebKit under its current network policy. See `qa/refinements-verification.json`.

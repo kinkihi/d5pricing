@@ -75,8 +75,8 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .credit-info img { flex: none; width: 16px; height: 16px; padding: 1.5px; }
 .credit-info strong { font-size: 16px; font-weight: 500; line-height: 26px; }
 .credit-info > span { font-size: 14px; line-height: 22px; color: var(--text-80); }
-.rolling-number { display: inline-flex; font-variant-numeric: tabular-nums; line-height: 1.15; vertical-align: baseline; }
-.number-wheel { display: inline-block; width: 1ch; height: 1.15em; overflow: hidden; }
+.rolling-number { display: inline-flex; align-items: flex-start; height: 1.15em; font-variant-numeric: tabular-nums; letter-spacing: 0; line-height: 1.15; vertical-align: baseline; }
+.number-wheel { display: inline-block; flex: none; width: 1ch; height: 1.15em; overflow: hidden; }
 .number-wheel-track { display: flex; flex-direction: column; }
 .number-wheel-track > span { display: block; height: 1.15em; line-height: 1.15em; flex: none; }
 

@@ -187,7 +187,7 @@
     if (target.hasAttribute('data-contact-sales')) window.openPricingDialog('team');
     if (target.closest('.education')) { event.preventDefault(); window.openPricingDialog('education'); }
     if (target.hasAttribute('data-language-toggle')) {
-      // Reuse the existing language events so the recommendation stays in sync.
+      // Reuse the existing language events for all page copy.
       $(`.footer-legal [data-lang="${state.lang === 'zh' ? 'en' : 'zh'}"]`).click();
     }
     if (target.hasAttribute('data-compare-toggle')) {

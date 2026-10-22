@@ -14,6 +14,7 @@ const state = { lang: 'zh', tier: 0, billing: 'monthly', audience: 'personal' };
 
 const copy = {
   zh: {
+    'faq.title': '常见问题',
     'hero.title': '找到适合你的 D5 方案',
     'hero.subtitle': '从第一次灵感探索，到下一次专业交付，更多创意，更大可能',
     'audience.personal': '个人创作', 'audience.team': '团队协作',
@@ -35,6 +36,7 @@ const copy = {
     'footer.copyright': 'Dimension 5 Techs. © 2026 Dimension 5. 保留所有权利。', 'footer.privacy': '隐私政策', 'footer.service': '服务协议', 'footer.join': '加入我们',
   },
   en: {
+    'faq.title': 'FAQ',
     'hero.title': 'Find the right D5 plan for you',
     'hero.subtitle': 'From your first exploration to your next professional delivery, more ideas, more possibilities',
     'audience.personal': 'For creators', 'audience.team': 'For teams',
@@ -138,9 +140,11 @@ function paintLane(lane) {
   lane.track.children[1].textContent = wrapDigit(whole + 1);
   // The track contains two digits, so half its height is one digit.
   lane.track.style.transform = `translateY(-${(lane.position - whole) * 50}%)`;
+  lane.wheel.style.width = `${lane.presence}ch`;
+  lane.wheel.style.opacity = lane.presence;
 }
 
-function addLane(el, number, position) {
+function addLane(el, number, position, presence = 1) {
   const wheel = document.createElement('span');
   wheel.className = 'number-wheel';
   wheel.setAttribute('aria-hidden', 'true');
@@ -149,7 +153,7 @@ function addLane(el, number, position) {
   track.append(document.createElement('span'), document.createElement('span'));
   wheel.append(track);
   el.prepend(wheel);
-  const lane = { wheel, track, position };
+  const lane = { wheel, track, position, presence };
   number.lanes.push(lane); // Units first: existing places stay right-aligned.
   paintLane(lane);
 }
@@ -158,15 +162,11 @@ function finishNumber(el, number) {
   cancelAnimationFrame(number.raf);
   number.raf = 0;
   activeNumbers.delete(el);
-  if (reducedMotion.matches) {
-    el.textContent = String(number.target);
-    number.lanes = [];
-    return;
-  }
   const length = String(number.target).length;
   while (number.lanes.length > length) number.lanes.pop().wheel.remove();
   number.lanes.forEach((lane, place) => {
     lane.position = digitAt(number.target, place);
+    lane.presence = 1;
     paintLane(lane);
   });
 }
@@ -180,28 +180,31 @@ function animateNumber(el, target) {
   el.classList.add('rolling-number');
   el.setAttribute('role', 'img');
   el.setAttribute('aria-label', String(target));
-  if (reducedMotion.matches) {
-    number.target = target;
-    finishNumber(el, number);
-    return;
+  if (!number.lanes.length) {
+    el.textContent = '';
+    for (let place = 0; place < String(number.target).length; place++) {
+      addLane(el, number, digitAt(number.target, place));
+    }
   }
   if (number.target === target) return;
   cancelAnimationFrame(number.raf);
   const previous = number.target;
   const direction = target > previous ? 1 : -1;
-  if (!number.lanes.length) {
-    el.textContent = '';
-    for (let place = 0; place < String(previous).length; place++) {
-      addLane(el, number, digitAt(previous, place));
-    }
-  }
   const length = Math.max(String(target).length, number.lanes.length);
-  while (number.lanes.length < length) addLane(el, number, 0);
+  // Extra leading places enter at zero width. Removed places shrink to zero
+  // before removal, keeping both the amount and its period label continuous.
+  while (number.lanes.length < length) addLane(el, number, 0, 0);
   number.target = target;
+  if (reducedMotion.matches) {
+    finishNumber(el, number);
+    return;
+  }
   number.lanes.forEach((lane, place) => {
     lane.start = lane.position; // Retarget from the last actually painted frame.
+    lane.startPresence = lane.presence;
+    lane.endPresence = place < String(target).length ? 1 : 0;
     const digit = digitAt(target, place);
-    lane.end = direction > 0
+    lane.end = !lane.endPresence ? lane.start : direction > 0
       ? digit + 10 * Math.ceil((lane.start - digit) / 10)
       : digit + 10 * Math.floor((lane.start - digit) / 10);
   });
@@ -221,6 +224,7 @@ function animateNumber(el, target) {
     const eased = 1 - (1 - progress) ** 4;
     number.lanes.forEach(lane => {
       lane.position = lane.start + (lane.end - lane.start) * eased;
+      lane.presence = lane.startPresence + (lane.endPresence - lane.startPresence) * eased;
       paintLane(lane);
     });
     if (progress === 1) finishNumber(el, number);
@@ -370,6 +374,8 @@ function renderCompare() {
 
 function renderAll() {
   renderPlans();
+  // Use identical digit metrics before the first interaction and during rolls.
+  $$('[data-price], [data-credits]').forEach(el => animateNumber(el, Number(el.textContent) || 0));
   renderCompare();
   applyLanguage();
 }

@@ -31,7 +31,7 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .pricing.is-team .tab-indicator { transform: translateX(calc(100% + 2px)); }
 .pricing.is-team .billing { opacity: 0; visibility: hidden; transform: translateX(35px); pointer-events: none; }
 .plan-grid, .plan-grid.is-team { display: block; position: relative; height: 536px; isolation: isolate; outline-offset: 12px; }
-.plan-grid .plan-card { position: absolute; top: 0; left: 0; width: var(--card-width); height: 536px; padding: 30px; gap: 16px; border: 2px solid var(--border-10); border-radius: 16px; background-color: rgba(0,0,0,.45); overflow-wrap: normal; transform-origin: center center; transition: transform var(--motion-time) var(--motion-ease), filter var(--motion-time) var(--motion-ease), opacity 440ms ease, border-color 180ms ease; }
+.plan-grid .plan-card { position: absolute; top: 0; left: 0; width: var(--card-width); height: 536px; padding: 30px; gap: 16px; border: 2px solid var(--border-10); border-radius: 16px; background-color: rgba(0,0,0,.45); overflow-wrap: normal; transform-origin: center center; translate: 0 0; scale: 1; transition: transform var(--motion-time) var(--motion-ease), filter var(--motion-time) var(--motion-ease), opacity 440ms ease, border-color 180ms ease, translate 240ms var(--motion-ease), scale 240ms var(--motion-ease), box-shadow 240ms ease; }
 .plan-grid .plan-card.basic { left: calc(var(--card-width) + var(--card-gap)); background-image: radial-gradient(ellipse 262px 290px at 50% 35%,rgba(255,255,255,.1),transparent); z-index: 2; }
 .plan-grid .plan-card.pro { left: calc((var(--card-width) + var(--card-gap)) * 2); background: rgba(0,0,0,.45); z-index: 3; }
 .plan-grid .plan-card.community { z-index: 1; }
@@ -54,7 +54,9 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .plan-grid .pro .card-glow canvas { opacity: .4; }
 .plan-grid .card-glow:has(canvas[data-rendered="true"]) { background-image: none; }
 .card-glow canvas { width: 100%; height: 536px; display: block; }
-.plan-grid .team-card { left: calc(var(--card-width) + var(--card-gap)); z-index: 5; opacity: 0; transform: translateY(28px) scale(.91); filter: blur(9px); pointer-events: none; background: rgba(140,143,226,.01); backdrop-filter: blur(50px); visibility: hidden; transition: transform var(--motion-time) var(--motion-ease), opacity 350ms ease, filter var(--motion-time) var(--motion-ease), visibility 680ms; }
+/* Keep the team surface independent of the animated cards behind it. Safari
+   can resample a live backdrop differently when hover creates a new layer. */
+.plan-grid .team-card { left: calc(var(--card-width) + var(--card-gap)); z-index: 5; opacity: 0; transform: translateY(28px) scale(.91); filter: blur(9px); pointer-events: none; background: #0e0f16; -webkit-backdrop-filter: none; backdrop-filter: none; isolation: isolate; visibility: hidden; transition: transform var(--motion-time) var(--motion-ease), opacity 350ms ease, filter var(--motion-time) var(--motion-ease), visibility 680ms, border-color 180ms ease, translate 240ms var(--motion-ease), scale 240ms var(--motion-ease), box-shadow 240ms ease; }
 .team-card .plan-button { background: #656ad9; border: 1px solid var(--border-6); }
 .team-card .plan-button:hover { background: #787de7; }
 .team-card .price-value { font-size: 24px; letter-spacing: -1px; }
@@ -62,8 +64,13 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .plan-grid.is-team .community { transform: translate(calc(100% + var(--card-gap) - 52px),32px) rotate(-9deg) skewX(-1.8deg); filter: blur(4px); opacity: .5; pointer-events: none; }
 .plan-grid.is-team .basic { transform: translate(52px,20px) rotate(9deg) skewX(1.8deg); filter: blur(4px); opacity: .5; pointer-events: none; }
 .plan-grid.is-team .pro { transform: translateX(calc(-100% - var(--card-gap))) scale(.94); filter: blur(10px); opacity: 0; pointer-events: none; }
-.plan-grid.is-team .team-card { transform: none; filter: blur(0); opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 80ms,80ms,80ms,0ms; }
-.plan-grid:not(.is-team) .plan-card:hover { border-color: rgba(255,255,255,.25); }
+.plan-grid.is-team .team-card { transform: none; filter: blur(0); opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 80ms,80ms,80ms,0ms,0ms,0ms,0ms,0ms; }
+/* Individual transforms compose with the existing audience transition, so a
+   hover never replaces the card's stack/rotation or its mobile centering. */
+@media (hover: hover) and (pointer: fine) {
+  .plan-grid .plan-card:not([inert]):hover { translate: 0 -6px; scale: 1.006; border-color: rgba(255,255,255,.25); box-shadow: 0 20px 44px rgba(0,0,0,.45), 0 8px 28px rgba(132,112,220,.16); }
+  .plan-grid .plan-card.pro:not([inert]):hover { border-color: #b0a5ff; }
+}
 .education { height: 96px; padding: 16px; transition: opacity 240ms, visibility 240ms; }
 .education-inner { padding: 8px 0; }
 .pricing.is-team .education { opacity: 0; visibility: hidden; pointer-events: none; }
