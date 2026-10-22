@@ -11,7 +11,7 @@
 body { isolation: isolate; }
 button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 2px solid #c9acff; outline-offset: 5px; }
-.pricing-sky { position: absolute; inset: 0 0 auto; height: 620px; z-index: -1; pointer-events: none; overflow: hidden; background: radial-gradient(ellipse 44% 56% at 32% 20%, #292632 0%, transparent 100%), radial-gradient(ellipse 42% 54% at 70% 24%, #202833 0%, transparent 100%), #000; -webkit-mask-image: linear-gradient(#000 55%, transparent 100%); mask-image: linear-gradient(#000 55%, transparent 100%); }
+.pricing-sky { position: absolute; inset: 0 0 auto; height: 620px; z-index: -1; pointer-events: none; overflow: hidden; background: radial-gradient(ellipse 68% 38% at 22% 0%, transparent 34%, #484451 53%, #25232d 66%, transparent 85%), radial-gradient(ellipse 58% 36% at 80% 5%, transparent 25%, #354149 48%, #1b222a 66%, transparent 90%), #000; -webkit-mask-image: linear-gradient(#000 55%, transparent 100%); mask-image: linear-gradient(#000 55%, transparent 100%); }
 .pricing-sky canvas { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 600ms ease; }
 .pricing-sky canvas[data-rendered="true"] { opacity: 1; }
 .global-nav { position: relative; height: 72px; padding: 16px; justify-content: flex-end; background: none; backdrop-filter: none; }

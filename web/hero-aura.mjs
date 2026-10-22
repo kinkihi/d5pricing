@@ -1,4 +1,4 @@
-// Low-chroma aura glow. WebGL keeps this available in browsers without WebGPU;
+// Low-chroma flowing light curtains. WebGL works without WebGPU;
 // the CSS gradient remains visible when graphics contexts are unavailable/lost.
 const canvas = document.querySelector('[data-aura-glow]');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -25,40 +25,45 @@ float noise(vec2 p) {
   return mix(mix(hash(cell), hash(cell + vec2(1.0, 0.0)), f.x),
              mix(hash(cell + vec2(0.0, 1.0)), hash(cell + 1.0), f.x), f.y);
 }
-float cloud(vec2 p) {
-  float value = 0.0, amplitude = 0.57;
-  for (int i = 0; i < 3; i++) {
-    value += amplitude * noise(p);
-    p = mat2(1.6, -1.2, 1.2, 1.6) * p + 7.3;
-    amplitude *= 0.5;
-  }
-  return value;
-}
-float halo(vec2 p, vec2 center, vec2 radius) {
-  vec2 delta = (p - center) / radius;
-  return exp(-dot(delta, delta) * 2.0);
+float curtain(float distance, float width) {
+  // An illuminated fold with a soft trailing body, rather than a neon line.
+  // Multiply signed distances: GLSL pow(negative, 2.0) is undefined on some GPUs.
+  float edgeDistance = distance / width;
+  float bodyDistance = (distance + width * 1.6) / (width * 3.8);
+  float edge = exp(-edgeDistance * edgeDistance);
+  float body = exp(-bodyDistance * bodyDistance);
+  return edge * 0.56 + body * 0.44;
 }
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
   uv.y = 1.0 - uv.y;
-  // Continuous noise, seeded once per visit: no timers, resets or fixed loop.
-  float t = u_time * 0.026;
-  vec2 drift = vec2(t, -t * 0.63);
-  vec2 domain = uv * vec2(2.8, 2.2) + u_seed;
-  vec2 warp = vec2(cloud(domain + drift), cloud(domain - drift + 13.4)) - 0.5;
-  vec2 p = uv + warp * vec2(0.17, 0.13);
-  vec2 wander = vec2(noise(vec2(t * 0.43, u_seed)),
-                     noise(vec2(u_seed + 17.0, t * 0.37))) - 0.5;
-  float violet = halo(p, vec2(0.32, 0.17) + wander * 0.22, vec2(0.46, 0.45));
-  float blue = halo(p, vec2(0.72, 0.22) - wander * 0.18, vec2(0.43, 0.40));
-  float mist = cloud(domain * 0.8 - drift * 0.35 + 24.0);
-  float ridge = 0.19 + 0.07 * sin(uv.x * 5.5 + t * 0.4 + u_seed) + warp.y * 0.12;
-  float ribbon = exp(-pow((p.y - ridge) / 0.18, 2.0));
-  ribbon *= smoothstep(0.0, 0.22, uv.x) * (1.0 - smoothstep(0.78, 1.0, uv.x));
-  vec3 color = vec3(0.002, 0.003, 0.005);
-  color += vec3(0.145, 0.127, 0.180) * violet * (0.72 + mist * 0.28);
-  color += vec3(0.102, 0.133, 0.168) * blue * (0.75 + mist * 0.25);
-  color += vec3(0.100, 0.094, 0.115) * ribbon * (0.25 + mist * 0.2);
+  // Independent, continuous drift: seeded once, with no timed resets.
+  float t = u_time * 0.065;
+  float phase = u_seed * 0.06283;
+  float wander = noise(vec2(t * 0.19, u_seed)) - 0.5;
+  float warp = noise(vec2(uv.x * 3.2 + t * 0.13, uv.y * 1.8 - t * 0.17) + u_seed) - 0.5;
+  float x = uv.x;
+  float y = uv.y + warp * 0.10;
+  float foldA = 0.12 + 0.21 * sin(x * 4.1 + t * 0.41 + phase * 0.28)
+                    + 0.065 * sin(x * 7.3 - t * 0.27) + wander * 0.10;
+  float foldB = 0.14 + 0.23 * cos(x * 3.8 - t * 0.33 + 1.25 + phase * 0.18)
+                    + 0.06 * sin(x * 6.1 + t * 0.23);
+  float foldC = 0.25 + 0.19 * sin(x * 4.7 + t * 0.29 + 3.1)
+                    + wander * 0.06;
+  float a = curtain(y - foldA, 0.045 + 0.018 * sin(x * 2.5 + 0.6));
+  float b = curtain(y - foldB, 0.055);
+  float c = curtain(y - foldC, 0.075);
+  // Gray-violet, steel blue and a neutral pearl accent keep chroma restrained.
+  vec3 color = vec3(0.009, 0.010, 0.015);
+  color += vec3(0.275, 0.258, 0.335) * a;
+  color += vec3(0.210, 0.263, 0.300) * b;
+  color += vec3(0.170, 0.167, 0.193) * c;
+  float edgeFade = 0.68 + 0.32 * sin(x * 3.14159);
+  float lowerFade = 1.0 - smoothstep(0.32, 0.84, uv.y);
+  // The title remains the brightest element as the light passes behind it.
+  vec2 title = (uv - vec2(0.5, 0.38)) / vec2(0.34, 0.16);
+  float titleShade = 1.0 - 0.40 * exp(-dot(title, title));
+  color *= edgeFade * lowerFade * titleShade;
   // Subpixel, time-independent dithering prevents banding without glitter.
   color += (hash(gl_FragCoord.xy) - 0.5) / 255.0;
   gl_FragColor = vec4(max(color, vec3(0.0)), 1.0);

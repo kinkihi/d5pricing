@@ -31,6 +31,22 @@ Those lower sections are not claimed as a clone of the supplied full-page frames
 
 ## Findings and fixes
 
+### Flowing light curtains, preview v20261022-5
+
+- Replaced the diffuse halo composition with three broad, softly illuminated
+  folds that drift and deform independently. The palette stays low-chroma
+  gray-violet, steel blue and pearl; a soft shade keeps the title readable.
+- Updated the CSS fallback to layered curved light bands. Rendering limits,
+  reduced-motion handling, visibility pauses and context recovery are retained.
+- Requested reference: Aura component `4F88F8E`, titled “Animated Aura Background
+  with UnicornStudio.” The exact component preview could not be retrieved
+  (network 403 and unavailable web-reader result). This is an original proposed
+  light-curtain interpretation, not a verified reproduction of that scene.
+- Desktop (1440px) and mobile (390px) screenshots reviewed:
+  `qa/aura-curtains-desktop.png`, `qa/aura-curtains-mobile.png`.
+- `scripts/verify-aura.cjs` passes with the new shader: changing pixels, motion
+  pauses, context recovery, fallback, responsive sizing and `#8F94FB` hover.
+
 ### Hero aura update, preview v20261022-4
 
 - Replaced the original star field with a custom low-saturation WebGL aura:

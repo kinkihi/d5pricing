@@ -24,8 +24,9 @@ The new pricing layout lives in `web/pricing-experience.css` and
 `web/pricing-experience.js`. It reuses the existing pricing data from `app.js`.
 The recommendation section is currently removed from the page; its standalone
 source files are retained for future use. The hero uses a custom low-saturation
-WebGL aura shader in `web/hero-aura.mjs`, with a matching CSS gradient fallback.
-It drifts smoothly, pauses offscreen/in background tabs, and respects reduced
+WebGL light-curtain shader in `web/hero-aura.mjs`, with a matching CSS gradient
+fallback. Gray-violet and steel-blue folds overlap and drift slowly, with darker
+shading behind the hero title. It pauses offscreen/in background tabs and respects reduced
 motion. The Pro-card decoration retains the original Figma export and optional
 WebGPU shader.
 
