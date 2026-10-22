@@ -7,7 +7,7 @@ const root = path.resolve(fileURLToPath(new URL('../web/', import.meta.url)));
 const portArg = process.argv.indexOf('--port');
 const port = Number(portArg > -1 ? process.argv[portArg + 1] : process.env.PORT || 4173);
 const clients = new Set();
-const types = {'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.mjs':'text/javascript','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.woff2':'font/woff2'};
+const types = {'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.mjs':'text/javascript','.svg':'image/svg+xml','.png':'image/png','.ico':'image/x-icon','.webp':'image/webp','.jpg':'image/jpeg','.woff2':'font/woff2'};
 const reload = `<script>const live=new EventSource('/__live');live.onmessage=()=>{sessionStorage.setItem('d5-preview-scroll',scrollY);location.reload()};addEventListener('load',()=>{const y=sessionStorage.getItem('d5-preview-scroll');if(y){scrollTo(0,+y);sessionStorage.removeItem('d5-preview-scroll')}});</script>`;
 http.createServer(async (req,res) => {
   if (req.url === '/__live') {res.writeHead(200,{'Content-Type':'text/event-stream','Cache-Control':'no-cache','Connection':'keep-alive'});res.write(': connected\n\n');clients.add(res);req.on('close',()=>clients.delete(res));return;}
