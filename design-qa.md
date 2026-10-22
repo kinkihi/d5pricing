@@ -31,6 +31,23 @@ Those lower sections are not claimed as a clone of the supplied full-page frames
 
 ## Findings and fixes
 
+### Hero aura update, preview v20261022-4
+
+- Replaced the original star field with a custom low-saturation WebGL aura:
+  soft gray-violet and blue-gray light fades into the black pricing page.
+  Continuous seeded noise moves the glow slowly without a repeating loop.
+- The hero keeps a matching CSS gradient when WebGL is unavailable or its
+  context is lost; restoring the context restarts the renderer.
+- Rendering is capped at 24fps, half CSS resolution and 960px buffer width.
+  Offscreen/hidden-page animation pauses; reduced-motion preference freezes it.
+- Team-card hover retains its lift/shadow and now ends at `#8F94FB`.
+- Actual WebGL rendering, pixel changes over time, pause/resume, context recovery,
+  fallback and responsive behavior pass in Chromium/SwiftShader. Existing pricing
+  interactions and mobile layout regression also pass, with no console errors.
+- Evidence: `qa/aura-desktop.png`, `qa/aura-mobile.png`,
+  `qa/aura-team-hover.png`, and `qa/aura-verification.json`.
+  Safari hardware rendering has not been exercised in this environment.
+
 ### October 22 follow-up, preview v20261022-2
 
 - Removed the recommendation section and its stylesheet/script includes.

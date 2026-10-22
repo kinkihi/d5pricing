@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "renderer": "Chromium WebGL / SwiftShader",
+  "checks": [
+    "WebGL shader compiles and paints changing pixels; no old star-field asset is requested.",
+    "Reduced-motion preference and leaving the viewport pause drawing; returning resumes it.",
+    "Losing the graphics context reveals the CSS gradient; restoring it restarts the shader.",
+    "Team hover border is #8F94FB; responsive hero rendering stays within the viewport and its 960px buffer cap.",
+    "A browser without WebGL retains the matching CSS gradient and readable page content."
+  ],
+  "errors": []
+}

@@ -11,13 +11,13 @@
 body { isolation: isolate; }
 button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 2px solid #c9acff; outline-offset: 5px; }
-.pricing-sky { position: absolute; inset: 0 0 auto; height: 882px; z-index: -1; pointer-events: none; background: url('assets/figma/nebula.png') center top / 1920px 540px no-repeat; mask-image: linear-gradient(#000 38%, transparent 100%); }
-.pricing-sky canvas { display: block; width: 100%; height: 540px; }
+.pricing-sky { position: absolute; inset: 0 0 auto; height: 620px; z-index: -1; pointer-events: none; overflow: hidden; background: radial-gradient(ellipse 44% 56% at 32% 20%, #292632 0%, transparent 100%), radial-gradient(ellipse 42% 54% at 70% 24%, #202833 0%, transparent 100%), #000; -webkit-mask-image: linear-gradient(#000 55%, transparent 100%); mask-image: linear-gradient(#000 55%, transparent 100%); }
+.pricing-sky canvas { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 600ms ease; }
+.pricing-sky canvas[data-rendered="true"] { opacity: 1; }
 .global-nav { position: relative; height: 72px; padding: 16px; justify-content: flex-end; background: none; backdrop-filter: none; }
 .header-language { height: 40px; padding: 0 18px; border: 1px solid var(--border-10); border-radius: 8px; font-size: 14px; font-weight: 500; }
 .header-language:hover { background: rgba(255,255,255,.08); }
 .hero { position: relative; min-height: 290px; padding: 120px 0 40px; gap: 24px; }
-.hero::before { content: ''; position: absolute; left: 50%; top: -72px; width: min(1725px,100vw); height: 290px; transform: translateX(-50%); background: radial-gradient(ellipse 50% 76% at 50% 0%,rgba(175,130,255,.1),transparent); pointer-events: none; z-index: -1; }
 .hero h1 { font-size: 64px; line-height: 77px; }
 .hero p { font-size: 24px; line-height: 29px; }
 .pricing-toolbar { position: relative; height: 112px; padding: 32px 0; justify-content: center; gap: 0; }
@@ -70,6 +70,7 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 @media (hover: hover) and (pointer: fine) {
   .plan-grid .plan-card:not([inert]):hover { translate: 0 -6px; scale: 1.006; border-color: rgba(255,255,255,.25); box-shadow: 0 20px 44px rgba(0,0,0,.45), 0 8px 28px rgba(132,112,220,.16); }
   .plan-grid .plan-card.pro:not([inert]):hover { border-color: #b0a5ff; }
+  .plan-grid .plan-card.team-card:not([inert]):hover { border-color: #8f94fb; }
 }
 .education { height: 96px; padding: 16px; transition: opacity 240ms, visibility 240ms; }
 .education-inner { padding: 8px 0; }
@@ -110,6 +111,7 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 }
 @media (max-width: 960px) {
   :root { --content-width: calc(100% - 40px); }
+  .pricing-sky { height: 440px; }
   .global-nav { height: 64px; padding: 12px 20px; }
   .header-language { height: 36px; font-size: 12px; }
   .hero { padding: 56px 0 24px; min-height: 0; gap: 16px; }

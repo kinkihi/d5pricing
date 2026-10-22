@@ -23,8 +23,11 @@ The server uses Node's standard library; no install step is required.
 The new pricing layout lives in `web/pricing-experience.css` and
 `web/pricing-experience.js`. It reuses the existing pricing data from `app.js`.
 The recommendation section is currently removed from the page; its standalone
-source files are retained for future use. Decorative assets are original Figma
-exports; the optional WebGPU backgrounds use the original shader programs.
+source files are retained for future use. The hero uses a custom low-saturation
+WebGL aura shader in `web/hero-aura.mjs`, with a matching CSS gradient fallback.
+It drifts smoothly, pauses offscreen/in background tabs, and respects reduced
+motion. The Pro-card decoration retains the original Figma export and optional
+WebGPU shader.
 
 The Figma sources are the Personal frame `31951:32322` and Teams frame
 `32080:12481` in the supplied Official Website file. The two-way transition follows
@@ -40,3 +43,7 @@ override its module, browser executable and target URL.
 rapid reversals, card hover geometry/background stability and FAQ localization.
 Safari/WebKit verification is still pending: this environment cannot download
 WebKit under its current network policy. See `qa/refinements-verification.json`.
+
+`scripts/verify-aura.cjs` exercises the actual WebGL shader, animation pause/resume,
+context loss/recovery, fallback rendering, responsive buffer sizing and the team
+hover border. Its report is `qa/aura-verification.json`.
