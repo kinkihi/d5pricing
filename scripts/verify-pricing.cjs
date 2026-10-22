@@ -1,0 +1,126 @@
+// Run against `npm run dev`. Requires Playwright (or PLAYWRIGHT_MODULE).
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+let activeBrowser;
+
+(async () => {
+  const browser = await chromium.launch({
+    headless: true,
+    ...(process.env.BROWSER_PATH ? { executablePath: process.env.BROWSER_PATH } : {}),
+    args: ['--no-sandbox'],
+  });
+  activeBrowser = browser;
+  const page = await browser.newPage({ viewport: { width: 1920, height: 1100 } });
+  const errors = [], failedRequests = [], checks = [];
+  page.on('pageerror', error => errors.push(error.message));
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+  page.on('response', response => { if (response.status() >= 400) failedRequests.push(`${response.status()} ${response.url()}`); });
+  const base = process.env.PREVIEW_URL || 'http://127.0.0.1:4173';
+  const shot = name => page.screenshot({ path: path.join(__dirname, '..', 'qa', name), fullPage: true });
+  const price = id => page.locator(`[data-price="${id}"]`).evaluate(el => el.getAttribute('aria-label') || el.textContent);
+  const audience = async name => {
+    await page.locator(`[data-audience="${name}"]`).click({ force: true });
+    await page.waitForTimeout(800);
+  };
+  await page.goto(base);
+  await page.evaluate(() => document.fonts.ready);
+  assert.equal(await page.locator('[data-audience="personal"]').getAttribute('aria-selected'), 'true');
+  assert.equal(await price('basic'), '49');
+  assert.equal(await price('pro'), '200');
+  assert.deepEqual(await page.locator('.plan-grid').boundingBox(), { x: 240, y: 474, width: 1440, height: 536 });
+  checks.push('Desktop geometry matches the 1920px Figma frame; three personal cards are visible.');
+  await shot('personal-desktop.png');
+
+  await page.locator('[data-billing-toggle]').click();
+  await page.waitForTimeout(550);
+  assert.equal(await price('basic'), '399');
+  assert.equal(await price('pro'), '1920');
+  await audience('team');
+  assert.equal(await page.locator('.billing').evaluate(el => el.inert), true);
+  assert.equal(await page.locator('.team-card').evaluate(el => el.inert), false);
+  assert.equal(await page.locator('.community').evaluate(el => el.inert), true);
+  assert.deepEqual(await page.locator('.column-title').allTextContents(), ['Pro','Team','Enterprise']);
+  await shot('team-desktop.png');
+  await audience('personal');
+  assert.equal(await price('basic'), '399');
+  assert.equal(await page.locator('[data-billing-toggle]').getAttribute('aria-pressed'), 'true');
+  checks.push('Annual prices, billing state, comparison columns and inactive focus targets survive a round trip.');
+
+  await page.locator('[data-audience="team"]').click({force:true});
+  await page.waitForTimeout(140);
+  const movingX = (await page.locator('.community').boundingBox()).x;
+  assert.ok(movingX > 240 && movingX < 728, `Expected card movement, got ${movingX}`);
+  await shot('transition-midpoint.png');
+  for (let i = 0; i < 7; i++) {
+    await page.locator(`[data-audience="${i % 2 ? 'team' : 'personal'}"]`).click({ force:true });
+    await page.waitForTimeout(60);
+  }
+  await page.waitForTimeout(800);
+  assert.equal(await page.locator('[data-audience="personal"]').getAttribute('aria-selected'),'true');
+  assert.ok(Math.abs((await page.locator('.community').boundingBox()).x - 240) < 1);
+  checks.push('Motion has intermediate frames; seven rapid reversals settle without stale cards or focus state.');
+
+  await page.locator('[data-audience="personal"]').focus();
+  await page.keyboard.press('ArrowRight');
+  assert.equal(await page.locator('[data-audience="team"]').evaluate(el=>el===document.activeElement),true);
+  await page.keyboard.press('Home');
+  assert.equal(await page.locator('[data-audience="personal"]').evaluate(el=>el===document.activeElement),true);
+  await page.waitForTimeout(850);
+  await page.locator('[data-select-plan="pro"]').click();
+  assert.equal(await page.locator('.pricing-dialog').evaluate(el=>el.open),true);
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('.pricing-dialog').evaluate(el=>el.open),false);
+  await audience('team');
+  await page.locator('[data-contact-sales]').click();
+  assert.match(await page.locator('.pricing-dialog').innerText(),/100GB/);
+  await page.keyboard.press('Escape');
+  await page.locator('[data-compare-toggle]').click();
+  assert.equal(await page.locator('.compare-row:visible').count(),0);
+  await page.locator('[data-compare-toggle]').click();
+  assert.equal(await page.locator('.compare-row:visible').count(),2);
+  checks.push('Keyboard tabs, focus return, preview dialogs, Escape and comparison disclosure work.');
+
+  await page.locator('[data-language-toggle]').click();
+  assert.equal(await page.locator('html').getAttribute('lang'),'en');
+  assert.equal(await page.locator('.team-card h2').innerText(),'Teams');
+  await page.locator('[data-language-toggle]').click();
+  assert.equal(await page.locator('.team-card h2').innerText(),'团队版');
+  checks.push('Language changes retain the selected audience and update card content.');
+
+  const reload = page.waitForEvent('framenavigated', frame => frame === page.mainFrame());
+  const css = path.join(__dirname, '..', 'web', 'pricing-experience.css');
+  const now = new Date(); fs.utimesSync(css, now, now);
+  await reload;
+  await page.waitForLoadState('load');
+  assert.equal(await page.locator('[data-audience="team"]').getAttribute('aria-selected'),'true');
+  checks.push('A saved file triggers browser reload and preserves the active audience and billing.');
+
+  for (const width of [1440,1024,820,760,390,320]) {
+    await page.setViewportSize({width,height:900});
+    for(const tab of ['personal','team']) {
+      await audience(tab);
+      const geometry=await page.evaluate(()=>({
+        viewport:innerWidth,document:document.documentElement.scrollWidth,
+        clipped:[...document.querySelectorAll('.plan-card:not([inert])')].filter(card=>
+          card.querySelector('.plan-list').getBoundingClientRect().bottom > card.getBoundingClientRect().bottom - 12
+        ).map(card=>card.dataset.plan),
+      }));
+      assert.equal(geometry.document,geometry.viewport,`Overflow at ${width}px / ${tab}`);
+      assert.deepEqual(geometry.clipped,[],`Card content clipped at ${width}px / ${tab}`);
+      if(width===390) await shot(`mobile-${tab}.png`);
+    }
+  }
+  checks.push('Both audiences pass overflow and card-content checks at 1440, 1024, 820, 760, 390 and 320px.');
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await audience('personal');
+  assert.equal(await page.locator('.community').evaluate(el=>getComputedStyle(el).transitionDuration),'0s');
+  checks.push('Reduced-motion preference disables card transitions.');
+  assert.deepEqual(errors,[]);
+  assert.deepEqual(failedRequests,[]);
+  const report = { passed:true,checks,consoleErrors:errors,failedRequests };
+  fs.writeFileSync(path.join(__dirname,'..','qa','verification.json'),JSON.stringify(report,null,2)+'\n');
+  console.log(JSON.stringify(report,null,2));
+  await browser.close();
+})().catch(async error=>{await activeBrowser?.close();console.error(error);process.exit(1);});

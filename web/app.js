@@ -419,12 +419,13 @@ document.addEventListener('click', e => {
     syncBillingToggle();
   return;
   }
-  if (btn.hasAttribute('data-contact-sales')) {
+  if (btn.hasAttribute('data-contact-sales') && !window.openPricingDialog) {
     const b = businessPlans[state.lang];
     $('#announcer').textContent = `${b[btn.dataset.contactSales].name} · ${b.preview}`;
     return;
   }
   if (btn.dataset.audience) {
+    if (window.setPricingAudience) { window.setPricingAudience(btn.dataset.audience); return; }
     finishDrag();
     state.audience = btn.dataset.audience;
     $$('[data-audience]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.audience === state.audience)));

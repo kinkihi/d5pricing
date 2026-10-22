@@ -9,14 +9,12 @@
   <link rel="icon" href="assets/d5-logo.png">
   <link rel="stylesheet" href="styles.css?v=20260928-3">
   <link rel="stylesheet" href="recommender.css?v=20260929-7">
+  <link rel="stylesheet" href="pricing-experience.css?v=20261022-1">
 </head>
 <body>
+  <div class="pricing-sky" aria-hidden="true"><canvas data-shader="nebula"></canvas></div>
   <header class="global-nav">
-    <a class="brand" href="#pricing" aria-label="D5"><img src="assets/brand.webp" alt=""><span>D5</span></a>
-    <fieldset class="language-switch" aria-label="Language">
-      <button type="button" data-lang="zh" aria-pressed="true">中文</button>
-      <button type="button" data-lang="en" aria-pressed="false">EN</button>
-    </fieldset>
+    <button class="header-language" type="button" data-language-toggle>English</button>
   </header>
 
   <main id="main">
@@ -27,9 +25,10 @@
 
     <section class="pricing container" id="pricing">
       <div class="pricing-toolbar">
-        <div class="segmented" role="group" aria-label="选择用户类别">
-          <button type="button" data-audience="personal" aria-pressed="true" data-i18n="audience.personal">个人创作</button>
-          <button type="button" data-audience="team" aria-pressed="false" data-i18n="audience.team">团队协作</button>
+        <div class="segmented" role="tablist" aria-label="选择用户类别">
+          <span class="tab-indicator" aria-hidden="true"></span>
+          <button type="button" id="tab-personal" role="tab" aria-controls="plan-grid" aria-selected="true" tabindex="0" data-audience="personal" aria-pressed="true" data-i18n="audience.personal">个人创作</button>
+          <button type="button" id="tab-team" role="tab" aria-controls="plan-grid" aria-selected="false" tabindex="-1" data-audience="team" aria-pressed="false" data-i18n="audience.team">团队协作</button>
         </div>
         <div class="billing">
           <span data-i18n="billing.monthly">按月</span>
@@ -37,7 +36,7 @@
           <div class="billing-annual"><span data-i18n="billing.annual">按年</span><b data-i18n="billing.discount">享x折</b></div>
         </div>
       </div>
-      <div class="plan-grid" id="plan-grid"></div>
+      <div class="plan-grid" id="plan-grid" role="tabpanel" aria-labelledby="tab-personal" tabindex="0"></div>
       <div class="education">
         <div class="education-inner">
           <strong data-i18n="education.title">D5 for Education</strong>
@@ -45,14 +44,6 @@
           <a href="#pricing" data-i18n="education.button">Apply</a>
         </div>
       </div>
-    </section>
-
-    <section class="section container" id="workflow" aria-labelledby="workflow-title">
-      <div class="section-head">
-        <h2 id="workflow-title">方案推荐</h2>
-        <p>让创作走的更远</p>
-      </div>
-      <div class="plan-finder" id="plan-finder"></div>
     </section>
 
     <section class="section container" id="comparison" aria-labelledby="comparison-title">
@@ -63,6 +54,14 @@
         </div>
       </div>
       <div class="compare-scroll" tabindex="0" role="region" aria-labelledby="comparison-title"><div class="compare" id="compare"></div></div>
+    </section>
+
+    <section class="section container" id="workflow" aria-labelledby="workflow-title">
+      <div class="section-head">
+        <h2 id="workflow-title">方案推荐</h2>
+        <p>让创作走的更远</p>
+      </div>
+      <div class="plan-finder" id="plan-finder"></div>
     </section>
 
     <section class="faq" id="faq" aria-labelledby="faq-title">
@@ -103,7 +102,9 @@
   </footer>
 
   <div class="sr-only" id="announcer" role="status" aria-live="polite"></div>
-  <script src="app.js?v=20260928-3"></script>
+  <script src="app.js?v=20261022-1"></script>
+  <script src="pricing-experience.js?v=20261022-1"></script>
   <script src="recommender.js?v=20260929-8"></script>
+  <script type="module" src="shader-backgrounds.mjs?v=20261022-1"></script>
 </body>
 </html>

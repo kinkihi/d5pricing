@@ -1,0 +1,139 @@
+/* Figma: Personal 31951:32322 / Teams 32080:12481.
+   Shared card elements keep their identity throughout the recorded transition. */
+@font-face { font-family: Inter; font-style: normal; font-weight: 100 900; font-display: swap; src: url('assets/fonts/inter-latin.woff2') format('woff2'); }
+:root {
+  --content-width: min(1440px, calc(100% - 96px));
+  --card-gap: 24px;
+  --card-width: calc((100% - 2 * var(--card-gap)) / 3);
+  --motion-ease: cubic-bezier(.22,.8,.22,1);
+  --motion-time: 680ms;
+}
+body { isolation: isolate; }
+button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 2px solid #c9acff; outline-offset: 5px; }
+.pricing-sky { position: absolute; inset: 0 0 auto; height: 882px; z-index: -1; pointer-events: none; background: url('assets/figma/nebula.png') center top / 1920px 540px no-repeat; mask-image: linear-gradient(#000 38%, transparent 100%); }
+.pricing-sky canvas { display: block; width: 100%; height: 540px; }
+.global-nav { position: relative; height: 72px; padding: 16px; justify-content: flex-end; background: none; backdrop-filter: none; }
+.header-language { height: 40px; padding: 0 18px; border: 1px solid var(--border-10); border-radius: 8px; font-size: 14px; font-weight: 500; }
+.header-language:hover { background: rgba(255,255,255,.08); }
+.hero { position: relative; min-height: 290px; padding: 120px 0 40px; gap: 24px; }
+.hero::before { content: ''; position: absolute; left: 50%; top: -72px; width: min(1725px,100vw); height: 290px; transform: translateX(-50%); background: radial-gradient(ellipse 50% 76% at 50% 0%,rgba(175,130,255,.1),transparent); pointer-events: none; z-index: -1; }
+.hero h1 { font-size: 64px; line-height: 77px; }
+.hero p { font-size: 24px; line-height: 29px; }
+.pricing-toolbar { position: relative; height: 112px; padding: 32px 0; justify-content: center; gap: 0; }
+.pricing-toolbar .segmented { position: absolute; left: 50%; width: 246px; height: 48px; transform: translateX(calc(-50% - 114px)); transition: transform var(--motion-time) var(--motion-ease); }
+.pricing-toolbar .segmented button { position: relative; z-index: 1; flex: 1; padding: 0 8px; font-size: 16px; font-weight: 600; background: none; opacity: .65; transition: opacity .2s; }
+.pricing-toolbar .segmented button[aria-selected="true"] { opacity: 1; }
+.tab-indicator { position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc((100% - 6px) / 2); border-radius: 999px; background: rgba(255,255,255,.1); transition: transform var(--motion-time) var(--motion-ease); }
+.pricing-toolbar .billing { position: absolute; left: calc(50% + 49px); width: 189px; transition: opacity 220ms ease, transform var(--motion-time) var(--motion-ease), visibility 220ms; }
+.billing b { background: #8863ca; }
+.pricing.is-team .segmented { transform: translateX(-50%); }
+.pricing.is-team .tab-indicator { transform: translateX(calc(100% + 2px)); }
+.pricing.is-team .billing { opacity: 0; visibility: hidden; transform: translateX(35px); pointer-events: none; }
+.plan-grid, .plan-grid.is-team { display: block; position: relative; height: 536px; isolation: isolate; outline-offset: 12px; }
+.plan-grid .plan-card { position: absolute; top: 0; left: 0; width: var(--card-width); height: 536px; padding: 30px; gap: 16px; border: 2px solid var(--border-10); border-radius: 16px; background-color: rgba(0,0,0,.45); overflow-wrap: normal; transform-origin: center center; transition: transform var(--motion-time) var(--motion-ease), filter var(--motion-time) var(--motion-ease), opacity 440ms ease, border-color 180ms ease; }
+.plan-grid .plan-card.basic { left: calc(var(--card-width) + var(--card-gap)); background-image: radial-gradient(ellipse 262px 290px at 50% 35%,rgba(255,255,255,.1),transparent); z-index: 2; }
+.plan-grid .plan-card.pro { left: calc((var(--card-width) + var(--card-gap)) * 2); background: rgba(0,0,0,.45); z-index: 3; }
+.plan-grid .plan-card.community { z-index: 1; }
+.plan-grid .plan-card > :not(.card-glow) { position: relative; z-index: 1; }
+.plan-grid .plan-top { gap: 8px; }
+.plan-grid .plan-title { gap: 0; }
+.plan-grid .plan-name { min-height: 24px; flex-wrap: nowrap; }
+.plan-grid .plan-name h2 { font-size: 20px; font-weight: 600; line-height: 24px; }
+.plan-grid .plan-price { height: 40px; }
+.plan-grid .price-value { font-size: 32px; letter-spacing: -2px; line-height: 39px; }
+.plan-grid .tag { padding: 4px 8px; font-size: 12px; line-height: 16px; font-weight: 600; background: #153e2b; white-space: nowrap; }
+.plan-grid .plan-list li { display: flex; align-items: center; gap: 4px; padding: 0; min-height: 32px; line-height: 20px; font-weight: 500; color: rgba(255,255,255,.9); }
+.plan-grid .feature-check { display: grid; place-items: center; flex: 0 0 32px; height: 32px; }
+.plan-grid .feature-check img { width: 16px; height: 16px; }
+.plan-grid .plan-list em { margin-left: 4px; }
+.plan-grid .plan-button { flex: none; }
+.plan-grid .card-glow { position: absolute; z-index: 0; inset: 0; pointer-events: none; overflow: hidden; border-radius: 14px; }
+.plan-grid .pro .card-glow { top: 108px; bottom: auto; height: 536px; background: url('assets/figma/pro-wave.png') center top / 100% 536px no-repeat; filter: blur(50px); }
+.plan-grid .pro { overflow: hidden; }
+.plan-grid .pro .card-glow canvas { opacity: .4; }
+.plan-grid .card-glow:has(canvas[data-rendered="true"]) { background-image: none; }
+.card-glow canvas { width: 100%; height: 536px; display: block; }
+.plan-grid .team-card { left: calc(var(--card-width) + var(--card-gap)); z-index: 5; opacity: 0; transform: translateY(28px) scale(.91); filter: blur(9px); pointer-events: none; background: rgba(140,143,226,.01); backdrop-filter: blur(50px); visibility: hidden; transition: transform var(--motion-time) var(--motion-ease), opacity 350ms ease, filter var(--motion-time) var(--motion-ease), visibility 680ms; }
+.team-card .plan-button { background: #656ad9; border: 1px solid var(--border-6); }
+.team-card .plan-button:hover { background: #787de7; }
+.team-card .price-value { font-size: 24px; letter-spacing: -1px; }
+.team-card .card-glow { background: radial-gradient(ellipse 110% 47% at 55% 69%,rgba(140,143,226,.32),transparent 95%); }
+.plan-grid.is-team .community { transform: translate(calc(100% + var(--card-gap) - 52px),32px) rotate(-9deg) skewX(-1.8deg); filter: blur(4px); opacity: .5; pointer-events: none; }
+.plan-grid.is-team .basic { transform: translate(52px,20px) rotate(9deg) skewX(1.8deg); filter: blur(4px); opacity: .5; pointer-events: none; }
+.plan-grid.is-team .pro { transform: translateX(calc(-100% - var(--card-gap))) scale(.94); filter: blur(10px); opacity: 0; pointer-events: none; }
+.plan-grid.is-team .team-card { transform: none; filter: blur(0); opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 80ms,80ms,80ms,0ms; }
+.plan-grid:not(.is-team) .plan-card:hover { border-color: rgba(255,255,255,.25); }
+.education { height: 96px; padding: 16px; transition: opacity 240ms, visibility 240ms; }
+.education-inner { padding: 8px 0; }
+.pricing.is-team .education { opacity: 0; visibility: hidden; pointer-events: none; }
+#comparison { padding-bottom: 120px; }
+#comparison .section-head { height: 154px; padding: 40px 0; }
+#comparison .section-head h2 { font-size: 32px; line-height: 39px; margin-bottom: 16px; }
+#comparison .section-head p { font-size: 16px; line-height: 19px; }
+.compare-table thead .lead { width: 38.8889%; padding-left: 20px; }
+.compare-table thead .col { width: 20.3704%; }
+.compare-table thead th { height: 96px; }
+.compare-table tbody .lead { padding: 14px 24px; }
+.compare-table .compare-group { padding: 0; height: 56px; }
+.compare-group button { display: flex; align-items: center; width: 100%; padding: 16px 20px; text-align: left; }
+.compare-group button[aria-expanded="false"] img { transform: rotate(-90deg); }
+.compare-group img { transition: transform 200ms; }
+.compare-table tbody .col { padding: 14px 12px; }
+.compare-table tbody .col img { width: auto; height: auto; padding: 0; }
+.compare-table .column-title { display: inline-block; animation: column-in 400ms var(--motion-ease); }
+@keyframes column-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.pricing-dialog { width: min(480px, calc(100% - 32px)); background: #111113; border: 1px solid #35323d; border-radius: 20px; padding: 32px; color: #fff; box-shadow: 0 24px 100px #0009; }
+.pricing-dialog::backdrop { background: #000b; backdrop-filter: blur(8px); }
+.pricing-dialog h2 { font-size: 24px; line-height: 32px; padding-right: 24px; }
+.pricing-dialog p { margin-top: 16px; color: #b4b1bd; font-size: 14px; line-height: 24px; }
+.pricing-dialog .dialog-price { color: #fff; font-size: 32px; line-height: 40px; margin-block: 24px; }
+.pricing-dialog .dialog-close { position: absolute; top: 20px; right: 20px; padding: 8px; font-size: 12px; color: #bcb8c5; }
+.pricing-dialog .plan-button { margin-top: 24px; background: #9459ff; }
+.pricing-dialog dl { display: grid; grid-template-columns: auto 1fr; gap: 12px; margin-top: 24px; }
+.pricing-dialog dd { margin: 0; text-align: right; color: #c9acff; }
+@media (min-width: 1680px) { :root { --content-width: min(1440px,75vw); } }
+@media (max-width: 1200px) {
+  :root { --content-width: calc(100% - 64px); --card-gap: 16px; }
+  .plan-grid .plan-card { padding: 22px; }
+  .plan-grid .plan-list li { font-size: 13px; }
+  .plan-grid .feature-check { flex-basis: 24px; }
+  .hero h1 { font-size: 48px; line-height: 60px; }
+  .hero p { font-size: 20px; line-height: 28px; }
+}
+@media (max-width: 960px) {
+  :root { --content-width: calc(100% - 40px); }
+  .global-nav { height: 64px; padding: 12px 20px; }
+  .header-language { height: 36px; font-size: 12px; }
+  .hero { padding: 56px 0 24px; min-height: 0; gap: 16px; }
+  .hero h1 { font-size: clamp(26px,6.5vw,42px); line-height: 1.3; }
+  .hero p { max-width: 450px; margin-inline: auto; font-size: 15px; line-height: 25px; text-wrap: balance; }
+  .pricing-toolbar { height: 144px; padding: 24px 0; display: block; }
+  .pricing-toolbar .segmented, .pricing.is-team .segmented { top: 24px; transform: translateX(-50%); }
+  .pricing-toolbar .billing { top: 96px; left: 50%; transform: translateX(-50%); }
+  .pricing.is-team .billing { transform: translate(-50%, -8px); }
+  .plan-grid, .plan-grid.is-team { height: var(--personal-height,1576px); --card-width: 100%; transition: height var(--motion-time) var(--motion-ease); }
+  .plan-grid .plan-card { width: 100%; max-width: 464px; left: 50%; height: auto; min-height: 440px; transform: translateX(-50%); padding: 28px; }
+  .plan-grid .plan-card.community { top: 0; }
+  .plan-grid .plan-card.basic { top: var(--basic-y,534px); left: 50%; }
+  .plan-grid .plan-card.pro { top: var(--pro-y,1068px); left: 50%; min-height: 536px; }
+  .plan-grid .plan-card.team-card { top: 0; left: 50%; opacity: 0; transform: translate(-50%,24px) scale(.95); }
+  .plan-grid .plan-list li { font-size: 14px; }
+  .plan-grid.is-team { height: var(--team-height,560px); }
+  .plan-grid.is-team .community { transform: translate(-50%,28px) rotate(-5deg) scale(.9); opacity: .3; }
+  .plan-grid.is-team .basic { transform: translate(-50%,calc(24px - var(--basic-y,534px))) rotate(5deg) scale(.9); opacity: .3; }
+  .plan-grid.is-team .pro { transform: translate(-50%,calc(24px - var(--pro-y,1068px))) scale(.94); }
+  .plan-grid.is-team .team-card { opacity: 1; transform: translateX(-50%); min-height: 536px; }
+  .education { height: 136px; padding: 24px 0; transition: height var(--motion-time) var(--motion-ease),opacity 240ms,visibility 240ms; }
+  .pricing.is-team .education { height: 32px; padding: 0; }
+  .education-inner { gap: 8px; }
+  .education span { font-size: 12px; }
+  #comparison { padding-bottom: 64px; }
+  #comparison .section-head { height: auto; padding: 32px 0; }
+  #comparison .section-head h2 { font-size: 26px; line-height: 34px; }
+  #comparison .section-head p { font-size: 14px; line-height: 22px; }
+  .compare-table { min-width: 680px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
