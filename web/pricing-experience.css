@@ -129,10 +129,22 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .plan-savings { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; min-height: 40px; padding: 4px; font-size: 12px; font-weight: 500; line-height: 22px; }
 .saving-badge { flex-shrink: 0; padding: 2px 8px; border-radius: 9999px; background: rgba(119,43,255,.3); color: #c9acff; }
 .original-price { color: var(--text-60); white-space: nowrap; }
-.tier-toggle { display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,.06); border-radius: 50%; background: rgba(255,255,255,.06); }
+.tier-toggle { position: relative; display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,.06); border-radius: 50%; background: rgba(255,255,255,.06); }
 .tier-toggle:hover { background: rgba(255,255,255,.16); }
 .tier-toggle img { display: block; transition: transform 200ms ease; }
 .tier-toggle[aria-pressed="true"] img { transform: rotate(180deg); }
+.tier-arrow-window { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
+.tier-arrow-track { position: absolute; top: calc(50% - 8px); left: calc(50% - 8px); width: 16px; height: 16px; }
+.tier-arrow-track img + img { position: absolute; top: 40px; left: 0; }
+.tier-toggle[aria-pressed="true"] .tier-arrow-track img + img { top: -40px; }
+@keyframes tier-roll-up { 0%, 15% { transform: translateY(0); } 70%, 100% { transform: translateY(-40px); } }
+@keyframes tier-roll-down { 0%, 15% { transform: translateY(0); } 70%, 100% { transform: translateY(40px); } }
+.tier-toggle:focus-visible .tier-arrow-track { animation: tier-roll-up 900ms ease-in-out infinite; }
+.tier-toggle[aria-pressed="true"]:focus-visible .tier-arrow-track { animation-name: tier-roll-down; }
+@media (hover: hover) and (pointer: fine) {
+  .tier-toggle:hover .tier-arrow-track { animation: tier-roll-up 900ms ease-in-out infinite; }
+  .tier-toggle[aria-pressed="true"]:hover .tier-arrow-track { animation-name: tier-roll-down; }
+}
 .plan-feature-section { padding: 0 30px 16px; }
 .plan-feature-section h3 { display: flex; align-items: center; height: 48px; padding-block: 8px; font-size: 14px; font-weight: 500; line-height: 22px; color: var(--text-80); }
 .render-features { min-height: var(--render-section-height,288px); border-bottom: 1px solid var(--border-10); }
@@ -148,6 +160,8 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .feature-info-button img, .plan-feature-section h3 img { display: block; }
 .feature-tooltip { position: fixed; inset: auto; width: max-content; max-width: min(380px,calc(100vw - 32px)); margin: 0; padding: 16px; color: var(--text-80); background: #393939; border: 1px solid var(--border-6); border-radius: 8px; font-family: var(--font); font-size: 12px; font-weight: 400; line-height: 20px; visibility: hidden; overflow-wrap: break-word; }
 .feature-tooltip:popover-open { display: flex; flex-direction: column; gap: 4px; visibility: visible; }
+.feature-tooltip.tier-tooltip { padding: 6px 10px; color: #fff; white-space: nowrap; }
+.team-card .feature-tooltip { width: 256px; padding: 12px 16px; }
 .tooltip-title { color: #fff; font-size: 14px; font-weight: 500; line-height: 20px; }
 .tooltip-detail { font-size: 12px; line-height: 20px; }
 .plan-grid .personal-card.pro { overflow: visible; }

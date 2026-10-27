@@ -132,7 +132,8 @@
         ${id === 'community' ? `<div class="plan-price"><span class="price-value">￥0</span><span class="price-period">${p.free}</span></div>` : `
         <div class="plan-tier"><span class="tier-name" data-personal-tier="${id}">${tierName(id)}</span><div class="price-tier-control">
           <div class="plan-price"><span class="price-value">￥<span data-price="${id}">${personalPrice(id)}</span></span><span class="price-period" data-period>${period}</span></div>
-          <button type="button" class="tier-toggle" data-tier-toggle="${id}" aria-pressed="${state.personalTiers[id] === 1}" aria-label="${tierToggleLabel(id)}">${personalIcon('arrow-up')}</button>
+          <button type="button" class="tier-toggle" data-tier-toggle="${id}" aria-pressed="${state.personalTiers[id] === 1}" aria-label="${tierToggleLabel(id)}" aria-describedby="${id}-tier-tip"><span class="tier-arrow-window" aria-hidden="true"><span class="tier-arrow-track">${personalIcon('arrow-up')}${personalIcon('arrow-up')}</span></span></button>
+          <span class="feature-tooltip tier-tooltip" role="tooltip" popover="manual" id="${id}-tier-tip">${tierTooltipLabel(id)}</span>
         </div><div class="plan-savings" data-savings="${id}"${annual ? '' : ' hidden'}>${annualSavings(id)}</div></div>`}
       </div>
       <button type="button" class="plan-button" data-select-plan="${id}">${id === 'community' ? p.download : p.upgrade}</button></div>
@@ -159,6 +160,9 @@
     const next = personalTiers[1 - state.personalTiers[id]].names[state.lang];
     return state.lang === 'zh' ? `${P()[id].name}：切换到${next}` : `${P()[id].name}: switch to ${next}`;
   }
+  function tierTooltipLabel(id) {
+    return state.lang === 'zh' ? (state.personalTiers[id] ? '较低档位' : '更高档位') : (state.personalTiers[id] ? 'Lower tier' : 'Higher tier');
+  }
   syncTier = function () {
     $('#plan-grid').classList.toggle('is-annual',state.billing === 'annual');
     for (const id of ['basic','pro']) {
@@ -167,6 +171,7 @@
       const toggle = $(`[data-tier-toggle="${id}"]`);
       toggle.setAttribute('aria-pressed',String(state.personalTiers[id] === 1));
       toggle.setAttribute('aria-label',tierToggleLabel(id));
+      $(`#${id}-tier-tip`).textContent = tierTooltipLabel(id);
       const savings = $(`[data-savings="${id}"]`);
       savings.innerHTML = annualSavings(id);
       savings.hidden = state.billing !== 'annual';
@@ -288,49 +293,78 @@
     if (target.hasAttribute('data-billing-toggle') || target.hasAttribute('data-lang')) persistPreviewState();
   });
   // Top-layer tooltips stay above animated cards and fit within the viewport.
-  let activeTooltip = null, tooltipTimer;
+  const tooltipTrigger = '.feature-info-button,.tier-toggle';
+  let activeTooltip = null, pendingTooltip = null, tooltipTimer, tooltipDelay, tooltipExpiry;
   function hideTooltip() {
     clearTimeout(tooltipTimer);
+    clearTimeout(tooltipDelay);
+    clearTimeout(tooltipExpiry);
+    pendingTooltip = null;
     if (activeTooltip?.tip.isConnected) activeTooltip.tip.hidePopover();
     activeTooltip = null;
   }
   function positionTooltip() {
     if (!activeTooltip) return;
     const {button,tip} = activeTooltip;
+    const teamCard = button.closest('.team-card')?.getBoundingClientRect();
+    if (teamCard) tip.style.maxWidth = `${Math.min(256,teamCard.width - 32,innerWidth - 32)}px`;
     const anchor = button.getBoundingClientRect(), box = tip.getBoundingClientRect();
-    const left = Math.max(16,Math.min(anchor.left,innerWidth - box.width - 16));
-    const top = anchor.bottom + 8 + box.height <= innerHeight - 16 ? anchor.bottom + 8 : anchor.top - box.height - 8;
+    const tier = button.matches('.tier-toggle');
+    const preferredLeft = teamCard || tier ? anchor.left + (anchor.width - box.width) / 2 : anchor.left;
+    const minLeft = Math.max(16,teamCard ? teamCard.left + 16 : 16);
+    const maxLeft = Math.min(innerWidth - box.width - 16,teamCard ? teamCard.right - box.width - 16 : innerWidth);
+    const left = Math.max(minLeft,Math.min(preferredLeft,maxLeft));
+    const above = anchor.top - box.height - 8, below = anchor.bottom + 8;
+    const top = (tier && above >= 16) || below + box.height > innerHeight - 16 ? above : below;
     tip.style.left = `${left}px`;
-    tip.style.top = `${Math.max(16,top)}px`;
+    tip.style.top = `${Math.max(16,Math.min(top,innerHeight - box.height - 16))}px`;
   }
   function showTooltip(button) {
     clearTimeout(tooltipTimer);
-    if (activeTooltip?.button !== button) {
-      hideTooltip();
+    if (activeTooltip?.button === button || pendingTooltip === button) return;
+    hideTooltip();
+    const open = () => {
+      pendingTooltip = null;
+      if (!button.isConnected || button.closest('[inert]')) return;
       const tip = document.getElementById(button.getAttribute('aria-describedby'));
       activeTooltip = {button,tip};
       tip.showPopover();
+      positionTooltip();
+      if (button.matches('.tier-toggle')) tooltipExpiry = setTimeout(hideTooltip,2500);
+    };
+    if (button.matches('.tier-toggle')) {
+      pendingTooltip = button;
+      tooltipDelay = setTimeout(open,500);
+    } else {
+      open();
     }
-    positionTooltip();
   }
   document.addEventListener('pointerover',event => {
     if (event.pointerType === 'touch') return;
-    const button = event.target.closest('.feature-info-button');
-    if (button) showTooltip(button);
+    const button = event.target.closest(tooltipTrigger);
+    if (button) {
+      if (!button.contains(event.relatedTarget)) showTooltip(button);
+    }
     else if (event.target.closest('.feature-tooltip')) clearTimeout(tooltipTimer);
   });
   document.addEventListener('pointerout',event => {
-    if (!event.target.closest('.feature-info-button,.feature-tooltip')) return;
+    const trigger = event.target.closest(`${tooltipTrigger},.feature-tooltip`);
+    if (!trigger || trigger.contains(event.relatedTarget)) return;
+    if (pendingTooltip === trigger && trigger !== document.activeElement) {
+      clearTimeout(tooltipDelay);
+      pendingTooltip = null;
+    }
+    clearTimeout(tooltipTimer);
     tooltipTimer = setTimeout(() => {
       if (activeTooltip?.button !== document.activeElement) hideTooltip();
     },120);
   });
   document.addEventListener('focusin',event => {
-    if (event.target.matches('.feature-info-button')) showTooltip(event.target);
+    if (event.target.matches(tooltipTrigger)) showTooltip(event.target);
     else hideTooltip();
   });
   document.addEventListener('focusout',event => {
-    if (event.target.matches('.feature-info-button')) hideTooltip();
+    if (event.target.matches(tooltipTrigger)) hideTooltip();
   });
   document.addEventListener('click',event => {
     const button = event.target.closest('.feature-info-button');
@@ -340,5 +374,8 @@
   document.addEventListener('keydown',event => { if (event.key === 'Escape') hideTooltip(); });
   window.addEventListener('resize',positionTooltip);
   window.addEventListener('scroll',positionTooltip,true);
+  document.addEventListener('transitionend',event => {
+    if (activeTooltip && event.target === activeTooltip.button.closest('.plan-card')) positionTooltip();
+  });
   renderAll();
 })();
