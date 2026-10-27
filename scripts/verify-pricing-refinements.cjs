@@ -55,7 +55,7 @@ let browser;
     });
   };
   const annual=await measureRoll(); verifyContinuous(annual);
-  assert.deepEqual(annual.frames.at(-1).prices.map(x=>x.label),['399','1920']);
+  assert.deepEqual(annual.frames.at(-1).prices.map(x=>x.label),['468','1920']);
   const monthly=await measureRoll(); verifyContinuous(monthly);
   assert.deepEqual(monthly.frames.at(-1).prices.map(x=>x.label),['49','200']);
   for(let i=0;i<6;i++) verifyContinuous(await measureRoll(80));
@@ -65,6 +65,9 @@ let browser;
 
   const hoverCard = async id => {
     const card=page.locator(`[data-plan="${id}"]`);
+    // Taller grouped cards can trigger Playwright's automatic scrolling on hover.
+    // Establish the viewport before comparing the hover geometry.
+    await card.scrollIntoViewIfNeeded();
     await page.mouse.move(0,0); await page.waitForTimeout(300);
     const before=await card.boundingBox();
     const background=await card.evaluate(el=>getComputedStyle(el).backgroundColor);
@@ -80,16 +83,16 @@ let browser;
   for(const id of ['community','basic','pro']) await hoverCard(id);
   await page.locator('[data-audience="team"]').click(); await page.waitForTimeout(850);
   await hoverCard('team');
-  await page.locator('.team-card').screenshot({path:path.join(__dirname,'../qa/team-background-rest.png')});
+  await page.locator('.team-card').screenshot({path:path.join(process.env.SCREENSHOT_DIR || path.join(__dirname,'../qa'),'team-background-rest.png')});
   await page.locator('.team-card').hover(); await page.waitForTimeout(350);
-  await page.locator('.team-card').screenshot({path:path.join(__dirname,'../qa/team-background-hover.png')});
+  await page.locator('.team-card').screenshot({path:path.join(process.env.SCREENSHOT_DIR || path.join(__dirname,'../qa'),'team-background-hover.png')});
   assert.equal(await page.locator('.team-card').evaluate(el=>getComputedStyle(el).backdropFilter),'none');
   checks.push('All four cards lift, scale subtly and cast shadows; leaving restores geometry and preserves the background color. Team background no longer samples animated rear cards.');
 
   await page.locator('[data-audience="personal"]').click(); await page.waitForTimeout(850);
   await page.emulateMedia({reducedMotion:'reduce'});
   await page.locator('[data-billing-toggle]').click();
-  assert.deepEqual(await page.locator('[data-price]').evaluateAll(els=>els.map(el=>el.getAttribute('aria-label'))),['399','1920']);
+  assert.deepEqual(await page.locator('[data-price]').evaluateAll(els=>els.map(el=>el.getAttribute('aria-label'))),['468','1920']);
   await page.locator('[data-billing-toggle]').click();
   assert.deepEqual(await page.locator('[data-price]').evaluateAll(els=>els.map(el=>el.getAttribute('aria-label'))),['49','200']);
   checks.push('Reduced-motion billing updates settle immediately in both directions.');

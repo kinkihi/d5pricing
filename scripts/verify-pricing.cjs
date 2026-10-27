@@ -18,7 +18,7 @@ let activeBrowser;
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
   page.on('response', response => { if (response.status() >= 400) failedRequests.push(`${response.status()} ${response.url()}`); });
   const base = process.env.PREVIEW_URL || 'http://127.0.0.1:4173';
-  const shot = name => page.screenshot({ path: path.join(__dirname, '..', 'qa', name), fullPage: true });
+  const shot = name => page.screenshot({ path: path.join(process.env.SCREENSHOT_DIR || path.join(__dirname, '..', 'qa'), name), fullPage: true });
   const price = id => page.locator(`[data-price="${id}"]`).evaluate(el => el.getAttribute('aria-label') || el.textContent);
   const audience = async name => {
     await page.locator(`[data-audience="${name}"]`).click({ force: true });
@@ -29,13 +29,15 @@ let activeBrowser;
   assert.equal(await page.locator('[data-audience="personal"]').getAttribute('aria-selected'), 'true');
   assert.equal(await price('basic'), '49');
   assert.equal(await price('pro'), '200');
-  assert.deepEqual(await page.locator('.plan-grid').boundingBox(), { x: 240, y: 474, width: 1440, height: 536 });
+  const grid = await page.locator('.plan-grid').boundingBox();
+  assert.deepEqual({x:grid.x,y:grid.y,width:grid.width}, {x:240,y:474,width:1440});
+  assert.ok(grid.height >= 760, 'Personal cards fit both Figma feature groups');
   checks.push('Desktop geometry matches the 1920px Figma frame; three personal cards are visible.');
   await shot('personal-desktop.png');
 
   await page.locator('[data-billing-toggle]').click();
   await page.waitForTimeout(550);
-  assert.equal(await price('basic'), '399');
+  assert.equal(await price('basic'), '468');
   assert.equal(await price('pro'), '1920');
   await audience('team');
   assert.equal(await page.locator('.billing').evaluate(el => el.inert), true);
@@ -44,7 +46,7 @@ let activeBrowser;
   assert.deepEqual(await page.locator('.column-title').allTextContents(), ['Pro','Team','Enterprise']);
   await shot('team-desktop.png');
   await audience('personal');
-  assert.equal(await price('basic'), '399');
+  assert.equal(await price('basic'), '468');
   assert.equal(await page.locator('[data-billing-toggle]').getAttribute('aria-pressed'), 'true');
   checks.push('Annual prices, billing state, comparison columns and inactive focus targets survive a round trip.');
 
@@ -104,7 +106,7 @@ let activeBrowser;
       const geometry=await page.evaluate(()=>({
         viewport:innerWidth,document:document.documentElement.scrollWidth,
         clipped:[...document.querySelectorAll('.plan-card:not([inert])')].filter(card=>
-          card.querySelector('.plan-list').getBoundingClientRect().bottom > card.getBoundingClientRect().bottom - 12
+          [...card.querySelectorAll('.plan-list')].some(list => list.getBoundingClientRect().bottom > card.getBoundingClientRect().bottom - 12)
         ).map(card=>card.dataset.plan),
       }));
       assert.equal(geometry.document,geometry.viewport,`Overflow at ${width}px / ${tab}`);

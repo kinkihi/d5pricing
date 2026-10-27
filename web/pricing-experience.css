@@ -1,4 +1,4 @@
-/* Figma: Personal 31951:32322 / Teams 32080:12481.
+/* Figma: Personal card content 31951:32326 / Teams 32080:12481.
    Shared card elements keep their identity throughout the recorded transition. */
 @font-face { font-family: Inter; font-style: normal; font-weight: 100 900; font-display: swap; src: url('assets/fonts/inter-latin.woff2') format('woff2'); }
 :root {
@@ -100,10 +100,47 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .pricing-dialog .plan-button { margin-top: 24px; background: #9459ff; }
 .pricing-dialog dl { display: grid; grid-template-columns: auto 1fr; gap: 12px; margin-top: 24px; }
 .pricing-dialog dd { margin: 0; text-align: right; color: #c9acff; }
+/* Personal plans keep the existing audience animation and page backgrounds. */
+.plan-grid:not(.is-team) { height: var(--personal-desktop-height,764px); }
+.plan-grid .personal-card { height: auto; padding: 0; gap: 0; }
+.plan-grid.is-team .personal-card { max-height: 536px; overflow: hidden; }
+.personal-card-header { display: flex; flex-direction: column; justify-content: space-between; height: 248px; padding: 30px; gap: 16px; }
+.plan-tier { display: flex; flex-direction: column; align-items: flex-start; }
+.tier-name { display: flex; align-items: center; height: 32px; padding-inline: 4px; color: rgba(255,255,255,.6); font-size: 14px; line-height: 22px; }
+.price-tier-control { display: flex; align-items: center; gap: 12px; max-width: 100%; padding: 8px 8px 8px 12px; border-radius: 9999px; background: rgba(255,255,255,.1); }
+.price-tier-control .plan-price { flex-wrap: nowrap; }
+.price-tier-control .price-period { white-space: nowrap; }
+.tier-toggle { display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,.06); border-radius: 50%; background: rgba(255,255,255,.06); }
+.tier-toggle:hover { background: rgba(255,255,255,.16); }
+.tier-toggle img { display: block; transition: transform 200ms ease; }
+.tier-toggle[aria-pressed="true"] img { transform: rotate(180deg); }
+.plan-feature-section { padding: 0 30px 16px; }
+.plan-feature-section h3 { display: flex; align-items: center; height: 48px; padding-block: 8px; font-size: 14px; font-weight: 500; line-height: 22px; color: var(--text-80); }
+.render-features { min-height: var(--render-section-height,288px); border-bottom: 1px solid var(--border-10); }
+.ai-features { min-height: var(--ai-section-height,224px); }
+.plan-grid .personal-card .plan-list { gap: 0; }
+.plan-grid .personal-card .feature-check img { width: auto; height: auto; padding: 0; }
+.plan-grid .personal-card .plan-list li { font-size: 14px; line-height: 22px; }
+.plan-grid .personal-card .unavailable { color: rgba(255,255,255,.4); }
+.feature-copy { min-width: 0; }
+.feature-info { display: inline-block; vertical-align: middle; }
+.feature-info-button { display: inline-grid; place-items: center; width: 32px; height: 32px; vertical-align: middle; }
+.feature-info-button img, .plan-feature-section h3 img { display: block; }
+.feature-tooltip { position: absolute; z-index: 10; left: 16px; right: 16px; margin-top: 32px; padding: 12px 16px; color: #eee; background: #25222e; border: 1px solid var(--border-10); border-radius: 8px; font-size: 12px; font-weight: 400; line-height: 20px; opacity: 0; visibility: hidden; pointer-events: none; }
+.feature-info:hover .feature-tooltip, .feature-info:focus-within .feature-tooltip { opacity: 1; visibility: visible; pointer-events: auto; }
+.plan-grid .personal-card:has(.feature-info:hover), .plan-grid .personal-card:has(.feature-info:focus-within) { z-index: 6; }
+.plan-grid .personal-card.pro { overflow: visible; }
+.plan-grid .personal-card.pro .card-glow { max-height: calc(100% - 108px); }
 @media (min-width: 1680px) { :root { --content-width: min(1440px,75vw); } }
 @media (max-width: 1200px) {
   :root { --content-width: calc(100% - 64px); --card-gap: 16px; }
   .plan-grid .plan-card { padding: 22px; }
+  .plan-grid .personal-card { padding: 0; }
+  .personal-card-header { padding: 22px; }
+  .plan-feature-section { padding-inline: 16px; }
+  .price-tier-control { gap: 8px; padding-left: 8px; }
+  .price-tier-control .price-value { font-size: 28px; }
+  .price-tier-control .price-period { font-size: 12px; }
   .plan-grid .plan-list li { font-size: 13px; }
   .plan-grid .feature-check { flex-basis: 24px; }
   .hero h1 { font-size: 48px; line-height: 60px; }
@@ -123,6 +160,12 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
   .pricing.is-team .billing { transform: translate(-50%, -8px); }
   .plan-grid, .plan-grid.is-team { height: var(--personal-height,1576px); --card-width: 100%; transition: height var(--motion-time) var(--motion-ease); }
   .plan-grid .plan-card { width: 100%; max-width: 464px; left: 50%; height: auto; min-height: 440px; transform: translateX(-50%); padding: 28px; }
+  .plan-grid .personal-card { padding: 0; }
+  .plan-grid:not(.is-team) { height: var(--personal-height,2340px); }
+  .personal-card-header { padding: 28px; }
+  .plan-feature-section { padding-inline: 20px; min-height: 0; }
+  .price-tier-control .price-value { font-size: 32px; }
+  .price-tier-control .price-period { font-size: 14px; }
   .plan-grid .plan-card.community { top: 0; }
   .plan-grid .plan-card.basic { top: var(--basic-y,534px); left: 50%; }
   .plan-grid .plan-card.pro { top: var(--pro-y,1068px); left: 50%; min-height: 536px; }

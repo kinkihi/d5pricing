@@ -1,0 +1,15 @@
+{
+  "fileKey": "PDtfa9hHljnEk6mZU35jM0",
+  "frame": "31951:32326",
+  "exportedOn": "2026-10-27",
+  "format": "SVG_STRING",
+  "size": {"width": 16, "height": 16},
+  "nodes": {
+    "personal-render.svg": "32098:12241",
+    "personal-check.svg": "32098:15050",
+    "personal-ai.svg": "32098:12234",
+    "personal-question.svg": "32098:15121",
+    "personal-arrow-up.svg": "32099:16194",
+    "personal-close.svg": "32098:15035"
+  }
+}
