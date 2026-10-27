@@ -126,7 +126,7 @@
     const period = pricePeriod();
     $('#plan-grid').classList.toggle('is-annual',annual);
     const personalCard = id => `<article class="plan-card personal-card ${id}" data-plan="${id}" aria-label="${p[id].name}">
-      ${id === 'pro' ? '<div class="card-glow" aria-hidden="true"><canvas data-shader="wave"></canvas></div>' : ''}
+      ${id === 'pro' ? '<div class="card-glow" aria-hidden="true"><div class="pro-wave"><canvas data-shader="wave"></canvas></div></div>' : ''}
       <div class="personal-card-header"><div class="plan-top">
         <div class="plan-title"><div class="plan-name"><h2>${p[id].name}</h2></div></div>
         ${id === 'community' ? `<div class="plan-price"><span class="price-value">￥0</span><span class="price-period">${p.free}</span></div>` : `

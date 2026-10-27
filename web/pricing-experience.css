@@ -35,7 +35,7 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .pricing.is-team .billing { opacity: 0; visibility: hidden; transform: translateX(35px); pointer-events: none; }
 .plan-grid, .plan-grid.is-team { display: block; position: relative; height: 536px; isolation: isolate; outline-offset: 12px; }
 .plan-grid .plan-card { position: absolute; top: 0; left: 0; width: var(--card-width); height: 536px; padding: 30px; gap: 16px; border: 2px solid var(--border-10); border-radius: 16px; background-color: rgba(0,0,0,.45); overflow-wrap: normal; transform-origin: center center; translate: 0 0; scale: 1; transition: transform var(--motion-time) var(--motion-ease), filter var(--motion-time) var(--motion-ease), opacity 440ms ease, border-color 180ms ease, translate 240ms var(--motion-ease), scale 240ms var(--motion-ease), box-shadow 240ms ease; }
-.plan-grid .plan-card.basic { left: calc(var(--card-width) + var(--card-gap)); background-image: radial-gradient(ellipse 262px 290px at 50% 35%,rgba(255,255,255,.1),transparent); z-index: 2; }
+.plan-grid .plan-card.basic { left: calc(var(--card-width) + var(--card-gap)); background-image: url('assets/figma/personal-basic-glow.svg'); background-size: 100% 100%; background-repeat: no-repeat; z-index: 2; }
 .plan-grid .plan-card.pro { left: calc((var(--card-width) + var(--card-gap)) * 2); background: rgba(0,0,0,.45); z-index: 3; }
 .plan-grid .plan-card.community { z-index: 1; }
 .plan-grid .plan-card > :not(.card-glow) { position: relative; z-index: 1; }
@@ -52,11 +52,14 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .plan-grid .plan-list em { margin-left: 4px; }
 .plan-grid .plan-button { flex: none; }
 .plan-grid .card-glow { position: absolute; z-index: 0; inset: 0; pointer-events: none; overflow: hidden; border-radius: 14px; }
-.plan-grid .pro .card-glow { top: 108px; bottom: auto; height: 536px; background: url('assets/figma/pro-wave.png') center top / 100% 536px no-repeat; filter: blur(50px); }
+/* Figma 31976:11580 / 31976:11625: diamond fills centered at 71% of
+   the card, with the 32086:13797 shader underneath the Pro gradient. */
+.plan-grid .pro .card-glow::after { content: ''; position: absolute; inset: 0; background: url('assets/figma/personal-pro-glow.svg') center / 100% 100% no-repeat; }
+.plan-grid .pro .pro-wave { position: absolute; top: 308px; width: 100%; height: 452px; background: url('assets/figma/personal-pro-wave.png') center / 100% 100% no-repeat; }
 .plan-grid .pro { overflow: hidden; }
-.plan-grid .pro .card-glow canvas { opacity: .4; }
-.plan-grid .card-glow:has(canvas[data-rendered="true"]) { background-image: none; }
-.card-glow canvas { width: 100%; height: 536px; display: block; }
+.plan-grid .pro .pro-wave canvas { opacity: .1; }
+.plan-grid .pro-wave:has(canvas[data-rendered="true"]) { background-image: none; }
+.pro-wave canvas { width: 100%; height: 100%; display: block; }
 /* Keep the team surface independent of the animated cards behind it. Safari
    can resample a live backdrop differently when hover creates a new layer. */
 .plan-grid .team-card { left: calc(var(--card-width) + var(--card-gap)); z-index: 5; opacity: 0; transform: translateY(28px) scale(.91); filter: blur(9px); pointer-events: none; background: #0e0f16; -webkit-backdrop-filter: none; backdrop-filter: none; isolation: isolate; visibility: hidden; transition: transform var(--motion-time) var(--motion-ease), opacity 350ms ease, filter var(--motion-time) var(--motion-ease), visibility 680ms, border-color 180ms ease, translate 240ms var(--motion-ease), scale 240ms var(--motion-ease), box-shadow 240ms ease; }
@@ -148,10 +151,10 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .tooltip-title { color: #fff; font-size: 14px; font-weight: 500; line-height: 20px; }
 .tooltip-detail { font-size: 12px; line-height: 20px; }
 .plan-grid .personal-card.pro { overflow: visible; }
-.plan-grid .personal-card.pro .card-glow { max-height: calc(100% - 108px); }
 @media (min-width: 1680px) { :root { --content-width: min(1440px,75vw); } }
 @media (max-width: 1200px) {
   :root { --content-width: calc(100% - 64px); --card-gap: 16px; }
+  .plan-grid .pro .pro-wave { top: calc(70.5% - 226px); }
   .plan-grid .plan-card { padding: 22px; }
   .plan-grid .personal-card { padding: 0; }
   .plan-grid .team-card { padding: 0; }

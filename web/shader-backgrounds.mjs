@@ -1,8 +1,9 @@
 import * as wave from './shaders/wave.mjs';
-// Keep the original Figma Pro-card wave and its static asset fallback.
+// Figma 32086:13797 / 32107:16866: the subtle, static Pro-card shader.
+// Keep the authored setup/render functions and exact exported fallback.
 // The hero aura uses its own WebGL renderer for broader browser support.
 const configurations = {
-  wave: { module: wave, params: { transform:{x:50,y:50,radius:30.64847183227539,angle:0},amplitude:6.900000095367432,waveColor:{r:.5967610478401184,g:.4673685133457184,b:.984938383102417,a:.6100000143051147},offset:40,zoom:1,glowIntensity:2 } },
+  wave: { module: wave, params: { transform:{x:50,y:50,radius:30,angle:0},amplitude:0,waveColor:{r:.5967610478401184,g:.4673685133457184,b:.984938383102417,a:.5},offset:50,zoom:1,glowIntensity:1 } },
 };
 const mounted = new Map();
 let device;
