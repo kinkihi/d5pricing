@@ -1,5 +1,6 @@
 // Figma card content and reversible, interruption-safe audience transitions.
-// Personal content: Figma 31951:32326. Tier prices: jjcyixi/d5pricing-beta/data.js.
+// Personal: Figma 31951:32326. Teams: 32080:13484 within 32080:12509.
+// Tier prices: jjcyixi/d5pricing-beta/data.js.
 (() => {
   const params = new URLSearchParams(location.search);
   state.audience = params.get('audience') === 'team' ? 'team' : 'personal';
@@ -67,15 +68,21 @@
     return `<section class="plan-feature-section render-features" aria-labelledby="${id}-render-title"><h3 id="${id}-render-title"><span class="feature-check" aria-hidden="true">${personalIcon('render')}</span>${state.lang === 'zh' ? '实时渲染' : 'Real-time rendering'}</h3><ul class="plan-list">${items.map(item => personalFeature(item)).join('')}</ul></section><section class="plan-feature-section ai-features" aria-labelledby="${id}-ai-title"><h3 id="${id}-ai-title"><span class="feature-check" aria-hidden="true">${personalIcon('ai')}</span>${state.lang === 'zh' ? 'AI 创作' : 'AI creation'}</h3><ul class="plan-list" data-ai-features="${id}">${aiFeatures(id)}</ul></section>`;
   }
   const teamFeatures = {
-    zh: ['包含个人创作全部功能权益', '支持D5工作流多人协作', '100GB 共享云空间', '支持定制席位类型',
-      '支持自定义团队角色权限', '团队后台数据看板', '团队成员分组管理', '团队数字资产管理',
-      '团队D5产品版本更新管理', '团队AI 功能权限及模型管理'],
-    en: ['Everything for individual creators', 'Collaborative D5 workflows', '100GB shared cloud storage', 'Custom seat types',
-      'Custom team roles and permissions', 'Team analytics dashboard', 'Member and group management', 'Team asset management',
-      'D5 version and update management', 'AI model and permission controls'],
+    zh: [
+      {id:'collaboration',title:'协作与管理',icon:'team-users',items:['支持团队基础 / 专业席位自由组合','支持团队分组及权限管理','支持团队数据看板','支持团队数字资产管理','支持 D5工作流多人协作']},
+      {id:'render',title:'专业表现席位',icon:'personal-render',items:['包含个人专业版功能权益','实时云端像素推流、虚拟现实(VR)分享']},
+      {id:'ai',title:'AI 创作席位',icon:'team-ai',items:['包含个人基础版功能权益','团队共享 AI 积分']},
+    ],
+    en: [
+      {id:'collaboration',title:'Collaboration & management',icon:'team-users',items:['Mix Basic and Pro seats freely','Team groups and permission management','Team analytics dashboard','Team digital asset management','Collaborative D5 workflows']},
+      {id:'render',title:'Professional visualization seats',icon:'personal-render',items:['Includes individual Pro plan benefits','Real-time cloud pixel streaming and virtual reality (VR) sharing']},
+      {id:'ai',title:'AI creation seats',icon:'team-ai',items:['Includes individual Basic plan benefits','Shared team AI credits']},
+    ],
   };
-  const check = '<span class="feature-check" aria-hidden="true"><img src="assets/figma/check.svg" alt="" width="16" height="16"></span>';
-  const features = items => items.map(item => `<li>${check}<span>${Array.isArray(item) ? `${item[0]}<em>${item[1]}</em>` : item}</span></li>`).join('');
+  function teamFeatureSections() {
+    const seatHelp = state.lang === 'zh' ? '可按成员的创作需求自由组合基础席位与专业席位；各席位权益见下方说明。' : 'Mix Basic and Pro seats to match each member’s creative needs. Seat benefits are listed below.';
+    return teamFeatures[state.lang].map(group => `<section class="plan-feature-section team-feature-section" aria-labelledby="team-${group.id}-title"><h3 id="team-${group.id}-title"><span class="feature-check" aria-hidden="true"><img src="assets/figma/${group.icon}.svg" alt="" width="16" height="16"></span>${group.title}</h3><ul class="plan-list">${group.items.map((item,index) => personalFeature(item, {help:group.id === 'collaboration' && index === 0 ? info('team','seats',seatHelp) : ''})).join('')}</ul></section>`).join('');
+  }
 
   // Measure natural card heights on narrow screens, including translated copy.
   // Transforms do not affect offsetHeight, so measurements stay stable in motion.
@@ -95,6 +102,7 @@
     grid.style.setProperty('--pro-y',`${community + basic + 48}px`);
     grid.style.setProperty('--personal-height',`${community + basic + pro + 48}px`);
     grid.style.setProperty('--team-height',`${team + 24}px`);
+    grid.style.setProperty('--team-desktop-height',`${team + 32}px`);
   });
 
   renderPlans = function () {
@@ -119,11 +127,11 @@
     $('#plan-grid').innerHTML = ['community','basic','pro'].map(personalCard).join('') + `
       <article class="plan-card team-card" data-plan="team" aria-label="${zh ? '团队版' : 'Teams'}">
         <div class="card-glow" aria-hidden="true"></div>
-        <div class="plan-top"><div class="plan-title"><div class="plan-name"><h2>${zh ? '团队版' : 'Teams'}</h2></div></div>
+        <div class="team-card-header"><div class="plan-top"><div class="plan-title"><div class="plan-name"><h2>${zh ? '团队版' : 'Teams'}</h2></div></div>
           <div class="plan-price"><span class="price-value">${zh ? '联系我们' : 'Contact us'}</span></div>
         </div>
-        <button type="button" class="plan-button" data-contact-sales="team">${zh ? '咨询购买' : 'Contact sales'}</button>
-        <ul class="plan-list">${features(teamFeatures[state.lang])}</ul>
+        <button type="button" class="plan-button" data-contact-sales="team">${zh ? '咨询购买' : 'Contact sales'}</button></div>
+        ${teamFeatureSections()}
       </article>`;
     cardObserver.disconnect();
     $$('#plan-grid .plan-card').forEach(card => cardObserver.observe(card));
@@ -226,7 +234,7 @@
     const zh = state.lang === 'zh';
     const title = id === 'team' ? (zh ? '团队方案咨询' : 'D5 for Teams') : id === 'education' ? (zh ? 'D5 学生版申请' : 'D5 for Education') : P()[id].name;
     let body;
-    if (id === 'team') body = `<p>${zh ? '为团队配置适合的席位、共享空间与协作权限。' : 'Find the right seats, shared storage and collaboration permissions for your team.'}</p><dl><dt>${zh ? '共享云空间' : 'Shared cloud storage'}</dt><dd>100GB</dd><dt>${zh ? '席位与权限' : 'Seats and permissions'}</dt><dd>${zh ? '支持定制' : 'Customizable'}</dd></dl><p>${zh ? '当前为方案预览，咨询入口尚未接入。' : 'This preview is not connected to the sales consultation service yet.'}</p>`;
+    if (id === 'team') body = `<p>${zh ? '按团队需求自由组合基础席位与专业席位，协作管理并共享 AI 积分。' : 'Mix Basic and Pro seats for your team, manage collaboration and share AI credits.'}</p><dl><dt>${teamFeatures[state.lang][1].title}</dt><dd>${teamFeatures[state.lang][1].items[0]}</dd><dt>${teamFeatures[state.lang][2].title}</dt><dd>${teamFeatures[state.lang][2].items[0]}</dd><dt>${zh ? 'AI 积分' : 'AI credits'}</dt><dd>${zh ? '团队共享' : 'Shared across the team'}</dd></dl><p>${zh ? '当前为方案预览，咨询入口尚未接入。' : 'This preview is not connected to the sales consultation service yet.'}</p>`;
     else if (id === 'education') body = `<p>${zh ? '专为高校在校生推出的特别权益方案，助力教与学。申请入口将在正式上线后开放。' : 'Special benefits for students and educators. Applications will open with the official release.'}</p>`;
     else body = `${id === 'community' ? '' : `<p class="dialog-tier">${tierName(id)}</p>`}<div class="dialog-price">￥${id === 'community' ? '0' : personalPrice(id)} <span class="price-period">${id === 'community' ? P().free : state.billing === 'annual' ? P().annual : P().monthly}</span></div><p>${zh ? '已选好你的创作方案。当前为交互预览，购买与账号服务尚未接入，不会创建订单。' : 'Your plan is selected. Checkout and account services are not connected in this preview; no order is created.'}</p>`;
     dialog.innerHTML = `<button type="button" class="dialog-close" data-close-dialog aria-label="${zh ? '关闭' : 'Close'}">${zh ? '关闭' : 'Close'}</button><h2 id="pricing-dialog-title">${title}</h2>${body}<button class="plan-button" type="button" data-close-dialog>${zh ? '继续了解方案' : 'Keep exploring'}</button>`;

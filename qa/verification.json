@@ -2,12 +2,14 @@
   "passed": true,
   "checks": [
     "Desktop geometry matches the 1920px Figma frame; three personal cards are visible.",
+    "Team card matches the Figma 464×680 layout, all three benefit groups, original 16px icons and accessible mixed-seat explanation.",
     "Annual prices, billing state, comparison columns and inactive focus targets survive a round trip.",
     "Motion has intermediate frames; seven rapid reversals settle without stale cards or focus state.",
     "Keyboard tabs, focus return, preview dialogs, Escape and comparison disclosure work.",
     "Language changes retain the selected audience and update card content.",
     "A saved file triggers browser reload and preserves the active audience and billing.",
     "Both audiences pass overflow and card-content checks at 1440, 1024, 820, 760, 390 and 320px.",
+    "English team benefits wrap without clipping at 1440, 1024, 390 and 320px; the updated contact preview fits mobile.",
     "Reduced-motion preference disables card transitions."
   ],
   "consoleErrors": [],

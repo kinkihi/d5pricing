@@ -36,8 +36,14 @@ concurrent tasks. The displayed 1,500 / 4,500 credits include the beta's 50% lau
 bonus; accessible tooltips explain the 1,000 / 3,000 base allowance and shared
 launch-window conditions. Render and AI benefits are grouped separately. Original
 16px icons are exported from the corresponding Figma nodes into
-`web/assets/figma/personal-*.svg`. Existing page backgrounds and team content remain
-from the previous implementation.
+`web/assets/figma/personal-*.svg`. Existing page backgrounds remain from the previous
+implementation. The team card follows node `32080:13484` within `32080:12509`,
+with Collaboration & management, Professional visualization seats and AI creation
+seats. It supports mixed Basic/Pro seats and shared team AI credits; its contact
+preview uses the same benefits. The two team-specific icons are original exports
+in `web/assets/figma/team-*.svg`; check, Render and question icons reuse the exact
+matching personal-card exports. The card grows with translated/wrapped content,
+and its desktop Chinese layout is 464 × 680px.
 The recommendation section is currently removed from the page; its standalone
 source files are retained for future use. The hero uses a custom low-saturation
 WebGL light-curtain shader in `web/hero-aura.mjs`, with a matching CSS gradient

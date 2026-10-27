@@ -20,9 +20,12 @@ let activeBrowser;
   const base = process.env.PREVIEW_URL || 'http://127.0.0.1:4173';
   const shot = name => page.screenshot({ path: path.join(process.env.SCREENSHOT_DIR || path.join(__dirname, '..', 'qa'), name), fullPage: true });
   const price = id => page.locator(`[data-price="${id}"]`).evaluate(el => el.getAttribute('aria-label') || el.textContent);
+  const finishCardMotion = () => page.locator('#pricing').evaluate(async region => {
+    await Promise.all(region.getAnimations({subtree:true}).map(animation => animation.finished.catch(() => {})));
+  });
   const audience = async name => {
     await page.locator(`[data-audience="${name}"]`).click({ force: true });
-    await page.waitForTimeout(800);
+    await finishCardMotion();
   };
   await page.goto(base);
   await page.evaluate(() => document.fonts.ready);
@@ -44,14 +47,34 @@ let activeBrowser;
   assert.equal(await page.locator('.team-card').evaluate(el => el.inert), false);
   assert.equal(await page.locator('.community').evaluate(el => el.inert), true);
   assert.deepEqual(await page.locator('.column-title').allTextContents(), ['Pro','Team','Enterprise']);
+  assert.deepEqual(await page.locator('.team-card h3').allTextContents(), ['协作与管理','专业表现席位','AI 创作席位']);
+  assert.deepEqual(await page.locator('.team-card .plan-list').evaluateAll(lists => lists.map(list => list.children.length)), [5,2,2]);
+  assert.match(await page.locator('.team-card').innerText(), /支持团队基础 \/ 专业席位自由组合/);
+  assert.match(await page.locator('.team-card').innerText(), /团队共享 AI 积分/);
+  assert.doesNotMatch(await page.locator('.team-card').innerText(), /100GB|版本更新管理|模型管理/);
+  const teamCard = await page.locator('.team-card').boundingBox();
+  assert.ok(Math.abs(teamCard.width-464)<.1);
+  assert.equal(teamCard.height,680);
+  const teamIcons = await page.locator('.team-card img').evaluateAll(images => images.map(img => ({loaded:img.complete && img.naturalWidth > 0,width:img.getBoundingClientRect().width,height:img.getBoundingClientRect().height})));
+  assert.equal(teamIcons.length,13);
+  for(const icon of teamIcons) assert.ok(icon.loaded && Math.abs(icon.width-16)<.2 && Math.abs(icon.height-16)<.2);
+  await page.locator('.team-card .feature-info-button').focus();
+  assert.equal(await page.locator('#team-seats-tip').evaluate(el => getComputedStyle(el).visibility),'visible');
+  await page.keyboard.press('Escape');
+  checks.push('Team card matches the Figma 464×680 layout, all three benefit groups, original 16px icons and accessible mixed-seat explanation.');
   await shot('team-desktop.png');
+  const stackedX = (await page.locator('.community').boundingBox()).x;
   await audience('personal');
   assert.equal(await price('basic'), '468');
   assert.equal(await page.locator('[data-billing-toggle]').getAttribute('aria-pressed'), 'true');
   checks.push('Annual prices, billing state, comparison columns and inactive focus targets survive a round trip.');
 
   await page.locator('[data-audience="team"]').click({force:true});
-  await page.waitForTimeout(140);
+  // Headless GPU rendering may delay the first frame; observe actual movement.
+  await page.waitForFunction(endX => {
+    const x=document.querySelector('.community').getBoundingClientRect().x;
+    return x > 241 && x < endX - 1;
+  },stackedX,{polling:'raf',timeout:5000});
   const movingX = (await page.locator('.community').boundingBox()).x;
   assert.ok(movingX > 240 && movingX < 728, `Expected card movement, got ${movingX}`);
   await shot('transition-midpoint.png');
@@ -59,7 +82,7 @@ let activeBrowser;
     await page.locator(`[data-audience="${i % 2 ? 'team' : 'personal'}"]`).click({ force:true });
     await page.waitForTimeout(60);
   }
-  await page.waitForTimeout(800);
+  await finishCardMotion();
   assert.equal(await page.locator('[data-audience="personal"]').getAttribute('aria-selected'),'true');
   assert.ok(Math.abs((await page.locator('.community').boundingBox()).x - 240) < 1);
   checks.push('Motion has intermediate frames; seven rapid reversals settle without stale cards or focus state.');
@@ -76,7 +99,9 @@ let activeBrowser;
   assert.equal(await page.locator('.pricing-dialog').evaluate(el=>el.open),false);
   await audience('team');
   await page.locator('[data-contact-sales]').click();
-  assert.match(await page.locator('.pricing-dialog').innerText(),/100GB/);
+  assert.match(await page.locator('.pricing-dialog').innerText(),/专业表现席位/);
+  assert.match(await page.locator('.pricing-dialog').innerText(),/团队共享/);
+  assert.doesNotMatch(await page.locator('.pricing-dialog').innerText(),/100GB/);
   await page.keyboard.press('Escape');
   await page.locator('[data-compare-toggle]').click();
   assert.equal(await page.locator('.compare-row:visible').count(),0);
@@ -87,6 +112,7 @@ let activeBrowser;
   await page.locator('[data-language-toggle]').click();
   assert.equal(await page.locator('html').getAttribute('lang'),'en');
   assert.equal(await page.locator('.team-card h2').innerText(),'Teams');
+  assert.deepEqual(await page.locator('.team-card h3').allTextContents(),['Collaboration & management','Professional visualization seats','AI creation seats']);
   await page.locator('[data-language-toggle]').click();
   assert.equal(await page.locator('.team-card h2').innerText(),'团队版');
   checks.push('Language changes retain the selected audience and update card content.');
@@ -115,6 +141,26 @@ let activeBrowser;
     }
   }
   checks.push('Both audiences pass overflow and card-content checks at 1440, 1024, 820, 760, 390 and 320px.');
+  await audience('team');
+  await page.locator('[data-language-toggle]').click();
+  for (const width of [1440,1024,390,320]) {
+    await page.setViewportSize({width,height:1000});
+    await page.mouse.move(0,0); await page.waitForTimeout(850);
+    const layout = await page.locator('.team-card').evaluate(card => ({
+      pageOverflow:document.documentElement.scrollWidth > innerWidth,
+      contentOverflow:[...card.querySelectorAll('.plan-list,h3')].some(el => {
+        const r=el.getBoundingClientRect(),c=card.getBoundingClientRect();
+        return r.right > c.right - 1 || r.bottom > c.bottom - 1;
+      }),
+    }));
+    assert.equal(layout.pageOverflow,false,`English team page overflow at ${width}px`);
+    assert.equal(layout.contentOverflow,false,`English team content overflow at ${width}px`);
+  }
+  await page.locator('[data-contact-sales]').click();
+  assert.match(await page.locator('.pricing-dialog').innerText(),/Shared across the team/);
+  assert.ok(await page.locator('.pricing-dialog').evaluate(el => el.scrollWidth <= el.clientWidth));
+  await page.keyboard.press('Escape');
+  checks.push('English team benefits wrap without clipping at 1440, 1024, 390 and 320px; the updated contact preview fits mobile.');
   await page.emulateMedia({reducedMotion:'reduce'});
   await audience('personal');
   assert.equal(await page.locator('.community').evaluate(el=>getComputedStyle(el).transitionDuration),'0s');

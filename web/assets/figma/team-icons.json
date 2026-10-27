@@ -1,0 +1,17 @@
+{
+  "fileKey": "PDtfa9hHljnEk6mZU35jM0",
+  "frame": "32080:12509",
+  "card": "32080:13484",
+  "exportedOn": "2026-10-27",
+  "format": "SVG_STRING",
+  "size": {"width": 16, "height": 16},
+  "nodes": {
+    "team-users.svg": "32099:16507",
+    "team-ai.svg": "32099:16566"
+  },
+  "reusedAssets": {
+    "personal-check.svg": {"node": "32099:16791", "designAsset": "449bd.svg"},
+    "personal-render.svg": {"node": "32099:16710", "designAsset": "c8b22.svg"},
+    "personal-question.svg": {"node": "32099:16794", "designAsset": "124be.svg"}
+  }
+}

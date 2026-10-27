@@ -1,4 +1,4 @@
-/* Figma: Personal card content 31951:32326 / Teams 32080:12481.
+/* Figma: Personal card content 31951:32326 / Teams 32080:12509.
    Shared card elements keep their identity throughout the recorded transition. */
 @font-face { font-family: Inter; font-style: normal; font-weight: 100 900; font-display: swap; src: url('assets/fonts/inter-latin.woff2') format('woff2'); }
 :root {
@@ -57,6 +57,13 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 /* Keep the team surface independent of the animated cards behind it. Safari
    can resample a live backdrop differently when hover creates a new layer. */
 .plan-grid .team-card { left: calc(var(--card-width) + var(--card-gap)); z-index: 5; opacity: 0; transform: translateY(28px) scale(.91); filter: blur(9px); pointer-events: none; background: #0e0f16; -webkit-backdrop-filter: none; backdrop-filter: none; isolation: isolate; visibility: hidden; transition: transform var(--motion-time) var(--motion-ease), opacity 350ms ease, filter var(--motion-time) var(--motion-ease), visibility 680ms, border-color 180ms ease, translate 240ms var(--motion-ease), scale 240ms var(--motion-ease), box-shadow 240ms ease; }
+.plan-grid .team-card { height: auto; padding: 0; gap: 0; }
+.plan-grid.is-team { height: var(--team-desktop-height,712px); }
+.team-card-header { display: flex; flex-direction: column; gap: 16px; padding: 30px; }
+.plan-grid .team-card .plan-list { gap: 0; }
+.plan-grid .team-card .plan-list li { font-size: 14px; line-height: 22px; }
+.plan-grid .team-card .feature-check img { width: auto; height: auto; padding: 0; }
+.team-feature-section:not(:last-child) { border-bottom: 1px solid var(--border-10); padding-bottom: 15px; }
 .team-card .plan-button { background: #656ad9; border: 1px solid var(--border-6); }
 .team-card .plan-button:hover { background: #787de7; }
 .team-card .price-value { font-size: 24px; letter-spacing: -1px; }
@@ -136,6 +143,8 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
   :root { --content-width: calc(100% - 64px); --card-gap: 16px; }
   .plan-grid .plan-card { padding: 22px; }
   .plan-grid .personal-card { padding: 0; }
+  .plan-grid .team-card { padding: 0; }
+  .team-card-header { padding: 22px; }
   .personal-card-header { padding: 22px; }
   .plan-feature-section { padding-inline: 16px; }
   .price-tier-control { gap: 8px; padding-left: 8px; }
@@ -161,6 +170,8 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
   .plan-grid, .plan-grid.is-team { height: var(--personal-height,1576px); --card-width: 100%; transition: height var(--motion-time) var(--motion-ease); }
   .plan-grid .plan-card { width: 100%; max-width: 464px; left: 50%; height: auto; min-height: 440px; transform: translateX(-50%); padding: 28px; }
   .plan-grid .personal-card { padding: 0; }
+  .plan-grid .team-card { padding: 0; }
+  .team-card-header { padding: 28px; }
   .plan-grid:not(.is-team) { height: var(--personal-height,2340px); }
   .personal-card-header { padding: 28px; }
   .plan-feature-section { padding-inline: 20px; min-height: 0; }
