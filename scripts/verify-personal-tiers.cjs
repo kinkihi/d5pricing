@@ -38,7 +38,7 @@ let browser;
     await setBilling(annual);
     for (const [basic,pro] of [[false,false],[true,false],[true,true],[false,true]]) {
       await setTier('basic',basic); await setTier('pro',pro); await settle();
-      const expected = annual ? [basic ? 1188 : 468,pro ? 2628 : 1920] : [basic ? 129 : 49,pro ? 279 : 200];
+      const expected = annual ? [basic ? 99 : 39,pro ? 219 : 160] : [basic ? 129 : 49,pro ? 279 : 200];
       for (const [i,id] of ['basic','pro'].entries()) {
         assert.equal(await amount(id),String(expected[i]));
         assert.equal(await renderedAmount(id),String(expected[i]),'Visible settled digits match the accessible amount');
@@ -49,13 +49,21 @@ let browser;
         assert.match(ai,new RegExp(advanced ? '6 个' : '4 个'));
         assert.match(ai,new RegExp(advanced ? '4K 图片，4K' : '2K 图片，720p'));
         await page.locator(`[data-select-plan="${id}"]`).click();
-        assert.match(await page.locator('.dialog-price').innerText(),new RegExp(`￥${expected[i]}.*${annual ? '年' : '月'}订阅`));
+        assert.match(await page.locator('.dialog-price').innerText(),new RegExp(`￥${expected[i]}.*${annual ? '/月，按年购买' : '/月订阅'}`));
+        const savings = page.locator(`[data-savings="${id}"]`);
+        assert.equal(await savings.isVisible(),annual);
+        if (annual) {
+          const monthly = id === 'basic' ? (advanced ? 129 : 49) : (advanced ? 279 : 200);
+          assert.equal(await savings.locator('.saving-badge').innerText(),`每年省￥${(monthly-expected[i])*12}`);
+          assert.equal(await savings.locator('s').innerText(),`¥${monthly}`);
+          assert.equal(await page.locator('.annual-total').innerText(),`按年支付 ￥${expected[i]*12}/年`);
+        }
         assert.equal(await page.locator('.dialog-tier').innerText(),advanced ? '进阶档' : '入门档');
         await page.keyboard.press('Escape');
       }
     }
   }
-  checks.push('All eight independent tier/billing combinations match beta prices, visible digits, AI allowances and subscription previews.');
+  checks.push('All eight independent tier/billing combinations show the correct monthly prices, annual savings, original monthly rates, annual payment totals and AI allowances.');
 
   await setTier('basic',false); await setTier('pro',false); await setBilling(false); await settle();
   const button = await toggle('basic').elementHandle();
@@ -68,24 +76,24 @@ let browser;
   });
   await settle();
   assert.equal(await button.evaluate(el => el.isConnected),true,'Tier switching preserves the button DOM');
-  assert.equal(await renderedAmount('basic'),'1188');
-  assert.equal(await renderedAmount('pro'),'1920');
+  assert.equal(await renderedAmount('basic'),'99');
+  assert.equal(await renderedAmount('pro'),'160');
   await toggle('basic').focus(); await page.keyboard.press('Enter'); await settle();
-  assert.equal(await amount('basic'),'468');
+  assert.equal(await amount('basic'),'39');
   assert.equal(await toggle('basic').evaluate(el => el === document.activeElement),true);
   await page.keyboard.press('Space'); await settle();
-  assert.equal(await amount('basic'),'1188');
-  assert.match(await page.locator('#announcer').innerText(),/基础版.*进阶档.*1188/);
+  assert.equal(await amount('basic'),'99');
+  assert.match(await page.locator('#announcer').innerText(),/基础版.*进阶档.*99/);
   checks.push('Nine interrupted tier/billing reversals settle correctly; Enter/Space work with retained focus and an announced selection.');
 
   await page.reload();
-  assert.equal(await amount('basic'),'1188'); assert.equal(await amount('pro'),'1920');
+  assert.equal(await amount('basic'),'99'); assert.equal(await amount('pro'),'160');
   await page.locator('[data-audience="team"]').click(); await page.waitForTimeout(850);
   assert.equal(await toggle('basic').evaluate(el => el.closest('.plan-card').inert),true);
   await page.locator('[data-audience="personal"]').click(); await page.waitForTimeout(850);
   await page.locator('[data-language-toggle]').click();
   assert.equal(await tier('basic'),'Advanced'); assert.equal(await tier('pro'),'Starter');
-  assert.equal(await amount('basic'),'1188'); assert.equal(await amount('pro'),'1920');
+  assert.equal(await amount('basic'),'99'); assert.equal(await amount('pro'),'160');
   checks.push('Different Basic/Pro selections persist through reload, audience round trips and language changes.');
 
   for (const lang of ['en','zh']) {
@@ -111,16 +119,67 @@ let browser;
   await page.setViewportSize({width:1920,height:1400});
   await page.locator('.basic .feature-info-button').focus();
   assert.equal(await page.locator('#basic-credits-tip').evaluate(el => getComputedStyle(el).visibility),'visible');
-  assert.match(await page.locator('#basic-credits-tip').innerText(),/3000.*1500.*50%/);
+  assert.match(await page.locator('#basic-credits-tip').innerText(),/2250 张图片或 375 秒视频/);
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('#basic-credits-tip').evaluate(el => getComputedStyle(el).visibility),'hidden');
   const assets = await page.locator('.personal-card img').evaluateAll(images => images.map(img => ({src:img.getAttribute('src'),loaded:img.complete && img.naturalWidth > 0,width:img.getBoundingClientRect().width,height:img.getBoundingClientRect().height})));
   assert.ok(assets.length > 40);
   for (const asset of assets) {assert.ok(asset.loaded,asset.src);assert.ok(Math.abs(asset.width-16)<.2 && Math.abs(asset.height-16)<.2,`${asset.src} retains its 16px design slot`);}
   await page.emulateMedia({reducedMotion:'reduce'});
-  await toggle('basic').click(); assert.equal(await renderedAmount('basic'),'468');
+  await toggle('basic').click(); assert.equal(await renderedAmount('basic'),'39');
   await setBilling(false); assert.equal(await renderedAmount('basic'),'49');assert.equal(await renderedAmount('pro'),'279');
   checks.push('Benefit tooltips are keyboard accessible; all original SVGs load at 16px; reduced-motion prices update immediately.');
+
+  for (const [id,title] of [['community','约 150 张图片或 25 秒视频'],['basic','约 750 张图片或 125 秒视频'],['pro','约 2250 张图片或 375 秒视频']]) {
+    await page.locator(`.${id} .feature-info-button`).first().focus();
+    const tip=page.locator(`#${id}-credits-tip`);
+    assert.equal(await tip.locator('.tooltip-title').innerText(),title);
+    assert.match(await tip.locator('.tooltip-detail').innerText(),/图像 2 积分\/张.*视频\s*（Seedance 2.0 Mini）12 积分\/秒/);
+    assert.deepEqual(await tip.evaluate(el=>{const s=getComputedStyle(el);return [s.backgroundColor,s.padding,s.borderRadius];}),['rgb(57, 57, 57)','16px','8px']);
+    assert.equal(await tip.locator('.tooltip-title').evaluate(el=>getComputedStyle(el).fontSize),'14px');
+    assert.equal(await tip.locator('.tooltip-detail').evaluate(el=>getComputedStyle(el).fontSize),'12px');
+    await page.keyboard.press('Escape');
+    assert.equal(await tip.evaluate(el=>el.matches(':popover-open')),false);
+  }
+  await page.locator('[aria-describedby="pro-workflow-tip"]').hover();
+  assert.equal(await page.locator('#pro-workflow-tip .tooltip-title').innerText(),'D5 Render 3.1 版本');
+  assert.equal(await page.locator('#pro-workflow-tip .tooltip-detail').innerText(),'AI 氛围匹配、AI 后期、局部重绘等不限次使用');
+  await page.locator('#pro-workflow-tip').hover();
+  await page.waitForTimeout(200);
+  assert.equal(await page.locator('#pro-workflow-tip').evaluate(el=>el.matches(':popover-open')),true,'Tooltip remains open while hovered');
+  await page.keyboard.press('Escape');
+  checks.push('All credit estimates, minimum-rate explanations and the D5 Render 3.1 tooltip match the Figma copy and gray two-level styling; hover and Escape work.');
+
+  for(const lang of ['zh','en']) {
+    if(await page.locator('html').getAttribute('lang') !== (lang === 'zh' ? 'zh-CN' : 'en')) await page.locator('[data-language-toggle]').click();
+    assert.equal(await page.locator('[data-i18n="billing.discount"]').innerText(),lang === 'zh' ? '更多优惠' : 'More savings');
+    for(const width of [1920,1024,390,320]) {
+      await page.setViewportSize({width,height:1100});
+      for(const annual of [true,false,true]) {
+        await setBilling(annual);
+        const geometry=await page.locator('[data-billing-toggle]').evaluate(el=>{const r=el.getBoundingClientRect(),h=el.firstElementChild.getBoundingClientRect();return {width:r.width,left:h.left-r.left,right:r.right-h.right};});
+        assert.equal(geometry.width,37);
+        assert.ok(Math.abs((annual ? geometry.right : geometry.left)-3)<.1,`${lang} ${width}: handle stays inset inside the track`);
+      }
+      for(const id of ['community','basic','pro']) {
+        const trigger=page.locator(`.${id} .feature-info-button`).first();
+        await trigger.scrollIntoViewIfNeeded(); await trigger.focus();
+        const box=await page.locator(`#${id}-credits-tip`).boundingBox();
+        assert.ok(box && box.x>=15 && box.x+box.width<=width-15 && box.y>=15 && box.y+box.height<=1100-15,`${lang} ${width}: ${id} tooltip stays within viewport`);
+        await page.keyboard.press('Escape');
+      }
+    }
+  }
+  checks.push('Both languages retain a 37px toggle with a contained handle through repeated switches; all three credit tooltips fit desktop and 320px viewports.');
+
+  const touchPage=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce'});
+  await touchPage.goto(base);
+  await touchPage.locator('.community .feature-info-button').tap();
+  assert.equal(await touchPage.locator('#community-credits-tip').evaluate(el=>el.matches(':popover-open')),true);
+  await touchPage.locator('.community h2').tap();
+  assert.equal(await touchPage.locator('#community-credits-tip').evaluate(el=>el.matches(':popover-open')),false);
+  await touchPage.close();
+  checks.push('Touch opens a benefit tooltip and tapping outside dismisses it.');
   assert.deepEqual(errors,[]);
   const report={passed:true,checks,errors,unverified:['Safari/WebKit and Firefox were not run.','Live publication and real checkout are outside this local preview.']};
   fs.writeFileSync(path.join(__dirname,'../qa/personal-tiers-verification.json'),JSON.stringify(report,null,2)+'\n');

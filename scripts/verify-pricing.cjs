@@ -40,8 +40,8 @@ let activeBrowser;
 
   await page.locator('[data-billing-toggle]').click();
   await page.waitForTimeout(550);
-  assert.equal(await price('basic'), '468');
-  assert.equal(await price('pro'), '1920');
+  assert.equal(await price('basic'), '39');
+  assert.equal(await price('pro'), '160');
   await audience('team');
   assert.equal(await page.locator('.billing').evaluate(el => el.inert), true);
   assert.equal(await page.locator('.team-card').evaluate(el => el.inert), false);
@@ -65,7 +65,7 @@ let activeBrowser;
   await shot('team-desktop.png');
   const stackedX = (await page.locator('.community').boundingBox()).x;
   await audience('personal');
-  assert.equal(await price('basic'), '468');
+  assert.equal(await price('basic'), '39');
   assert.equal(await page.locator('[data-billing-toggle]').getAttribute('aria-pressed'), 'true');
   checks.push('Annual prices, billing state, comparison columns and inactive focus targets survive a round trip.');
 

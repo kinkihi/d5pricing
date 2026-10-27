@@ -12,7 +12,12 @@
     { names: {zh:'进阶档',en:'Advanced'}, credits:4500, baseCredits:3000, concurrency:6, image:'4K', video:'4K', basic:129, pro:279, basicAnnual:1188, proAnnual:2628 },
   ];
   const selectedTier = id => personalTiers[state.personalTiers[id]];
-  const personalPrice = id => selectedTier(id)[state.billing === 'annual' ? `${id}Annual` : id];
+  const personalPrice = id => state.billing === 'annual' ? selectedTier(id)[`${id}Annual`] / 12 : selectedTier(id)[id];
+  const pricePeriod = () => state.billing === 'annual' ? (state.lang === 'zh' ? '/月，按年购买' : '/mo, billed yearly') : P().monthly;
+  function annualSavings(id) {
+    const tier = selectedTier(id), saved = tier[id] * 12 - tier[`${id}Annual`];
+    return `<span class="saving-badge">${state.lang === 'zh' ? `每年省￥${saved}` : `Save ￥${saved}/year`}</span><span class="original-price">${state.lang === 'zh' ? '原月订阅价 ' : 'Monthly price '}<s>¥${tier[id]}</s>${state.lang === 'zh' ? '/月' : '/mo'}</span>`;
+  }
   const tierName = id => selectedTier(id).names[state.lang];
 
   Object.assign(copy.zh, {
@@ -21,9 +26,9 @@
     'education.button': '自主申请',
     'comparison.title': '功能权益对比',
     'comparison.subtitle': '详细对比个人创作套餐及功能权益',
-    'billing.discount': '年付惠',
+    'billing.discount': '更多优惠',
   });
-  copy.en['billing.discount'] = 'Save';
+  copy.en['billing.discount'] = 'More savings';
   plans.zh.download = '开始体验';
   plans.en.download = 'Get started';
   plans.zh.upgrade = '立即订阅';
@@ -41,22 +46,28 @@
     },
   };
   const personalIcon = name => `<img src="assets/figma/personal-${name}.svg" alt="" width="16" height="16">`;
-  const info = (id, key, text) => `<span class="feature-info"><button type="button" class="feature-info-button" aria-label="${state.lang === 'zh' ? '权益说明' : 'Benefit details'}" aria-describedby="${id}-${key}-tip">${personalIcon('question')}</button><span class="feature-tooltip" role="tooltip" id="${id}-${key}-tip">${text}</span></span>`;
+  const info = (id, key, text) => `<span class="feature-info"><button type="button" class="feature-info-button" aria-label="${state.lang === 'zh' ? '权益说明' : 'Benefit details'}" aria-describedby="${id}-${key}-tip">${personalIcon('question')}</button><span class="feature-tooltip" role="tooltip" popover="manual" id="${id}-${key}-tip">${text}</span></span>`;
+  const tooltipCopy = (title, detail) => `<span class="tooltip-title">${title}</span><span class="tooltip-detail">${detail}</span>`;
+  function creditTip(credits) {
+    return state.lang === 'zh'
+      ? tooltipCopy(`约 ${credits / 2} 张图片或 ${credits / 12} 秒视频`, '按最低价估算：图像 2 积分/张，视频<br>（Seedance 2.0 Mini）12 积分/秒')
+      : tooltipCopy(`About ${credits / 2} images or ${credits / 12} seconds of video`, 'Estimated at the lowest rates: 2 credits/image;<br>video (Seedance 2.0 Mini), 12 credits/second.');
+  }
   const personalFeature = (text, {unavailable = false, help = ''} = {}) => `<li${unavailable ? ' class="unavailable"' : ''}><span class="feature-check" aria-hidden="true">${personalIcon(unavailable ? 'close' : 'check')}</span><span class="feature-copy">${text}${help}</span></li>`;
   function aiFeatures(id) {
     const zh = state.lang === 'zh';
     if (id === 'community') return [
-      personalFeature(zh ? '免费 300 AI 积分领取' : '300 free AI credits to claim', {help:info(id,'credits',zh ? '一次性领取 300 积分，有效期 365 天。' : 'Claim 300 credits once, valid for 365 days.')}),
+      personalFeature(zh ? '免费 300 AI 积分领取' : '300 free AI credits to claim', {help:info(id,'credits',creditTip(300))}),
       personalFeature(zh ? '支持体验部分 AI 模型' : 'Try selected AI models'),
       personalFeature(zh ? '支持最高 1K 图片，480p 视频生成' : 'Generate images up to 1K and video up to 480p'),
       personalFeature(zh ? '支持最多 2 个 AI 任务并发' : 'Run up to 2 concurrent AI tasks'),
       personalFeature(zh ? '不支持积分充值' : 'Credit top-ups unavailable', {unavailable:true}),
     ].join('');
     const tier = selectedTier(id);
-    const help = zh ? `每月 ${tier.baseCredits} 基础积分 + ${tier.credits - tier.baseCredits} 首发赠送积分。2027年2月28日前购买，统一首发窗口内合资格月度批次加赠 50%；窗口结束后恢复基础积分。年付按月发放，不全年加赠。` : `${tier.baseCredits} base credits + ${tier.credits - tier.baseCredits} launch bonus per eligible monthly batch. Purchase before February 28, 2027 within the shared launch window; base credits apply afterward. Annual credits are issued monthly; the bonus does not cover the full year.`;
+    const help = creditTip(tier.credits);
     return [
       personalFeature(zh ? `每月 ${tier.credits} AI 积分` : `${tier.credits.toLocaleString('en-US')} AI credits per month`, {help:info(id,'credits',help)}),
-      ...(id === 'pro' ? [personalFeature(zh ? '工作流内指定 AI 功能不限次使用' : 'Unlimited use of selected workflow AI features', {help:info(id,'workflow',zh ? 'Render 内指定功能（AI 氛围匹配、AI 后期、局部重绘等）不限次使用；通过 Arco 使用按积分计费。' : 'Selected features within Render, including AI Atmosphere Match, AI post-processing and inpainting, are unlimited. Usage through Arco consumes credits.')})] : []),
+      ...(id === 'pro' ? [personalFeature(zh ? '工作流内指定 AI 功能不限次使用' : 'Unlimited use of selected workflow AI features', {help:info(id,'workflow',tooltipCopy(zh ? 'D5 Render 3.1 版本' : 'D5 Render 3.1', zh ? 'AI 氛围匹配、AI 后期、局部重绘等不限次使用' : 'Unlimited AI Atmosphere Match, AI post-processing, inpainting and more.'))})] : []),
       personalFeature(zh ? '支持全部 AI 模型' : 'Access to all AI models'),
       personalFeature(zh ? `支持最高 ${tier.image} 图片，${tier.video} 视频生成` : `Generate images up to ${tier.image} and video up to ${tier.video}`),
       personalFeature(zh ? `支持最多 ${tier.concurrency} 个 AI 任务并发` : `Run up to ${tier.concurrency} concurrent AI tasks`),
@@ -97,6 +108,8 @@
     }));
     grid.style.setProperty('--render-section-height',`${sectionHeight('render-features')}px`);
     grid.style.setProperty('--ai-section-height',`${sectionHeight('ai-features')}px`);
+    const headers = cards.slice(0,3).map(card => card.querySelector('.personal-card-header').offsetHeight);
+    grid.style.setProperty('--annual-header-extra',`${Math.max(0,Math.max(headers[1],headers[2]) - headers[0])}px`);
     grid.style.setProperty('--personal-desktop-height',`${Math.max(community,basic,pro)}px`);
     grid.style.setProperty('--basic-y',`${community + 24}px`);
     grid.style.setProperty('--pro-y',`${community + basic + 48}px`);
@@ -106,10 +119,12 @@
   });
 
   renderPlans = function () {
+    hideTooltip();
     activeNumbers.forEach(el => finishNumber(el, rollingNumbers.get(el)));
     const p = P();
     const annual = state.billing === 'annual';
-    const period = annual ? p.annual : p.monthly;
+    const period = pricePeriod();
+    $('#plan-grid').classList.toggle('is-annual',annual);
     const personalCard = id => `<article class="plan-card personal-card ${id}" data-plan="${id}" aria-label="${p[id].name}">
       ${id === 'pro' ? '<div class="card-glow" aria-hidden="true"><canvas data-shader="wave"></canvas></div>' : ''}
       <div class="personal-card-header"><div class="plan-top">
@@ -118,7 +133,7 @@
         <div class="plan-tier"><span class="tier-name" data-personal-tier="${id}">${tierName(id)}</span><div class="price-tier-control">
           <div class="plan-price"><span class="price-value">￥<span data-price="${id}">${personalPrice(id)}</span></span><span class="price-period" data-period>${period}</span></div>
           <button type="button" class="tier-toggle" data-tier-toggle="${id}" aria-pressed="${state.personalTiers[id] === 1}" aria-label="${tierToggleLabel(id)}">${personalIcon('arrow-up')}</button>
-        </div></div>`}
+        </div><div class="plan-savings" data-savings="${id}"${annual ? '' : ' hidden'}>${annualSavings(id)}</div></div>`}
       </div>
       <button type="button" class="plan-button" data-select-plan="${id}">${id === 'community' ? p.download : p.upgrade}</button></div>
       ${featureSections(id)}
@@ -145,14 +160,18 @@
     return state.lang === 'zh' ? `${P()[id].name}：切换到${next}` : `${P()[id].name}: switch to ${next}`;
   }
   syncTier = function () {
+    $('#plan-grid').classList.toggle('is-annual',state.billing === 'annual');
     for (const id of ['basic','pro']) {
       animateNumber($(`[data-price="${id}"]`),personalPrice(id));
       $(`[data-personal-tier="${id}"]`).textContent = tierName(id);
       const toggle = $(`[data-tier-toggle="${id}"]`);
       toggle.setAttribute('aria-pressed',String(state.personalTiers[id] === 1));
       toggle.setAttribute('aria-label',tierToggleLabel(id));
+      const savings = $(`[data-savings="${id}"]`);
+      savings.innerHTML = annualSavings(id);
+      savings.hidden = state.billing !== 'annual';
     }
-    $$('[data-period]').forEach(el => { el.textContent = state.billing === 'annual' ? P().annual : P().monthly; });
+    $$('[data-period]').forEach(el => { el.textContent = pricePeriod(); });
   };
 
   let comparisonExpanded = true;
@@ -208,6 +227,7 @@
 
   window.setPricingAudience = audience => {
     if (audience === state.audience) return;
+    hideTooltip();
     state.audience = audience;
     // CSS retargets each existing card from its current interpolated position.
     // No timers or DOM replacement means rapid reversals cannot leave stale cards.
@@ -236,7 +256,7 @@
     let body;
     if (id === 'team') body = `<p>${zh ? '按团队需求自由组合基础席位与专业席位，协作管理并共享 AI 积分。' : 'Mix Basic and Pro seats for your team, manage collaboration and share AI credits.'}</p><dl><dt>${teamFeatures[state.lang][1].title}</dt><dd>${teamFeatures[state.lang][1].items[0]}</dd><dt>${teamFeatures[state.lang][2].title}</dt><dd>${teamFeatures[state.lang][2].items[0]}</dd><dt>${zh ? 'AI 积分' : 'AI credits'}</dt><dd>${zh ? '团队共享' : 'Shared across the team'}</dd></dl><p>${zh ? '当前为方案预览，咨询入口尚未接入。' : 'This preview is not connected to the sales consultation service yet.'}</p>`;
     else if (id === 'education') body = `<p>${zh ? '专为高校在校生推出的特别权益方案，助力教与学。申请入口将在正式上线后开放。' : 'Special benefits for students and educators. Applications will open with the official release.'}</p>`;
-    else body = `${id === 'community' ? '' : `<p class="dialog-tier">${tierName(id)}</p>`}<div class="dialog-price">￥${id === 'community' ? '0' : personalPrice(id)} <span class="price-period">${id === 'community' ? P().free : state.billing === 'annual' ? P().annual : P().monthly}</span></div><p>${zh ? '已选好你的创作方案。当前为交互预览，购买与账号服务尚未接入，不会创建订单。' : 'Your plan is selected. Checkout and account services are not connected in this preview; no order is created.'}</p>`;
+    else body = `${id === 'community' ? '' : `<p class="dialog-tier">${tierName(id)}</p>`}<div class="dialog-price">￥${id === 'community' ? '0' : personalPrice(id)} <span class="price-period">${id === 'community' ? P().free : pricePeriod()}</span></div>${id !== 'community' && state.billing === 'annual' ? `<div class="plan-savings">${annualSavings(id)}</div><p class="annual-total">${zh ? `按年支付 ￥${selectedTier(id)[`${id}Annual`]}/年` : `Billed yearly: ￥${selectedTier(id)[`${id}Annual`]}/year`}</p>` : ''}<p>${zh ? '已选好你的创作方案。当前为交互预览，购买与账号服务尚未接入，不会创建订单。' : 'Your plan is selected. Checkout and account services are not connected in this preview; no order is created.'}</p>`;
     dialog.innerHTML = `<button type="button" class="dialog-close" data-close-dialog aria-label="${zh ? '关闭' : 'Close'}">${zh ? '关闭' : 'Close'}</button><h2 id="pricing-dialog-title">${title}</h2>${body}<button class="plan-button" type="button" data-close-dialog>${zh ? '继续了解方案' : 'Keep exploring'}</button>`;
     dialog.showModal();
   };
@@ -245,12 +265,13 @@
     const target = event.target.closest('button,a');
     if (!target) return;
     if (target.hasAttribute('data-tier-toggle')) {
+      hideTooltip();
       const id = target.dataset.tierToggle;
       state.personalTiers[id] = 1 - state.personalTiers[id];
       syncTier();
       $(`[data-ai-features="${id}"]`).innerHTML = aiFeatures(id);
       persistPreviewState();
-      $('#announcer').textContent = `${P()[id].name} · ${tierName(id)} · ￥${personalPrice(id)}${state.billing === 'annual' ? P().annual : P().monthly}`;
+      $('#announcer').textContent = `${P()[id].name} · ${tierName(id)} · ￥${personalPrice(id)}${pricePeriod()}`;
     }
     if (target.hasAttribute('data-select-plan')) window.openPricingDialog(target.dataset.selectPlan);
     if (target.hasAttribute('data-contact-sales')) window.openPricingDialog('team');
@@ -266,8 +287,58 @@
     }
     if (target.hasAttribute('data-billing-toggle') || target.hasAttribute('data-lang')) persistPreviewState();
   });
-  document.addEventListener('keydown',event => {
-    if (event.key === 'Escape' && document.activeElement?.matches('.feature-info-button')) document.activeElement.blur();
+  // Top-layer tooltips stay above animated cards and fit within the viewport.
+  let activeTooltip = null, tooltipTimer;
+  function hideTooltip() {
+    clearTimeout(tooltipTimer);
+    if (activeTooltip?.tip.isConnected) activeTooltip.tip.hidePopover();
+    activeTooltip = null;
+  }
+  function positionTooltip() {
+    if (!activeTooltip) return;
+    const {button,tip} = activeTooltip;
+    const anchor = button.getBoundingClientRect(), box = tip.getBoundingClientRect();
+    const left = Math.max(16,Math.min(anchor.left,innerWidth - box.width - 16));
+    const top = anchor.bottom + 8 + box.height <= innerHeight - 16 ? anchor.bottom + 8 : anchor.top - box.height - 8;
+    tip.style.left = `${left}px`;
+    tip.style.top = `${Math.max(16,top)}px`;
+  }
+  function showTooltip(button) {
+    clearTimeout(tooltipTimer);
+    if (activeTooltip?.button !== button) {
+      hideTooltip();
+      const tip = document.getElementById(button.getAttribute('aria-describedby'));
+      activeTooltip = {button,tip};
+      tip.showPopover();
+    }
+    positionTooltip();
+  }
+  document.addEventListener('pointerover',event => {
+    if (event.pointerType === 'touch') return;
+    const button = event.target.closest('.feature-info-button');
+    if (button) showTooltip(button);
+    else if (event.target.closest('.feature-tooltip')) clearTimeout(tooltipTimer);
   });
+  document.addEventListener('pointerout',event => {
+    if (!event.target.closest('.feature-info-button,.feature-tooltip')) return;
+    tooltipTimer = setTimeout(() => {
+      if (activeTooltip?.button !== document.activeElement) hideTooltip();
+    },120);
+  });
+  document.addEventListener('focusin',event => {
+    if (event.target.matches('.feature-info-button')) showTooltip(event.target);
+    else hideTooltip();
+  });
+  document.addEventListener('focusout',event => {
+    if (event.target.matches('.feature-info-button')) hideTooltip();
+  });
+  document.addEventListener('click',event => {
+    const button = event.target.closest('.feature-info-button');
+    if (button) showTooltip(button);
+    else if (!event.target.closest('.feature-tooltip')) hideTooltip();
+  });
+  document.addEventListener('keydown',event => { if (event.key === 'Escape') hideTooltip(); });
+  window.addEventListener('resize',positionTooltip);
+  window.addEventListener('scroll',positionTooltip,true);
   renderAll();
 })();
