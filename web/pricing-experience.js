@@ -1,5 +1,5 @@
 // Figma card content and reversible, interruption-safe audience transitions.
-// Personal: Figma 31951:32326. Teams: 32080:13484 within 32080:12509.
+// Personal: Figma 31951:32326. Teams: 32080:13484 within 32080:12530.
 // Tier prices: jjcyixi/d5pricing-beta/data.js.
 (() => {
   const params = new URLSearchParams(location.search);
@@ -80,13 +80,13 @@
   }
   const teamFeatures = {
     zh: [
-      {id:'collaboration',title:'协作与管理',icon:'team-users',items:['支持团队基础 / 专业席位自由组合','支持团队分组及权限管理','支持团队数据看板','支持团队数字资产管理','支持 D5工作流多人协作']},
-      {id:'render',title:'专业表现席位',icon:'personal-render',items:['包含个人专业版功能权益','实时云端像素推流、虚拟现实(VR)分享']},
+      {id:'collaboration',title:'协作与管理',icon:'team-users',items:['支持团队基础 / 专业席位自由组合','支持自定义AI功能权限','支持团队成员及分组管理','支持团队数据看板','支持团队云资产管理']},
+      {id:'render',title:'专业表现席位',icon:'personal-render',items:['包含个人专业版功能权益','支持D5工作流项目多人编辑']},
       {id:'ai',title:'AI 创作席位',icon:'team-ai',items:['包含个人基础版功能权益','团队共享 AI 积分']},
     ],
     en: [
-      {id:'collaboration',title:'Collaboration & management',icon:'team-users',items:['Mix Basic and Pro seats freely','Team groups and permission management','Team analytics dashboard','Team digital asset management','Collaborative D5 workflows']},
-      {id:'render',title:'Professional visualization seats',icon:'personal-render',items:['Includes individual Pro plan benefits','Real-time cloud pixel streaming and virtual reality (VR) sharing']},
+      {id:'collaboration',title:'Collaboration & management',icon:'team-users',items:['Mix Basic and Pro seats freely','Custom AI feature permissions','Team member and group management','Team analytics dashboard','Team cloud asset management']},
+      {id:'render',title:'Professional visualization seats',icon:'personal-render',items:['Includes individual Pro plan benefits','Collaborative editing of D5 workflow projects']},
       {id:'ai',title:'AI creation seats',icon:'team-ai',items:['Includes individual Basic plan benefits','Shared team AI credits']},
     ],
   };
