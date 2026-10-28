@@ -112,7 +112,7 @@ let activeBrowser;
   await page.locator('[data-language-toggle]').click();
   assert.equal(await page.locator('html').getAttribute('lang'),'en');
   assert.equal(await page.locator('.team-card h2').innerText(),'Teams');
-  assert.deepEqual(await page.locator('.team-card h3').allTextContents(),['Collaboration & management','Professional visualization seats','AI creation seats']);
+  assert.deepEqual(await page.locator('.team-card h3').allTextContents(),['Collaboration & management','Pro visualization seats','AI creation seats']);
   await page.locator('[data-language-toggle]').click();
   assert.equal(await page.locator('.team-card h2').innerText(),'团队版');
   checks.push('Language changes retain the selected audience and update card content.');

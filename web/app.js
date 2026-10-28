@@ -38,7 +38,7 @@ const copy = {
   en: {
     'faq.title': 'FAQ',
     'hero.title': 'Find the right D5 plan for you',
-    'hero.subtitle': 'From your first spark of inspiration to your next professional project delivery, more creativity, more possibilities',
+    'hero.subtitle': 'From first ideas to professional delivery. More creativity, more possibilities.',
     'audience.personal': 'For creators', 'audience.team': 'For teams',
     'billing.monthly': 'Monthly', 'billing.annual': 'Yearly', 'billing.discount': 'Save x%',
     'billing.toAnnual': 'Switch to yearly billing', 'billing.toMonthly': 'Switch to monthly billing',

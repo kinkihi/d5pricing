@@ -69,8 +69,8 @@ let browser;
   await page.locator('[data-language-toggle]').click();
   assert.equal(await page.locator('.community .price-value').innerText(),'$0');
   assert.equal(await page.locator('[data-i18n="education.title"]').innerText(),'D5 Student Plan');
-  assert.match(await page.locator('[data-i18n="education.subtitle"]').innerText(),/university and college students/);
-  assert.match(await page.locator('.pro .render-features').innerText(),/video rendering at multiple frame rates and formats/);
+  assert.match(await page.locator('[data-i18n="education.subtitle"]').innerText(),/college students/);
+  assert.match(await page.locator('.pro .render-features').innerText(),/Pro video formats & frame rates/);
   for (const annual of [false,true]) {
     await setBilling(annual);
     for (const [basic,pro] of [[false,false],[true,false],[true,true],[false,true]]) {
@@ -85,8 +85,8 @@ let browser;
         assert.equal(await page.locator(`.${id} .price-value`).evaluate(el => el.firstChild.textContent),'$');
         const ai = await page.locator(`[data-ai-features="${id}"]`).innerText();
         assert.match(ai,new RegExp(advanced ? '4,500 AI credits' : '1,500 AI credits'));
-        assert.match(ai,new RegExp(advanced ? '6 concurrent' : '4 concurrent'));
-        assert.match(ai,new RegExp(advanced ? '4K and video up to 4K' : '2K and video up to 720p'));
+        assert.match(ai,new RegExp(advanced ? '6 AI tasks at once' : '4 AI tasks at once'));
+        assert.match(ai,new RegExp(advanced ? 'Up to 4K images & 4K video' : 'Up to 2K images & 720p video'));
         const savings = page.locator(`[data-savings="${id}"]`);
         assert.equal(await savings.isVisible(),annual);
         await page.locator(`[data-select-plan="${id}"]`).click();

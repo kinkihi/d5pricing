@@ -44,10 +44,10 @@
   });
   Object.assign(copy.en, {
     'education.title': 'D5 Student Plan',
-    'education.subtitle': 'Special benefits for university and college students to support teaching and learning',
+    'education.subtitle': 'Special benefits for college students',
     'education.button': 'Apply now',
-    'comparison.title': 'Compare features and benefits',
-    'comparison.subtitle': 'Compare individual plans and their features and benefits in detail',
+    'comparison.title': 'Compare features',
+    'comparison.subtitle': 'Individual plans, side by side',
     'billing.discount': 'More savings',
   });
   plans.zh.download = '开始体验';
@@ -61,9 +61,9 @@
       pro: ['全品类 16,000+ 高品质素材','城市生成等高级场景构建功能','专业级图片.tga、.tif、.exr格式渲染','专业级视频多帧率及多格式渲染','实时空间漫游、XR 漫游创建及分享','实时云端像素推流、虚拟现实(VR)分享','完整 D5工作流功能可用'],
     },
     en: {
-      shared: ['Free syncing via modeling plugins','3,000+ free assets','Free real-time interactive presentations','Free real-time 16K image rendering','Free real-time 4K video rendering','Free panorama tour creation and sharing'],
-      community: 'More free D5 workflow features available', basic: 'Includes Community D5 workflow features',
-      pro: ['16,000+ premium assets across all categories','Advanced scene building, including city generation','Professional image rendering in TGA, TIF and EXR formats','Professional video rendering at multiple frame rates and formats','Create and share real-time spatial tours and XR tours','Real-time cloud pixel streaming and virtual reality (VR) sharing','Full access to D5 workflow features'],
+      shared: ['Free modeling plugin sync','3,000+ free assets','Free interactive demos','Free 16K image rendering','Free 4K video rendering','Free panorama tours & sharing'],
+      community: 'More free D5 workflow features', basic: 'Community D5 workflow included',
+      pro: ['16,000+ premium assets, all categories','Advanced scene & city building','Pro image formats: TGA, TIF, EXR','Pro video formats & frame rates','Spatial / XR tour creation & sharing','Cloud pixel streaming & VR sharing','All D5 workflow features'],
     },
   };
   const personalIcon = name => `<img src="assets/figma/personal-${name}.svg" alt="" width="16" height="16">`;
@@ -72,7 +72,7 @@
   function creditTip(credits) {
     return state.lang === 'zh'
       ? tooltipCopy(`约 ${credits / 2} 张图片或 ${credits / 12} 秒视频`, '按最低价估算：图像 2 积分/张，视频<br>（Seedance 2.0 Mini）12 积分/秒')
-      : tooltipCopy(`About ${credits / 2} images or ${credits / 12} seconds of video`, 'Estimated at the lowest rates: 2 credits/image;<br>video (Seedance 2.0 Mini), 12 credits/second.');
+      : tooltipCopy(`About ${credits / 2} images or ${credits / 12}s of video`, 'Est. at minimum rates: 2 credits/image;<br>Seedance 2.0 Mini video: 12 credits/sec.');
   }
   const personalFeature = (text, {unavailable = false, help = ''} = {}) => `<li${unavailable ? ' class="unavailable"' : ''}><span class="feature-check" aria-hidden="true">${personalIcon(unavailable ? 'close' : 'check')}</span><span class="feature-copy">${text}${help}</span></li>`;
   function aiFeatures(id) {
@@ -80,18 +80,18 @@
     if (id === 'community') return [
       personalFeature(zh ? '免费 300 AI 积分领取' : 'Claim 300 free AI credits', {help:info(id,'credits',creditTip(300))}),
       personalFeature(zh ? '支持体验部分 AI 模型' : 'Try selected AI models'),
-      personalFeature(zh ? '支持最高 1K 图片，480p 视频生成' : 'Generate images up to 1K and video up to 480p'),
-      personalFeature(zh ? '支持最多 2 个 AI 任务并发' : 'Run up to 2 concurrent AI tasks'),
-      personalFeature(zh ? '不支持积分充值' : 'Credit top-ups unavailable', {unavailable:true}),
+      personalFeature(zh ? '支持最高 1K 图片，480p 视频生成' : 'Up to 1K images & 480p video'),
+      personalFeature(zh ? '支持最多 2 个 AI 任务并发' : 'Up to 2 AI tasks at once'),
+      personalFeature(zh ? '不支持积分充值' : 'No credit top-ups', {unavailable:true}),
     ].join('');
     const tier = selectedTier(id);
     const help = creditTip(tier.credits);
     return [
-      personalFeature(zh ? `每月 ${tier.credits} AI 积分` : `${tier.credits.toLocaleString('en-US')} AI credits per month`, {help:info(id,'credits',help)}),
-      ...(id === 'pro' ? [personalFeature(zh ? '工作流内指定 AI 功能不限次使用' : 'Unlimited use of selected workflow AI features', {help:info(id,'workflow',tooltipCopy(zh ? 'D5 Render 3.1 版本' : 'D5 Render 3.1', zh ? 'AI 氛围匹配、AI 后期、局部重绘等不限次使用' : 'Unlimited AI Atmosphere Match, AI post-processing, inpainting and more.'))})] : []),
-      personalFeature(zh ? '支持全部 AI 模型' : 'Access to all AI models'),
-      personalFeature(zh ? `支持最高 ${tier.image} 图片，${tier.video} 视频生成` : `Generate images up to ${tier.image} and video up to ${tier.video}`),
-      personalFeature(zh ? `支持最多 ${tier.concurrency} 个 AI 任务并发` : `Run up to ${tier.concurrency} concurrent AI tasks`),
+      personalFeature(zh ? `每月 ${tier.credits} AI 积分` : `${tier.credits.toLocaleString('en-US')} AI credits/month`, {help:info(id,'credits',help)}),
+      ...(id === 'pro' ? [personalFeature(zh ? '工作流内指定 AI 功能不限次使用' : 'Selected workflow AI: unlimited', {help:info(id,'workflow',tooltipCopy(zh ? 'D5 Render 3.1 版本' : 'D5 Render 3.1', zh ? 'AI 氛围匹配、AI 后期、局部重绘等不限次使用' : 'Unlimited AI Atmosphere Match, AI post-processing, inpainting & more.'))})] : []),
+      personalFeature(zh ? '支持全部 AI 模型' : 'All AI models'),
+      personalFeature(zh ? `支持最高 ${tier.image} 图片，${tier.video} 视频生成` : `Up to ${tier.image} images & ${tier.video} video`),
+      personalFeature(zh ? `支持最多 ${tier.concurrency} 个 AI 任务并发` : `Up to ${tier.concurrency} AI tasks at once`),
     ].join('');
   }
   function featureSections(id) {
@@ -106,13 +106,13 @@
       {id:'ai',title:'AI 创作席位',icon:'team-ai',items:['包含个人基础版功能权益','团队共享 AI 积分']},
     ],
     en: [
-      {id:'collaboration',title:'Collaboration & management',icon:'team-users',items:['Mix Basic and Pro seats freely','Custom AI feature permissions','Team member and group management','Team analytics dashboard','Team cloud asset management']},
-      {id:'render',title:'Professional visualization seats',icon:'personal-render',items:['Includes individual Pro plan benefits','Collaborative editing of D5 workflow projects']},
-      {id:'ai',title:'AI creation seats',icon:'team-ai',items:['Includes individual Basic plan benefits','Shared team AI credits']},
+      {id:'collaboration',title:'Collaboration & management',icon:'team-users',items:['Mix Basic & Pro seats','Custom AI permissions','Member & group management','Team analytics dashboard','Cloud asset management']},
+      {id:'render',title:'Pro visualization seats',icon:'personal-render',items:['Individual Pro benefits included','Co-edit D5 workflow projects']},
+      {id:'ai',title:'AI creation seats',icon:'team-ai',items:['Individual Basic benefits included','Shared team AI credits']},
     ],
   };
   function teamFeatureSections() {
-    const seatHelp = state.lang === 'zh' ? '可按成员的创作需求自由组合基础席位与专业席位；各席位权益见下方说明。' : 'Mix Basic and Pro seats to match each member’s creative needs. Seat benefits are listed below.';
+    const seatHelp = state.lang === 'zh' ? '可按成员的创作需求自由组合基础席位与专业席位；各席位权益见下方说明。' : 'Mix Basic and Pro seats to fit each member’s needs. See benefits below.';
     return teamFeatures[state.lang].map(group => `<section class="plan-feature-section team-feature-section" aria-labelledby="team-${group.id}-title"><h3 id="team-${group.id}-title"><span class="feature-check" aria-hidden="true"><img src="assets/figma/${group.icon}.svg" alt="" width="16" height="16"></span>${group.title}</h3><ul class="plan-list">${group.items.map((item,index) => personalFeature(item, {help:group.id === 'collaboration' && index === 0 ? info('team','seats',seatHelp) : ''})).join('')}</ul></section>`).join('');
   }
 
@@ -245,7 +245,7 @@
     $('.education').inert = team;
     $('.education').setAttribute('aria-hidden',String(team));
     copy.zh['comparison.subtitle'] = team ? '详细对比个人与团队套餐及功能权益' : '详细对比个人创作套餐及功能权益';
-    copy.en['comparison.subtitle'] = team ? 'Compare individual and team plans, features and benefits in detail' : 'Compare individual plans and their features and benefits in detail';
+    copy.en['comparison.subtitle'] = team ? 'Individual & team plans, side by side' : 'Individual plans, side by side';
     $('[data-i18n="comparison.subtitle"]').textContent = t('comparison.subtitle');
     $('.header-language').textContent = state.lang === 'zh' ? 'English' : '中文';
     persistPreviewState();
