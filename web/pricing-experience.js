@@ -85,12 +85,13 @@
       personalFeature(zh ? '不支持积分充值' : 'No credit top-ups', {unavailable:true}),
     ].join('');
     const tier = selectedTier(id);
+    const resolution = id === 'pro' ? {image:'4K',video:'4K'} : tier;
     const help = creditTip(tier.credits);
     return [
       personalFeature(zh ? `每月 ${tier.credits} AI 积分` : `${tier.credits.toLocaleString('en-US')} AI credits/month`, {help:info(id,'credits',help)}),
       ...(id === 'pro' ? [personalFeature(zh ? '工作流内指定 AI 功能不限次使用' : 'Selected workflow AI: unlimited', {help:info(id,'workflow',tooltipCopy(zh ? 'D5 Render 3.1 版本' : 'D5 Render 3.1', zh ? 'AI 氛围匹配、AI 后期、局部重绘等不限次使用' : 'Unlimited AI Atmosphere Match, AI post-processing, inpainting & more.'))})] : []),
       personalFeature(zh ? '支持全部 AI 模型' : 'All AI models'),
-      personalFeature(zh ? `支持最高 ${tier.image} 图片，${tier.video} 视频生成` : `Up to ${tier.image} images & ${tier.video} video`),
+      personalFeature(zh ? `支持最高 ${resolution.image} 图片，${resolution.video} 视频生成` : `Up to ${resolution.image} images & ${resolution.video} video`),
       personalFeature(zh ? `支持最多 ${tier.concurrency} 个 AI 任务并发` : `Up to ${tier.concurrency} AI tasks at once`),
     ].join('');
   }
