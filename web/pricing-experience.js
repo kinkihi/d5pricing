@@ -1,6 +1,7 @@
 // Figma card content and reversible, interruption-safe audience transitions.
 // Personal: Figma 31951:32326. Teams: 32080:13484 within 32080:12530.
-// Tier prices: jjcyixi/d5pricing-beta/data.js.
+// CNY prices: jjcyixi/d5pricing-beta/data.js. USD prices: 海外版本.html,
+// PERSONAL_TIERS (20261023-usd-r2); only prices are taken from that attachment.
 (() => {
   const params = new URLSearchParams(location.search);
   state.audience = params.get('audience') === 'team' ? 'team' : 'personal';
@@ -8,15 +9,28 @@
   state.lang = params.get('lang') === 'en' ? 'en' : 'zh';
   state.personalTiers = Object.fromEntries(['basic','pro'].map(id => [id, params.get(`${id}Tier`) === 'advanced' ? 1 : 0]));
   const personalTiers = [
-    { names: {zh:'入门档',en:'Starter'}, credits:1500, baseCredits:1000, concurrency:4, image:'2K', video:'720p', basic:49, pro:200, basicAnnual:468, proAnnual:1920 },
-    { names: {zh:'进阶档',en:'Advanced'}, credits:4500, baseCredits:3000, concurrency:6, image:'4K', video:'4K', basic:129, pro:279, basicAnnual:1188, proAnnual:2628 },
+    { names: {zh:'入门档',en:'Starter'}, credits:1500, baseCredits:1000, concurrency:4, image:'2K', video:'720p' },
+    { names: {zh:'进阶档',en:'Advanced'}, credits:4500, baseCredits:3000, concurrency:6, image:'4K', video:'4K' },
   ];
+  const personalPrices = {
+    zh: [
+      {basic:49, pro:200, basicAnnual:468, proAnnual:1920},
+      {basic:129, pro:279, basicAnnual:1188, proAnnual:2628},
+    ],
+    en: [
+      {basic:7, pro:38, basicAnnual:72, proAnnual:360},
+      {basic:25, pro:55, basicAnnual:240, proAnnual:504},
+    ],
+  };
   const selectedTier = id => personalTiers[state.personalTiers[id]];
-  const personalPrice = id => state.billing === 'annual' ? selectedTier(id)[`${id}Annual`] / 12 : selectedTier(id)[id];
+  const selectedPrices = id => personalPrices[state.lang][state.personalTiers[id]];
+  const currencySymbol = () => state.lang === 'zh' ? '￥' : '$';
+  const money = amount => `${currencySymbol()}${amount}`;
+  const personalPrice = id => state.billing === 'annual' ? selectedPrices(id)[`${id}Annual`] / 12 : selectedPrices(id)[id];
   const pricePeriod = () => state.billing === 'annual' ? (state.lang === 'zh' ? '/月，按年购买' : '/mo, billed yearly') : P().monthly;
   function annualSavings(id) {
-    const tier = selectedTier(id), saved = tier[id] * 12 - tier[`${id}Annual`];
-    return `<span class="saving-badge">${state.lang === 'zh' ? `每年省￥${saved}` : `Save ￥${saved}/year`}</span><span class="original-price">${state.lang === 'zh' ? '原月订阅价 ' : 'Monthly price '}<s>¥${tier[id]}</s>${state.lang === 'zh' ? '/月' : '/mo'}</span>`;
+    const prices = selectedPrices(id), saved = prices[id] * 12 - prices[`${id}Annual`];
+    return `<span class="saving-badge">${state.lang === 'zh' ? `每年省${money(saved)}` : `Save ${money(saved)}/year`}</span><span class="original-price">${state.lang === 'zh' ? '原月订阅价 ' : 'Monthly price '}<s>${state.lang === 'zh' ? '¥' : '$'}${prices[id]}</s>${state.lang === 'zh' ? '/月' : '/mo'}</span>`;
   }
   const tierName = id => selectedTier(id).names[state.lang];
 
@@ -28,7 +42,14 @@
     'comparison.subtitle': '详细对比个人创作套餐及功能权益',
     'billing.discount': '更多优惠',
   });
-  copy.en['billing.discount'] = 'More savings';
+  Object.assign(copy.en, {
+    'education.title': 'D5 Student Plan',
+    'education.subtitle': 'Special benefits for university and college students to support teaching and learning',
+    'education.button': 'Apply now',
+    'comparison.title': 'Compare features and benefits',
+    'comparison.subtitle': 'Compare individual plans and their features and benefits in detail',
+    'billing.discount': 'More savings',
+  });
   plans.zh.download = '开始体验';
   plans.en.download = 'Get started';
   plans.zh.upgrade = '立即订阅';
@@ -40,9 +61,9 @@
       pro: ['全品类 16,000+ 高品质素材','城市生成等高级场景构建功能','专业级图片.tga、.tif、.exr格式渲染','专业级视频多帧率及多格式渲染','实时空间漫游、XR 漫游创建及分享','实时云端像素推流、虚拟现实(VR)分享','完整 D5工作流功能可用'],
     },
     en: {
-      shared: ['Free modeling plugin sync','3,000+ free assets','Free real-time interactive presentations','Free real-time 16K image rendering','Free real-time 4K video rendering','Free panorama creation and sharing'],
-      community: 'More free D5 workflow features', basic: 'Community D5 workflow features included',
-      pro: ['16,000+ premium assets across all categories','Advanced scene building including city generation','Professional TGA, TIF and EXR image rendering','Professional video formats and frame rates','Spatial and XR tour creation and sharing','Cloud pixel streaming and virtual reality (VR) sharing','The complete D5 workflow'],
+      shared: ['Free syncing via modeling plugins','3,000+ free assets','Free real-time interactive presentations','Free real-time 16K image rendering','Free real-time 4K video rendering','Free panorama tour creation and sharing'],
+      community: 'More free D5 workflow features available', basic: 'Includes Community D5 workflow features',
+      pro: ['16,000+ premium assets across all categories','Advanced scene building, including city generation','Professional image rendering in TGA, TIF and EXR formats','Professional video rendering at multiple frame rates and formats','Create and share real-time spatial tours and XR tours','Real-time cloud pixel streaming and virtual reality (VR) sharing','Full access to D5 workflow features'],
     },
   };
   const personalIcon = name => `<img src="assets/figma/personal-${name}.svg" alt="" width="16" height="16">`;
@@ -57,7 +78,7 @@
   function aiFeatures(id) {
     const zh = state.lang === 'zh';
     if (id === 'community') return [
-      personalFeature(zh ? '免费 300 AI 积分领取' : '300 free AI credits to claim', {help:info(id,'credits',creditTip(300))}),
+      personalFeature(zh ? '免费 300 AI 积分领取' : 'Claim 300 free AI credits', {help:info(id,'credits',creditTip(300))}),
       personalFeature(zh ? '支持体验部分 AI 模型' : 'Try selected AI models'),
       personalFeature(zh ? '支持最高 1K 图片，480p 视频生成' : 'Generate images up to 1K and video up to 480p'),
       personalFeature(zh ? '支持最多 2 个 AI 任务并发' : 'Run up to 2 concurrent AI tasks'),
@@ -129,9 +150,9 @@
       ${id === 'pro' ? '<div class="card-glow" aria-hidden="true"><div class="pro-wave"><canvas data-shader="wave"></canvas></div></div>' : ''}
       <div class="personal-card-header"><div class="plan-top">
         <div class="plan-title"><div class="plan-name"><h2>${p[id].name}</h2></div></div>
-        ${id === 'community' ? `<div class="plan-price"><span class="price-value">￥0</span><span class="price-period">${p.free}</span></div>` : `
+        ${id === 'community' ? `<div class="plan-price"><span class="price-value">${money(0)}</span><span class="price-period">${p.free}</span></div>` : `
         <div class="plan-tier"><span class="tier-name" data-personal-tier="${id}">${tierName(id)}</span><div class="price-tier-control">
-          <div class="plan-price"><span class="price-value">￥<span data-price="${id}">${personalPrice(id)}</span></span><span class="price-period" data-period>${period}</span></div>
+          <div class="plan-price"><span class="price-value">${currencySymbol()}<span data-price="${id}">${personalPrice(id)}</span></span><span class="price-period" data-period>${period}</span></div>
           <button type="button" class="tier-toggle" data-tier-toggle="${id}" aria-pressed="${state.personalTiers[id] === 1}" aria-label="${tierToggleLabel(id)}" aria-describedby="${id}-tier-tip"><span class="tier-arrow-window" aria-hidden="true"><span class="tier-arrow-track">${personalIcon('arrow-up')}${personalIcon('arrow-up')}</span></span></button>
           <span class="feature-tooltip tier-tooltip" role="tooltip" popover="manual" id="${id}-tier-tip">${tierTooltipLabel(id)}</span>
         </div><div class="plan-savings" data-savings="${id}"${annual ? '' : ' hidden'}>${annualSavings(id)}</div></div>`}
@@ -224,7 +245,7 @@
     $('.education').inert = team;
     $('.education').setAttribute('aria-hidden',String(team));
     copy.zh['comparison.subtitle'] = team ? '详细对比个人与团队套餐及功能权益' : '详细对比个人创作套餐及功能权益';
-    copy.en['comparison.subtitle'] = team ? 'Compare individual and team plans and features' : 'Compare individual plans and features';
+    copy.en['comparison.subtitle'] = team ? 'Compare individual and team plans, features and benefits in detail' : 'Compare individual plans and their features and benefits in detail';
     $('[data-i18n="comparison.subtitle"]').textContent = t('comparison.subtitle');
     $('.header-language').textContent = state.lang === 'zh' ? 'English' : '中文';
     persistPreviewState();
@@ -257,11 +278,11 @@
   document.body.append(dialog);
   window.openPricingDialog = id => {
     const zh = state.lang === 'zh';
-    const title = id === 'team' ? (zh ? '团队方案咨询' : 'D5 for Teams') : id === 'education' ? (zh ? 'D5 学生版申请' : 'D5 for Education') : P()[id].name;
+    const title = id === 'team' ? (zh ? '团队方案咨询' : 'Team plan consultation') : id === 'education' ? (zh ? 'D5 学生版申请' : 'D5 Student Plan application') : P()[id].name;
     let body;
     if (id === 'team') body = `<p>${zh ? '按团队需求自由组合基础席位与专业席位，协作管理并共享 AI 积分。' : 'Mix Basic and Pro seats for your team, manage collaboration and share AI credits.'}</p><dl><dt>${teamFeatures[state.lang][1].title}</dt><dd>${teamFeatures[state.lang][1].items[0]}</dd><dt>${teamFeatures[state.lang][2].title}</dt><dd>${teamFeatures[state.lang][2].items[0]}</dd><dt>${zh ? 'AI 积分' : 'AI credits'}</dt><dd>${zh ? '团队共享' : 'Shared across the team'}</dd></dl><p>${zh ? '当前为方案预览，咨询入口尚未接入。' : 'This preview is not connected to the sales consultation service yet.'}</p>`;
-    else if (id === 'education') body = `<p>${zh ? '专为高校在校生推出的特别权益方案，助力教与学。申请入口将在正式上线后开放。' : 'Special benefits for students and educators. Applications will open with the official release.'}</p>`;
-    else body = `${id === 'community' ? '' : `<p class="dialog-tier">${tierName(id)}</p>`}<div class="dialog-price">￥${id === 'community' ? '0' : personalPrice(id)} <span class="price-period">${id === 'community' ? P().free : pricePeriod()}</span></div>${id !== 'community' && state.billing === 'annual' ? `<div class="plan-savings">${annualSavings(id)}</div><p class="annual-total">${zh ? `按年支付 ￥${selectedTier(id)[`${id}Annual`]}/年` : `Billed yearly: ￥${selectedTier(id)[`${id}Annual`]}/year`}</p>` : ''}<p>${zh ? '已选好你的创作方案。当前为交互预览，购买与账号服务尚未接入，不会创建订单。' : 'Your plan is selected. Checkout and account services are not connected in this preview; no order is created.'}</p>`;
+    else if (id === 'education') body = `<p>${zh ? '专为高校在校生推出的特别权益方案，助力教与学。申请入口将在正式上线后开放。' : 'Special benefits for university and college students to support teaching and learning. Applications will open with the official release.'}</p>`;
+    else body = `${id === 'community' ? '' : `<p class="dialog-tier">${tierName(id)}</p>`}<div class="dialog-price">${money(id === 'community' ? 0 : personalPrice(id))} <span class="price-period">${id === 'community' ? P().free : pricePeriod()}</span></div>${id !== 'community' && state.billing === 'annual' ? `<div class="plan-savings">${annualSavings(id)}</div><p class="annual-total">${zh ? `按年支付 ${money(selectedPrices(id)[`${id}Annual`])}/年` : `Billed yearly: ${money(selectedPrices(id)[`${id}Annual`])}/year`}</p>` : ''}<p>${zh ? '已选好你的创作方案。当前为交互预览，购买与账号服务尚未接入，不会创建订单。' : 'Your plan is selected. Checkout and account services are not connected in this preview; no order is created.'}</p>`;
     dialog.innerHTML = `<button type="button" class="dialog-close" data-close-dialog aria-label="${zh ? '关闭' : 'Close'}">${zh ? '关闭' : 'Close'}</button><h2 id="pricing-dialog-title">${title}</h2>${body}<button class="plan-button" type="button" data-close-dialog>${zh ? '继续了解方案' : 'Keep exploring'}</button>`;
     dialog.showModal();
   };
@@ -276,7 +297,7 @@
       syncTier();
       $(`[data-ai-features="${id}"]`).innerHTML = aiFeatures(id);
       persistPreviewState();
-      $('#announcer').textContent = `${P()[id].name} · ${tierName(id)} · ￥${personalPrice(id)}${pricePeriod()}`;
+      $('#announcer').textContent = `${P()[id].name} · ${tierName(id)} · ${money(personalPrice(id))}${pricePeriod()}`;
     }
     if (target.hasAttribute('data-select-plan')) window.openPricingDialog(target.dataset.selectPlan);
     if (target.hasAttribute('data-contact-sales')) window.openPricingDialog('team');
@@ -289,6 +310,9 @@
       comparisonExpanded = !comparisonExpanded;
       target.setAttribute('aria-expanded',String(comparisonExpanded));
       $$('.compare-row').forEach(row => { row.hidden = !comparisonExpanded; });
+    }
+    if (target.hasAttribute('data-billing-toggle')) {
+      $('#announcer').textContent = ['basic','pro'].map(id => `${P()[id].name} · ${tierName(id)} · ${money(personalPrice(id))}${pricePeriod()}`).join('; ');
     }
     if (target.hasAttribute('data-billing-toggle') || target.hasAttribute('data-lang')) persistPreviewState();
   });

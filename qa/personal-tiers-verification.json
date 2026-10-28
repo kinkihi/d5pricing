@@ -3,8 +3,9 @@
   "checks": [
     "All three cards use the Figma Render/AI groups, exact entry-tier limits and current subscription labels.",
     "All eight independent tier/billing combinations show the correct monthly prices, annual savings, original monthly rates, annual payment totals and AI allowances.",
+    "All eight USD tier/billing combinations match the attachment, including savings and annual totals; benefits match Chinese, rapid switches settle, and reload/language changes preserve tiers with the correct currency.",
     "Nine interrupted tier/billing reversals settle correctly; Enter/Space work with retained focus and an announced selection.",
-    "Different Basic/Pro selections persist through reload, audience round trips and language changes.",
+    "Different Basic/Pro selections persist through reload, audience round trips and language changes, switching to USD in English.",
     "Chinese/English advanced annual cards fit at 1920, 1440, 1024, 961, 820, 390 and 320px.",
     "Benefit tooltips are keyboard accessible; all original SVGs load at 16px; reduced-motion prices update immediately.",
     "All credit estimates, minimum-rate explanations and the D5 Render 3.1 tooltip match the Figma copy and gray two-level styling; hover and Escape work.",

@@ -65,6 +65,59 @@ let browser;
   }
   checks.push('All eight independent tier/billing combinations show the correct monthly prices, annual savings, original monthly rates, annual payment totals and AI allowances.');
 
+  // USD prices from the overseas reference; benefits remain translations of Chinese.
+  await page.locator('[data-language-toggle]').click();
+  assert.equal(await page.locator('.community .price-value').innerText(),'$0');
+  assert.equal(await page.locator('[data-i18n="education.title"]').innerText(),'D5 Student Plan');
+  assert.match(await page.locator('[data-i18n="education.subtitle"]').innerText(),/university and college students/);
+  assert.match(await page.locator('.pro .render-features').innerText(),/video rendering at multiple frame rates and formats/);
+  for (const annual of [false,true]) {
+    await setBilling(annual);
+    for (const [basic,pro] of [[false,false],[true,false],[true,true],[false,true]]) {
+      await setTier('basic',basic); await setTier('pro',pro); await settle();
+      const expected = annual ? [basic ? 20 : 6,pro ? 42 : 30] : [basic ? 25 : 7,pro ? 55 : 38];
+      for (const [i,id] of ['basic','pro'].entries()) {
+        const advanced = id === 'basic' ? basic : pro;
+        const monthly = id === 'basic' ? (advanced ? 25 : 7) : (advanced ? 55 : 38);
+        const total = id === 'basic' ? (advanced ? 240 : 72) : (advanced ? 504 : 360);
+        assert.equal(await amount(id),String(expected[i]));
+        assert.equal(await renderedAmount(id),String(expected[i]));
+        assert.equal(await page.locator(`.${id} .price-value`).evaluate(el => el.firstChild.textContent),'$');
+        const ai = await page.locator(`[data-ai-features="${id}"]`).innerText();
+        assert.match(ai,new RegExp(advanced ? '4,500 AI credits' : '1,500 AI credits'));
+        assert.match(ai,new RegExp(advanced ? '6 concurrent' : '4 concurrent'));
+        assert.match(ai,new RegExp(advanced ? '4K and video up to 4K' : '2K and video up to 720p'));
+        const savings = page.locator(`[data-savings="${id}"]`);
+        assert.equal(await savings.isVisible(),annual);
+        await page.locator(`[data-select-plan="${id}"]`).click();
+        assert.equal(await page.locator('.dialog-price').innerText(),`$${expected[i]} ${annual ? '/mo, billed yearly' : '/month'}`);
+        if (annual) {
+          assert.equal(await savings.locator('.saving-badge').innerText(),`Save $${monthly*12-total}/year`);
+          assert.equal(await savings.locator('s').innerText(),`$${monthly}`);
+          assert.equal(await page.locator('.annual-total').innerText(),`Billed yearly: $${total}/year`);
+        }
+        assert.doesNotMatch(await page.locator('body').innerText(),/[￥¥]/,'No CNY values remain in English');
+        await page.keyboard.press('Escape');
+      }
+    }
+  }
+  await setTier('basic',false); await setTier('pro',false); await setBilling(false); await settle();
+  await page.evaluate(async () => {
+    for(let i=0;i<9;i++) {
+      document.querySelector('[data-tier-toggle="basic"]').click();
+      document.querySelector('[data-billing-toggle]').click();
+      await new Promise(resolve => setTimeout(resolve,35));
+    }
+  });
+  await settle();
+  assert.equal(await renderedAmount('basic'),'20'); assert.equal(await renderedAmount('pro'),'30');
+  assert.match(await page.locator('#announcer').innerText(),/Basic.*Advanced.*\$20/);
+  await page.reload();
+  assert.equal(await amount('basic'),'20'); assert.equal(await amount('pro'),'30');
+  await page.locator('[data-language-toggle]').click();
+  assert.equal(await amount('basic'),'99'); assert.equal(await amount('pro'),'160');
+  checks.push('All eight USD tier/billing combinations match the attachment, including savings and annual totals; benefits match Chinese, rapid switches settle, and reload/language changes preserve tiers with the correct currency.');
+
   await setTier('basic',false); await setTier('pro',false); await setBilling(false); await settle();
   const button = await toggle('basic').elementHandle();
   await page.evaluate(async () => {
@@ -93,8 +146,8 @@ let browser;
   await page.locator('[data-audience="personal"]').click(); await page.waitForTimeout(850);
   await page.locator('[data-language-toggle]').click();
   assert.equal(await tier('basic'),'Advanced'); assert.equal(await tier('pro'),'Starter');
-  assert.equal(await amount('basic'),'99'); assert.equal(await amount('pro'),'160');
-  checks.push('Different Basic/Pro selections persist through reload, audience round trips and language changes.');
+  assert.equal(await amount('basic'),'20'); assert.equal(await amount('pro'),'30');
+  checks.push('Different Basic/Pro selections persist through reload, audience round trips and language changes, switching to USD in English.');
 
   for (const lang of ['en','zh']) {
     if(await page.locator('html').getAttribute('lang') !== (lang === 'zh' ? 'zh-CN' : 'en')) await page.locator('[data-language-toggle]').click();

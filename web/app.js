@@ -38,7 +38,7 @@ const copy = {
   en: {
     'faq.title': 'FAQ',
     'hero.title': 'Find the right D5 plan for you',
-    'hero.subtitle': 'From your first exploration to your next professional delivery, more ideas, more possibilities',
+    'hero.subtitle': 'From your first spark of inspiration to your next professional project delivery, more creativity, more possibilities',
     'audience.personal': 'For creators', 'audience.team': 'For teams',
     'billing.monthly': 'Monthly', 'billing.annual': 'Yearly', 'billing.discount': 'Save x%',
     'billing.toAnnual': 'Switch to yearly billing', 'billing.toMonthly': 'Switch to monthly billing',
@@ -46,14 +46,14 @@ const copy = {
     'workflow.title': 'Workflow Comparison', 'workflow.subtitle': 'Find the D5 workflow that fits you',
     'comparison.title': 'Compare all features', 'comparison.subtitle': 'Detailed comparison of plans and features',
     'faq.q1': 'Can D5 Pro be upgraded to D5 for Teams?', 'faq.a1': 'D5 for Teams is designed for collaborative work and centralized management. Availability and upgrade details will follow the product announcement.',
-    'faq.q2': 'What am I allowed to do with D5 Community license?', 'faq.a2': 'The Community plan is for exploring D5 AI creation features. Generated content is not for commercial use.',
+    'faq.q2': 'What can I do with a D5 Community license?', 'faq.a2': 'The Community plan lets individuals explore D5’s AI creation features. Generated content cannot be used commercially.',
     'faq.q3': 'How do I get an invoice?', 'faq.a3': 'After purchase, request and download an invoice from your account orders page.',
     'footer.product': 'Product', 'footer.whyD5': 'Why D5', 'footer.whatsNew': 'What’s New', 'footer.pricing': 'Pricing', 'footer.download': 'Download', 'footer.teams': 'D5 for Teams', 'footer.education': 'D5 for Education', 'footer.roadmap': 'Roadmap', 'footer.assets': 'Asset Library',
     'footer.support': 'Support', 'footer.help': 'Help Center', 'footer.requirements': 'System Requirements', 'footer.space': 'My Space',
     'footer.learn': 'Learn', 'footer.tutorial': 'Tutorials', 'footer.sample': 'Sample Scene', 'footer.gallery': 'Gallery', 'footer.blog': 'Blog', 'footer.webinars': 'Webinars', 'footer.certification': 'Certification', 'footer.instructor': 'D5 Instructor',
-    'footer.community': 'Community', 'footer.forum': 'Forum', 'footer.awards': 'D5 Awards', 'footer.creator': 'Champion Program', 'footer.campus': 'Campus Ambassador', 'footer.userGroup': 'User Group', 'footer.winPro': 'Win D5 Pro',
+    'footer.community': 'Community', 'footer.forum': 'Forum', 'footer.awards': 'D5 Awards', 'footer.creator': 'Creator Program', 'footer.campus': 'Campus Ambassador', 'footer.userGroup': 'User Group', 'footer.winPro': 'Win D5 Pro',
     'footer.business': 'For Business', 'footer.reseller': 'Become a Reseller', 'footer.findReseller': 'Find a Reseller', 'footer.affiliate': 'Affiliate Program', 'footer.technology': 'Technology Partners', 'footer.brandKit': 'Brand Kit',
-    'footer.company': 'Company', 'footer.about': 'About Us', 'footer.careers': 'Career',
+    'footer.company': 'Company', 'footer.about': 'About Us', 'footer.careers': 'Careers',
     'footer.subscribe': 'Hear from us', 'footer.newsletter': 'Subscribe to get the latest news, articles, resources and inspiration.', 'footer.emailLabel': 'Email address', 'footer.emailPlaceholder': 'Enter your email', 'footer.next': 'Next', 'footer.followTitle': 'Follow us',
     'footer.copyright': 'Dimension 5 Techs. © 2026 Dimension 5. All rights reserved.', 'footer.privacy': 'Privacy Policy', 'footer.service': 'Service Agreement', 'footer.join': 'Join Us',
   },
@@ -71,7 +71,7 @@ const plans = {
   },
   en: {
     tierNames: ['Starter', 'Light', 'Standard', 'Ultra'],
-    credits: 'credits', perMonth: '/mo', monthly: '/month', annual: '/year', free: '/free', firstMonth: 'First month ￥39', upgrade: 'Upgrade now', download: 'Free Download',
+    credits: 'credits', perMonth: '/mo', monthly: '/month', annual: '/year', free: '/free trial', firstMonth: 'First month ￥39', upgrade: 'Upgrade now', download: 'Free Download',
     community: { desc: 'Start exploring your ideas', name: 'Community', info: 'One-time 300 trial credits', list: ['2 concurrent tasks', 'Selected models', 'AI images up to 1K', 'AI videos up to 480P', 'AI credit packs unavailable', 'Not for commercial use'] },
     basic: { desc: 'For everyday creation', name: 'Basic', list: ['Credits issued by monthly tier', '4 concurrent tasks', 'All models', 'AI images up to 2K', 'AI videos up to 720P', 'AI credit packs available', 'AI content for commercial use'] },
     pro: { desc: 'Professional expression, amplified', name: 'Pro', list: ['Credits issued by monthly tier', '4 concurrent tasks', 'All models', 'AI images up to 4K', 'AI videos up to 4K', ['AI credit packs available', '10% bonus'], 'All for commercial use'] },
@@ -241,6 +241,7 @@ reducedMotion.addEventListener('change', () => {
 
 function applyLanguage() {
   document.documentElement.lang = state.lang === 'zh' ? 'zh-CN' : 'en';
+  $('#announcer').textContent = '';
   document.title = state.lang === 'zh' ? 'D5 · 选择你的创作方案' : 'D5 · Choose your D5 plan';
   $$('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   $$('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
