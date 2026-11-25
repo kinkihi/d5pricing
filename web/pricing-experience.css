@@ -181,6 +181,10 @@ body.is-plan-subnav .plan-subnav { opacity: 1; visibility: visible; pointer-even
 .plan-subnav .plan-price { height: auto; }
 .plan-subnav .price-value { font-size: 28px; line-height: 34px; letter-spacing: 0; }
 .plan-subnav .plan-savings { padding-top: 0; }
+.plan-subnav-inner.is-team { display: flex; justify-content: center; }
+.plan-subnav-inner.is-team .plan-subnav-card { width: calc((100% - 2 * var(--card-gap)) / 3); background: #0e0f16; }
+.plan-subnav-card.team .price-value { font-size: 24px; line-height: 32px; letter-spacing: -2px; }
+.plan-subnav-card.team .plan-button { background: #656ad9; border: 1px solid var(--border-6); color: #fff; }
 .bonus-badge { flex: none; height: 28px; padding: 2px 8px 2px 16px; border-radius: 8px; background: linear-gradient(269deg, rgba(119,51,255,.4) .45%, rgba(188,32,255,0) 103%); color: #c9acff; font-size: 11px; font-weight: 500; line-height: 24px; white-space: nowrap; }
 .tier-toggle { position: relative; display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,.06); border-radius: 50%; background: rgba(255,255,255,.06); }
 .tier-toggle:hover { background: rgba(255,255,255,.16); }
@@ -247,6 +251,8 @@ body.is-plan-subnav .plan-subnav { opacity: 1; visibility: visible; pointer-even
   .plan-subnav-card { flex: 0 0 min(300px, 84vw); scroll-snap-align: start; padding: 12px; gap: 8px; }
   .plan-subnav .price-value { font-size: 22px; line-height: 28px; white-space: nowrap; }
   .plan-subnav .multiplier-option { min-width: 28px; height: 28px; padding: 4px; font-size: 12px; }
+  .plan-subnav-inner.is-team { display: block; overflow: visible; }
+  .plan-subnav-inner.is-team .plan-subnav-card { width: 100%; }
   .header-language { height: 36px; font-size: 12px; }
   .hero { padding: 56px 0 24px; min-height: 0; gap: 16px; }
   .hero h1 { font-size: clamp(26px,6.5vw,42px); line-height: 1.3; }

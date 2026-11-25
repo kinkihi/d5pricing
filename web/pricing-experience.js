@@ -184,7 +184,6 @@
     cardObserver.disconnect();
     $$('#plan-grid .plan-card').forEach(card => cardObserver.observe(card));
     $$('.personal-card .plan-list').forEach(list => cardObserver.observe(list));
-    renderSubnav();
     syncAudience();
     document.dispatchEvent(new Event('d5:shaders'));
   };
@@ -201,11 +200,18 @@
   function renderSubnav() {
     const p = P();
     const annual = state.billing === 'annual';
-    $('#plan-subnav').innerHTML = `<div class="plan-subnav-inner">${['community','basic','pro'].map(id => `<article class="plan-subnav-card ${id}">
+    const zh = state.lang === 'zh';
+    const personal = ['community','basic','pro'].map(id => `<article class="plan-subnav-card ${id}">
       <h2>${p[id].name}</h2>
       ${id === 'community' ? `<div class="plan-price"><span class="price-value">${money(0)}</span><span class="price-period">${p.free}</span></div>` : `${priceControl(id)}<div class="plan-savings${annual ? '' : ' is-off'}" data-savings="${id}">${annualSavings(id)}</div>`}
       <button type="button" class="plan-button" data-select-plan="${id}" data-purchase="${id}">${id === 'community' ? p.download : purchaseLabel()}</button>
-    </article>`).join('')}</div>`;
+    </article>`).join('');
+    const team = `<article class="plan-subnav-card team">
+      <h2>${zh ? '团队版' : 'Teams'}</h2>
+      <div class="plan-price"><span class="price-value">${zh ? '联系我们' : 'Contact us'}</span></div>
+      <button type="button" class="plan-button" data-contact-sales="team">${zh ? '咨询购买' : 'Contact sales'}</button>
+    </article>`;
+    $('#plan-subnav').innerHTML = `<div class="plan-subnav-inner${state.audience === 'team' ? ' is-team' : ''}">${state.audience === 'team' ? team : personal}</div>`;
     syncPlanSubnav();
   }
   function syncPlanSubnav() {
@@ -213,7 +219,7 @@
     const comparison = $('#comparison');
     if (!bar || !comparison) return;
     const box = comparison.getBoundingClientRect();
-    const show = state.audience !== 'team' && box.top <= 88 && box.bottom > 220;
+    const show = box.top <= 88 && box.bottom > 220;
     document.body.classList.toggle('is-plan-subnav', show);
     bar.setAttribute('aria-hidden', String(!show));
     if (show) bar.removeAttribute('inert');
@@ -591,6 +597,7 @@
 
   function syncAudience() {
     const team = state.audience === 'team';
+    renderSubnav();
     $('#pricing').classList.toggle('is-team',team);
     $('#plan-grid').classList.toggle('is-team',team);
     $('#plan-grid').setAttribute('aria-labelledby',`tab-${state.audience}`);
