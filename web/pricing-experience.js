@@ -165,14 +165,9 @@
       ${id === 'pro' ? '<div class="card-glow" aria-hidden="true"><div class="pro-wave"><canvas data-shader="wave"></canvas></div></div>' : ''}
       <div class="personal-card-header"><div class="plan-top">
         <div class="plan-title"><div class="plan-name"><h2>${p[id].name}</h2></div></div>
-        ${id === 'community' ? `<div class="plan-price"><span class="price-value">${money(0)}</span><span class="price-period">${p.free}</span></div>` : `
-        <div class="plan-tier"><div class="price-tier-control">
-          <div class="plan-price"><span class="price-value">${currencySymbol()}<span data-price="${id}">${personalPrice(id)}</span></span><span class="price-period" data-period>${period}</span></div>
-          <div class="multiplier${state.personalTiers[id] === 1 ? ' is-triple' : ''}" role="group" aria-label="${state.lang === 'zh' ? `${p[id].name}积分倍数` : `${p[id].name} credit multiplier`}">
-            ${[0,1].map(index => `<button type="button" class="multiplier-option" data-tier-set="${id}" data-tier-index="${index}" aria-pressed="${state.personalTiers[id] === index}">${personalTiers[index].names[state.lang]}</button>`).join('')}
-          </div>
-        </div><div class="plan-savings" data-savings="${id}"${annual ? '' : ' hidden'}>${annualSavings(id)}</div></div>`}
+        ${id === 'community' ? `<div class="plan-price"><span class="price-value">${money(0)}</span><span class="price-period">${p.free}</span></div>` : priceControl(id)}
       </div>
+      ${id === 'community' ? '' : `<div class="plan-savings${annual ? '' : ' is-off'}" data-savings="${id}">${annualSavings(id)}</div>`}
       <button type="button" class="plan-button" data-select-plan="${id}" data-purchase="${id}">${id === 'community' ? p.download : purchaseLabel()}</button></div>
       ${featureSections(id)}
     </article>`;
@@ -189,16 +184,46 @@
     cardObserver.disconnect();
     $$('#plan-grid .plan-card').forEach(card => cardObserver.observe(card));
     $$('.personal-card .plan-list').forEach(list => cardObserver.observe(list));
+    renderSubnav();
     syncAudience();
     document.dispatchEvent(new Event('d5:shaders'));
   };
 
+  function priceControl(id) {
+    const name = P()[id].name;
+    return `<div class="plan-tier"><div class="price-tier-control">
+      <div class="plan-price"><span class="price-value">${currencySymbol()}<span data-price="${id}">${personalPrice(id)}</span></span><span class="price-period" data-period>${pricePeriod()}</span></div>
+      <div class="multiplier${state.personalTiers[id] === 1 ? ' is-triple' : ''}" data-multiplier="${id}" role="group" aria-label="${state.lang === 'zh' ? `${name}积分倍数` : `${name} credit multiplier`}">
+        ${[0,1].map(index => `<button type="button" class="multiplier-option" data-tier-set="${id}" data-tier-index="${index}" aria-pressed="${state.personalTiers[id] === index}">${personalTiers[index].names[state.lang]}</button>`).join('')}
+      </div>
+    </div></div>`;
+  }
+  function renderSubnav() {
+    const p = P();
+    const annual = state.billing === 'annual';
+    $('#plan-subnav').innerHTML = `<div class="plan-subnav-inner">${['community','basic','pro'].map(id => `<article class="plan-subnav-card ${id}">
+      <h2>${p[id].name}</h2>
+      ${id === 'community' ? `<div class="plan-price"><span class="price-value">${money(0)}</span><span class="price-period">${p.free}</span></div>` : `${priceControl(id)}<div class="plan-savings${annual ? '' : ' is-off'}" data-savings="${id}">${annualSavings(id)}</div>`}
+      <button type="button" class="plan-button" data-select-plan="${id}" data-purchase="${id}">${id === 'community' ? p.download : purchaseLabel()}</button>
+    </article>`).join('')}</div>`;
+    syncPlanSubnav();
+  }
+  function syncPlanSubnav() {
+    const bar = $('#plan-subnav');
+    const comparison = $('#comparison');
+    if (!bar || !comparison) return;
+    const box = comparison.getBoundingClientRect();
+    const show = state.audience !== 'team' && box.top <= 88 && box.bottom > 220;
+    document.body.classList.toggle('is-plan-subnav', show);
+    bar.setAttribute('aria-hidden', String(!show));
+    if (show) bar.removeAttribute('inert');
+    else bar.setAttribute('inert','');
+  }
   syncTier = function () {
     $('#plan-grid').classList.toggle('is-annual',state.billing === 'annual');
     for (const id of ['basic','pro']) {
-      animateNumber($(`[data-price="${id}"]`),personalPrice(id));
-      const track = $(`.plan-card.${id} .multiplier`);
-      track.classList.toggle('is-triple',state.personalTiers[id] === 1);
+      $$(`[data-price="${id}"]`).forEach(el => animateNumber(el, personalPrice(id)));
+      $$(`[data-multiplier="${id}"]`).forEach(track => track.classList.toggle('is-triple', state.personalTiers[id] === 1));
       $$(`[data-tier-set="${id}"]`).forEach(button => {
         const selected = Number(button.dataset.tierIndex) === state.personalTiers[id];
         button.setAttribute('aria-pressed',String(selected));
@@ -207,9 +232,10 @@
       if (badge) badge.textContent = tierName(id);
       const features = $(`[data-ai-features="${id}"]`);
       if (features) features.innerHTML = aiFeatures(id);
-      const savings = $(`[data-savings="${id}"]`);
-      savings.innerHTML = annualSavings(id);
-      savings.hidden = state.billing !== 'annual';
+      $$(`[data-savings="${id}"]`).forEach(el => {
+        el.innerHTML = annualSavings(id);
+        el.classList.toggle('is-off', state.billing !== 'annual');
+      });
     }
     $$('[data-period]').forEach(el => { el.textContent = pricePeriod(); });
     $$('[data-purchase]').forEach(el => {
@@ -492,13 +518,22 @@
     if (value === no) return `<img src="assets/figma/personal-close.svg" alt="${zh ? '不支持' : 'Not included'}">`;
     return `<span class="compare-text">${value}</span>`;
   }
+  const collapsedCompare = new Set();
   renderCompare = function () {
     const team = state.audience === 'team';
     const catalog = (team ? teamCompare : personalCompare)[state.lang];
     const span = catalog.columns.length + 1;
-    const body = catalog.groups.map(([title, rows]) => `<tr><th colspan="${span}" class="compare-group">${title}</th></tr>` + rows.map(row => row.sub
-      ? `<tr class="compare-subgroup"><th colspan="${span}" scope="colgroup">${row.sub}</th></tr>`
-      : `<tr><th scope="row" class="lead">${row[0]}</th>${row.slice(1).map(value => `<td class="col">${compareCell(value)}</td>`).join('')}</tr>`).join('')).join('');
+    const scope = team ? 'team' : 'personal';
+    const body = catalog.groups.map(([title, rows], index) => {
+      const key = `${scope}-${index}`;
+      const open = !collapsedCompare.has(key);
+      const [main, sub] = title.split(' · ');
+      const head = `<tr class="compare-group-row"><th colspan="${span}" class="compare-group"><button type="button" data-compare-toggle="${key}" aria-expanded="${open}"><img src="assets/figma/caret-down.svg" alt=""><span class="compare-heading"><strong>${main}</strong>${sub ? `<span class="compare-sub">${sub}</span>` : ''}</span></button></th></tr>`;
+      const panel = rows.map(row => row.sub
+        ? `<tr class="compare-subgroup" data-compare-panel="${key}"${open ? '' : ' hidden'}><th colspan="${span}" scope="colgroup">${row.sub}</th></tr>`
+        : `<tr data-compare-panel="${key}"${open ? '' : ' hidden'}><th scope="row" class="lead">${row[0]}</th>${row.slice(1).map(value => `<td class="col">${compareCell(value)}</td>`).join('')}</tr>`).join('');
+      return head + panel;
+    }).join('');
     $('#compare').innerHTML = `<table class="compare-table${team ? ' is-team' : ''}">
       <thead class="compare-head"><tr><th scope="col" class="lead"><span>${state.lang === 'zh' ? '功能与权益' : 'Features'}</span></th>
         ${catalog.columns.map(title => `<th scope="col" class="col"><span class="column-title">${title}</span></th>`).join('')}</tr></thead>
@@ -545,6 +580,7 @@
     $('[data-i18n="comparison.subtitle"]').textContent = t('comparison.subtitle');
     $('.header-language').textContent = state.lang === 'zh' ? 'English' : '中文';
     persistPreviewState();
+    syncPlanSubnav();
   }
 
   window.setPricingAudience = audience => {
@@ -599,6 +635,14 @@
     if (target.hasAttribute('data-select-plan')) window.openPricingDialog(target.dataset.selectPlan);
     if (target.hasAttribute('data-contact-sales')) window.openPricingDialog('team');
     if (target.closest('.education')) { event.preventDefault(); window.openPricingDialog('education'); }
+    if (target.hasAttribute('data-compare-toggle')) {
+      const key = target.dataset.compareToggle;
+      const open = target.getAttribute('aria-expanded') !== 'false';
+      if (open) collapsedCompare.add(key);
+      else collapsedCompare.delete(key);
+      target.setAttribute('aria-expanded', String(!open));
+      $$(`[data-compare-panel="${key}"]`).forEach(row => { row.hidden = open; });
+    }
     if (target.hasAttribute('data-language-toggle')) {
       // Reuse the existing language events for all page copy.
       $(`.footer-legal [data-lang="${state.lang === 'zh' ? 'en' : 'zh'}"]`).click();
@@ -688,8 +732,8 @@
     else if (!event.target.closest('.feature-tooltip')) hideTooltip();
   });
   document.addEventListener('keydown',event => { if (event.key === 'Escape') hideTooltip(); });
-  window.addEventListener('resize',positionTooltip);
-  window.addEventListener('scroll',positionTooltip,true);
+  window.addEventListener('resize',() => { positionTooltip(); syncPlanSubnav(); });
+  window.addEventListener('scroll',() => { positionTooltip(); syncPlanSubnav(); },true);
   document.addEventListener('transitionend',event => {
     if (activeTooltip && event.target === activeTooltip.button.closest('.plan-card')) positionTooltip();
   });
