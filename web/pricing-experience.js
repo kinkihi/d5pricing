@@ -445,7 +445,7 @@
   const teamCompare = {
     zh: {
       columns: ['专业版','团队版'],
-      groups: [['功能权益对比', [
+      groups: [['功能', [
         ['成员管理', no, yes],
         ['积分共享池', no, yes],
         ['积分额度分配', no, yes],
@@ -464,7 +464,7 @@
     },
     en: {
       columns: ['Pro','Teams'],
-      groups: [['Feature comparison', [
+      groups: [['Features', [
         ['Member management', no, yes],
         ['Shared credit pool', no, yes],
         ['Credit quota allocation', no, yes],
