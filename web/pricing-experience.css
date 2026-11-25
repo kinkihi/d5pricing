@@ -96,6 +96,7 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .pricing.is-team .education { opacity: 0; visibility: hidden; pointer-events: none; }
 #comparison { padding-bottom: 120px; }
 #comparison .section-head { height: 154px; padding: 40px 0; }
+#comparison .section-head.row > div { gap: 0; }
 #comparison .section-head h2 { font-size: 32px; line-height: 39px; margin-bottom: 16px; }
 #comparison .section-head p { font-size: 16px; line-height: 19px; }
 .compare-table thead .lead { width: 38.8889%; padding-left: 20px; }
