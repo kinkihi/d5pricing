@@ -47,8 +47,8 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .plan-grid .price-value { font-size: 32px; letter-spacing: -2px; line-height: 39px; }
 .plan-grid .tag { padding: 4px 8px; font-size: 12px; line-height: 16px; font-weight: 600; background: #153e2b; white-space: nowrap; }
 .plan-grid .plan-list li { display: flex; align-items: center; gap: 4px; padding: 0; min-height: 32px; line-height: 20px; font-weight: 500; color: rgba(255,255,255,.9); }
-.plan-grid .feature-check { display: grid; place-items: center; flex: 0 0 32px; height: 32px; }
-.plan-grid .feature-check img { width: 16px; height: 16px; }
+.plan-grid .feature-check { display: grid; place-items: center; flex: 0 0 32px; width: 32px; min-width: 32px; max-width: 32px; height: 32px; overflow: hidden; }
+.plan-grid .feature-check img { width: 16px; height: 16px; max-width: 16px; max-height: 16px; }
 .plan-grid .plan-list em { margin-left: 4px; }
 .plan-grid .plan-button { flex: none; }
 .plan-grid .card-glow { position: absolute; z-index: 0; inset: 0; pointer-events: none; overflow: hidden; border-radius: 14px; }
@@ -68,7 +68,7 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .team-card-header { display: flex; flex-direction: column; gap: 16px; padding: 30px; }
 .plan-grid .team-card .plan-list { gap: 0; }
 .plan-grid .team-card .plan-list li { font-size: 14px; line-height: 22px; }
-.plan-grid .team-card .feature-check img { width: auto; height: auto; padding: 0; }
+.plan-grid .team-card .feature-check img { width: 16px; height: 16px; max-width: 16px; max-height: 16px; padding: 0; }
 .team-feature-section:not(:last-child) { border-bottom: 1px solid var(--border-10); padding-bottom: 15px; }
 .team-card .plan-button { background: #656ad9; border: 1px solid var(--border-6); }
 .team-card .plan-button:hover { background: #787de7; }
@@ -151,15 +151,16 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .plan-grid:not(.is-team) { height: var(--personal-desktop-height,764px); }
 .plan-grid .personal-card { height: auto; padding: 0; gap: 0; }
 .plan-grid.is-team .personal-card { max-height: 536px; overflow: hidden; }
-.personal-card-header { display: flex; flex-direction: column; justify-content: space-between; height: 248px; padding: 30px; gap: 16px; }
-.personal-card:not(.community) .personal-card-header { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 0; align-content: stretch; }
+.personal-card-header { display: flex; flex-direction: column; justify-content: space-between; height: 248px; min-height: 248px; padding: 30px; gap: 16px; }
+.personal-card:not(.community) .personal-card-header { display: flex; flex-direction: column; justify-content: flex-start; gap: 0; height: 248px; min-height: 248px; }
+.personal-card:not(.community) .personal-card-header .plan-button { margin-top: auto; }
 .plan-tier { display: flex; flex-direction: column; align-items: flex-start; }
 .tier-name { display: flex; align-items: center; height: 32px; padding-inline: 4px; color: rgba(255,255,255,.6); font-size: 14px; line-height: 22px; }
 .price-tier-control { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; max-width: 100%; padding: 8px 8px 8px 16px; border-radius: 9999px; background: rgba(255,255,255,.1); }
 .price-tier-control .plan-price { flex-wrap: nowrap; min-width: 0; }
 .price-tier-control .price-period { white-space: nowrap; }
 .price-tier-control .price-value { flex-shrink: 0; letter-spacing: 0; }
-.plan-savings { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 4px 8px; align-self: start; max-height: 100%; padding: 8px 4px 0; overflow: hidden; font-size: 12px; font-weight: 500; line-height: 16px; }
+.plan-savings { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 4px 8px; align-self: start; min-width: 0; min-height: 0; padding: 8px 4px 0; overflow: hidden; font-size: 12px; font-weight: 500; line-height: 16px; }
 .plan-savings.is-off { visibility: hidden; }
 .plan-subnav .plan-savings.is-off { display: none; }
 .saving-badge { flex-shrink: 0; padding: 2px 8px; border-radius: 9999px; background: rgba(119,43,255,.3); color: #c9acff; }
@@ -207,16 +208,18 @@ body.is-plan-subnav .plan-subnav { opacity: 1; visibility: visible; pointer-even
 .ai-features { min-height: var(--ai-section-height,224px); border-bottom: 1px solid var(--border-10); }
 .workflow-features { min-height: var(--workflow-section-height,200px); }
 .community .ai-features { min-height: calc(var(--ai-section-height,224px) + var(--annual-header-extra,0px)); }
-.plan-grid .personal-card .plan-list { gap: 0; }
-.plan-grid .personal-card .feature-check img { width: auto; height: auto; padding: 0; }
+.plan-grid .personal-card .plan-list,
+.plan-grid .team-card .plan-list { width: 100%; gap: 0; }
+.plan-grid .personal-card .feature-check img { width: 16px; height: 16px; max-width: 16px; max-height: 16px; padding: 0; }
 .plan-grid .personal-card .plan-list li { font-size: 14px; line-height: 22px; }
+.plan-grid .plan-list li { width: 100%; min-width: 0; }
 .plan-grid .plan-list li.has-badge { justify-content: space-between; }
-.feature-main { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.feature-main { display: flex; align-items: center; flex: 1 1 0%; width: 100%; min-width: 0; gap: 4px; }
+.feature-copy { flex: 1 1 auto; min-width: 0; }
+.feature-info { display: inline-flex; align-items: center; vertical-align: middle; }
+.feature-info-button { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; vertical-align: middle; }
 .plan-grid .personal-card .unavailable { color: rgba(255,255,255,.4); }
-.feature-copy { min-width: 0; }
-.feature-info { display: inline-block; vertical-align: middle; }
-.feature-info-button { display: inline-grid; place-items: center; width: 32px; height: 32px; vertical-align: middle; }
-.feature-info-button img, .plan-feature-section h3 img { display: block; }
+.feature-info-button img, .plan-feature-section h3 img { display: block; width: 16px; height: 16px; }
 .feature-tooltip { position: fixed; inset: auto; width: max-content; max-width: min(380px,calc(100vw - 32px)); margin: 0; padding: 16px; color: var(--text-80); background: #393939; border: 1px solid var(--border-6); border-radius: 8px; font-family: var(--font); font-size: 12px; font-weight: 400; line-height: 20px; visibility: hidden; overflow-wrap: break-word; }
 .feature-tooltip:popover-open { display: flex; flex-direction: column; gap: 4px; visibility: visible; }
 .feature-tooltip.tier-tooltip { padding: 6px 10px; color: #fff; white-space: nowrap; }

@@ -75,9 +75,9 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .credit-info img { flex: none; width: 16px; height: 16px; padding: 1.5px; }
 .credit-info strong { font-size: 16px; font-weight: 500; line-height: 26px; }
 .credit-info > span { font-size: 14px; line-height: 22px; color: var(--text-80); }
-.rolling-number { display: inline-flex; align-items: flex-start; height: 1.15em; font-variant-numeric: tabular-nums; letter-spacing: 0; line-height: 1.15; vertical-align: baseline; }
-.number-wheel { display: inline-block; flex: none; width: 1ch; height: 1.15em; overflow: hidden; }
-.number-wheel-track { display: flex; flex-direction: column; }
+.rolling-number { display: inline-flex; align-items: flex-start; height: 1.15em; overflow: hidden; font-variant-numeric: tabular-nums; letter-spacing: 0; line-height: 1.15; vertical-align: baseline; }
+.number-wheel { position: relative; display: inline-block; flex: none; width: 1ch; height: 1.15em; overflow: hidden; vertical-align: top; }
+.number-wheel-track { position: absolute; top: 0; left: 0; display: flex; flex-direction: column; width: 100%; }
 .number-wheel-track > span { display: block; height: 1.15em; line-height: 1.15em; flex: none; }
 
 .plan-slider { position: relative; height: 32px; border: 1px solid var(--border-10); border-radius: 8px; background: rgba(255, 255, 255, .06); -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px); overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: pointer; }
