@@ -217,18 +217,297 @@
     });
   };
 
-  let comparisonExpanded = true;
+  const yes = 'yes', no = 'no';
+  const personalCompare = {
+    zh: {
+      columns: ['社区版','基础版','专业版'],
+      groups: [
+        ['产品', [
+          ['D5 Arco', yes, yes, yes],
+          ['D5 Render', yes, yes, yes],
+          ['D5 Lite', yes, yes, yes],
+          ['D5 Works', yes, yes, yes],
+        ]],
+        ['D5 Arco · AI 创作', [
+          ['模型', '部分开放', '全部开放', '全部开放'],
+          ['同时运行 AI 任务（画布＋对话合计）', '2', '1× 4；3× 6', '1× 4；3× 6'],
+          ['AI 图片最高规格', '1K', '1× 2K；3× 4K', '4K'],
+          ['AI 视频最高规格', '480P', '1× 720P；3× 4K', '4K'],
+          ['Arco 增强与放大', yes, yes, yes],
+          ['Arco 项目评论与反馈', yes, yes, yes],
+          ['技能', yes, yes, yes],
+          ['每个画布分享链接上限', '1', '3', '20'],
+          ['分享访问码设置', '无', yes, yes],
+          ['分享下载设置', '无', '可禁止下载', '可禁止下载'],
+          ['分享署名水印设置', yes, yes, yes],
+          ['对话分享数量', '不限', '不限', '不限'],
+        ]],
+        ['D5 Arco · 连接', [
+          ['与 D5 Render 连接', '限时支持', '限时支持', yes],
+          ['与 D5 Lite 连接', '限时支持', '限时支持', yes],
+          ['与 D5 Works 连接', '限时支持', '限时支持', yes],
+          ['自定义 MCP 连接', yes, yes, yes],
+        ]],
+        ['D5 Render · 场景与渲染', [
+          ['实时渲染、环境与材质编辑', yes, yes, yes],
+          ['地理天空和天气系统', yes, yes, yes],
+          ['地形系统和海洋系统', yes, yes, yes],
+          ['植物笔刷、路径与散布', yes, yes, yes],
+          ['素材库', '2100+', '2100+', '16000+'],
+          ['基础光源', yes, yes, yes],
+          ['自定义 HDRI、LUT、IES', yes, yes, yes],
+          ['Render 内指定 AI 功能（AI 氛围匹配、AI 图像后期、AI 材质生成、局部重绘）', no, no, '不限次数，不扣积分'],
+          ['文本/图片生成模型（使用消耗积分）', yes, yes, yes],
+          ['舞台灯与投影灯', no, no, yes],
+          ['城市生成', no, no, yes],
+          ['剖切工具', no, no, yes],
+          ['项目合并', no, no, yes],
+        ]],
+        ['D5 Render · 渲染输出与展示交付', [
+          ['图片和全景图渲染', '最高支持 16K', '最高支持 16K', '最高支持 16K'],
+          ['基础视频输出格式', '最高支持 4K', '最高支持 4K', '最高支持 4K'],
+          ['通道图渲染', yes, yes, yes],
+          ['视频序列帧与多帧率渲染', no, no, yes],
+          ['交互演示', '创建 1 个', '创建 1 个', '不限'],
+          ['空间漫游与全景漫游', '创建 1 个', '创建 1 个', '不限'],
+          ['双目立体全景图', no, no, yes],
+          ['VR 虚拟现实', no, no, yes],
+          ['XR 漫游', no, no, yes],
+          ['漫游项目管理', '1 个项目', '1 个项目', yes],
+          ['漫游信息和相机设置', yes, yes, yes],
+          ['锚点热点', yes, yes, yes],
+          ['高级显示设置（高级显示、密码保护、富媒体热点与户型导航）', no, no, yes],
+          ['分享链接设置（链接有效期、品牌水印配置、水印可见性管理）', no, no, yes],
+        ]],
+        ['D5 Render · 云工作空间', [
+          ['D5 Studio 个人预设', '5 个', '5 个', '不限'],
+          ['D5 精选预设', no, no, yes],
+        ]],
+        ['D5 Lite', [
+          ['Lite CLI（beta）', '限时支持', '限时支持', yes],
+          ['D5 Lite 实时渲染', yes, yes, yes],
+          ['材质和灯光编辑', yes, yes, yes],
+          ['环境和后期调整', yes, yes, yes],
+          ['图片与全景图渲染', yes, yes, yes],
+        ]],
+        ['D5 Works', [
+          ['Works MCP', '限时支持', '限时支持', yes],
+          ['单个付费商品购买（仅海外）', '原价购买', '原价购买', '享专属优惠价（-12%）'],
+        ]],
+        ['云存储', [
+          ['云空间', '限量', '1× 10 GB；3× 10 GB', '1× 10 GB；3× 10 GB'],
+        ]],
+        ['工作流插件', [
+          {sub:'D5 Render 同步插件'},
+          ['SketchUp 实时同步', yes, yes, yes],
+          ['Rhino 实时同步', yes, yes, yes],
+          ['3ds Max 实时同步', yes, yes, yes],
+          ['Archicad 实时同步', yes, yes, yes],
+          ['Blender 实时同步', yes, yes, yes],
+          ['Vectorworks 实时同步', yes, yes, yes],
+          ['Revit', yes, yes, yes],
+          ['Cinema 4D', yes, yes, yes],
+          {sub:'D5 Lite 同步插件'},
+          ['Lite for SketchUp', yes, yes, yes],
+          ['Lite for Rhino', yes, yes, yes],
+          ['Lite for Revit', yes, yes, yes],
+        ]],
+      ],
+    },
+    en: {
+      columns: ['Community','Basic','Pro'],
+      groups: [
+        ['Products', [
+          ['D5 Arco', yes, yes, yes],
+          ['D5 Render', yes, yes, yes],
+          ['D5 Lite', yes, yes, yes],
+          ['D5 Works', yes, yes, yes],
+        ]],
+        ['D5 Arco · AI creation', [
+          ['Models', 'Selected', 'All', 'All'],
+          ['Concurrent AI tasks (canvas + chat)', '2', '1× 4; 3× 6', '1× 4; 3× 6'],
+          ['Max AI image', '1K', '1× 2K; 3× 4K', '4K'],
+          ['Max AI video', '480P', '1× 720P; 3× 4K', '4K'],
+          ['Arco enhance and upscale', yes, yes, yes],
+          ['Arco comments and feedback', yes, yes, yes],
+          ['Skills', yes, yes, yes],
+          ['Share links per canvas', '1', '3', '20'],
+          ['Share access code', 'None', yes, yes],
+          ['Share download control', 'None', 'Can disable download', 'Can disable download'],
+          ['Share attribution watermark', yes, yes, yes],
+          ['Shared conversations', 'Unlimited', 'Unlimited', 'Unlimited'],
+        ]],
+        ['D5 Arco · Connections', [
+          ['Connect to D5 Render', 'Limited-time', 'Limited-time', yes],
+          ['Connect to D5 Lite', 'Limited-time', 'Limited-time', yes],
+          ['Connect to D5 Works', 'Limited-time', 'Limited-time', yes],
+          ['Custom MCP connection', yes, yes, yes],
+        ]],
+        ['D5 Render · Scenes and rendering', [
+          ['Real-time render, environment, and materials', yes, yes, yes],
+          ['Geo sky and weather', yes, yes, yes],
+          ['Terrain and ocean', yes, yes, yes],
+          ['Plant brush, path, and scatter', yes, yes, yes],
+          ['Asset library', '2,100+', '2,100+', '16,000+'],
+          ['Basic lights', yes, yes, yes],
+          ['Custom HDRI, LUT, IES', yes, yes, yes],
+          ['Selected Render AI (Atmosphere Match, post, materials, inpainting)', no, no, 'Unlimited, no credits'],
+          ['Text/image generation models (uses credits)', yes, yes, yes],
+          ['Stage and projector lights', no, no, yes],
+          ['City generation', no, no, yes],
+          ['Section tool', no, no, yes],
+          ['Project merge', no, no, yes],
+        ]],
+        ['D5 Render · Output and delivery', [
+          ['Image and panorama render', 'Up to 16K', 'Up to 16K', 'Up to 16K'],
+          ['Basic video output', 'Up to 4K', 'Up to 4K', 'Up to 4K'],
+          ['Channel render', yes, yes, yes],
+          ['Image sequence and multi-frame-rate video', no, no, yes],
+          ['Interactive presentation', 'Create 1', 'Create 1', 'Unlimited'],
+          ['Spatial and panorama tours', 'Create 1', 'Create 1', 'Unlimited'],
+          ['Stereo panorama', no, no, yes],
+          ['VR', no, no, yes],
+          ['XR tour', no, no, yes],
+          ['Tour project management', '1 project', '1 project', yes],
+          ['Tour info and camera settings', yes, yes, yes],
+          ['Anchor hotspots', yes, yes, yes],
+          ['Advanced display (password, rich hotspots, floorplan nav)', no, no, yes],
+          ['Share-link settings (expiry, brand watermark, visibility)', no, no, yes],
+        ]],
+        ['D5 Render · Cloud workspace', [
+          ['D5 Studio personal presets', '5', '5', 'Unlimited'],
+          ['D5 curated presets', no, no, yes],
+        ]],
+        ['D5 Lite', [
+          ['Lite CLI (beta)', 'Limited-time', 'Limited-time', yes],
+          ['D5 Lite real-time render', yes, yes, yes],
+          ['Material and light editing', yes, yes, yes],
+          ['Environment and post adjustments', yes, yes, yes],
+          ['Image and panorama render', yes, yes, yes],
+        ]],
+        ['D5 Works', [
+          ['Works MCP', 'Limited-time', 'Limited-time', yes],
+          ['Buying a paid item (overseas only)', 'List price', 'List price', 'Exclusive price (−12%)'],
+        ]],
+        ['Cloud storage', [
+          ['Cloud storage', 'Limited', '1× 10 GB; 3× 10 GB', '1× 10 GB; 3× 10 GB'],
+        ]],
+        ['Workflow plugins', [
+          {sub:'D5 Render sync plugins'},
+          ['SketchUp live sync', yes, yes, yes],
+          ['Rhino live sync', yes, yes, yes],
+          ['3ds Max live sync', yes, yes, yes],
+          ['Archicad live sync', yes, yes, yes],
+          ['Blender live sync', yes, yes, yes],
+          ['Vectorworks live sync', yes, yes, yes],
+          ['Revit', yes, yes, yes],
+          ['Cinema 4D', yes, yes, yes],
+          {sub:'D5 Lite sync plugins'},
+          ['Lite for SketchUp', yes, yes, yes],
+          ['Lite for Rhino', yes, yes, yes],
+          ['Lite for Revit', yes, yes, yes],
+        ]],
+      ],
+    },
+  };
+  const teamCompare = {
+    zh: {
+      columns: ['专业版','团队版'],
+      groups: [['功能权益对比', [
+        ['成员管理', no, yes],
+        ['积分共享池', no, yes],
+        ['积分额度分配', no, yes],
+        ['数据看板', no, yes],
+        ['团队资产管理', no, yes],
+        ['Arco 团队项目', no, yes],
+        ['Arco 画布多人协作', no, yes],
+        ['同时运行 AI 任务（画布＋对话合计）', '最多 6 个', '最多 10 个'],
+        ['Render 项目多人编辑', no, '专业席位支持'],
+        ['Render 团队预设', no, '专业席位支持'],
+        ['Render 第三方网盘集成', no, '专业席位支持'],
+        ['云空间', '10 GB', '100 GB'],
+        ['订阅积分有效期', '1 月', '1 年'],
+        ['充值积分有效期', '180 天', '365 天'],
+      ]]],
+    },
+    en: {
+      columns: ['Pro','Teams'],
+      groups: [['Feature comparison', [
+        ['Member management', no, yes],
+        ['Shared credit pool', no, yes],
+        ['Credit quota allocation', no, yes],
+        ['Analytics dashboard', no, yes],
+        ['Team asset management', no, yes],
+        ['Arco team projects', no, yes],
+        ['Multi-user Arco canvas', no, yes],
+        ['Concurrent AI tasks (canvas + chat)', 'Up to 6', 'Up to 10'],
+        ['Multi-user Render editing', no, 'Pro seats'],
+        ['Render team presets', no, 'Pro seats'],
+        ['Render third-party drive integration', no, 'Pro seats'],
+        ['Cloud storage', '10 GB', '100 GB'],
+        ['Subscription credit expiry', '1 month', '1 year'],
+        ['Top-up credit expiry', '180 days', '365 days'],
+      ]]],
+    },
+  };
+  const faqs = {
+    zh: {
+      personal: [
+        ['社区版、基础版和专业版怎么选？', '社区版免费提供 300 积分，适合体验；基础版适合以 AI 创作为主的用户；专业版适合需要 D5 Render、D5 Lite 及更完整专业可视化能力的用户。基础版和专业版均提供 1× / 3× 档位，可按 AI 用量与创作需求选择。'],
+        ['按月和按年购买有什么区别？如何升级或续费？', '按年购买一次支付全年费用，不自动续费；月订阅取消自动续费后，当前周期内权益继续有效。升级、续费和降档按独立规则执行。'],
+        ['积分如何发放、到期和充值？', '基础版与专业版的订阅积分按月发放；未用积分按规则到期。有效订阅期内可充值，充值积分单独计算有效期；社区版不支持充值。'],
+        ['如何开具发票？', '成功订购后，可前往 <a href="https://myspace.d5render.cn/bill" target="_blank" rel="noopener">D5 用户中心·发票服务</a>申请开票。团队采购的发票事宜请与销售确认。'],
+        ['原有专业版用户如何衔接？', '详见<a href="https://www.d5render.cn/news/d5-subscription-update-2026/" target="_blank" rel="noopener">D5 订阅方案更新预告及权益说明</a>。'],
+        ['首发赠分持续多久？年付可以锁定全年赠分吗？', '首发赠分截至 <strong>2027 年 2 月 28 日（含当日，北京时间）</strong>。按实际发放批次判断。年付积分仍按月发放，不锁定全年赠分；已发赠分不因活动结束提前收回。'],
+      ],
+      team: [
+        ['基础席位与专业席位是什么？', '基础席位与专业席位是团队版内可组合的席位配置。基础席位包含个人基础版功能权益；专业席位包含个人专业版权益。'],
+        ['团队版和个人版有什么区别？', '团队版增加项目与画布多人协作、成员与资产管理、共享积分池及额度分配。以 AI 创作为主的成员可选基础席位，需要可视化专业能力的成员选专业席位，两类席位可以组合。'],
+        ['团队积分如何发放、共享和充值？', '团队套餐积分与单独充值积分分别管理；具体发放、共享、有效期和赠送规则见团队积分细则。'],
+        ['团队版如何购买？支持按月、折扣和开票吗？', '团队方案需联系销售，按席位配置和实际协作需求报价；月付、折扣、开票及开票类型以销售确认的方案为准。'],
+        ['原有团队版会自动升级吗？个人版如何升级或加入团队？', '不会。旧团队版与工作流团队版的积分和权益规则不同，升级需另行办理；个人加入团队、旧订阅衔接及金额抵扣以独立迁移说明和销售确认为准。'],
+      ],
+    },
+    en: {
+      personal: [
+        ['How do I choose Community, Basic, and Pro?', 'Community includes 300 free credits for trying D5. Basic is for work that is mainly AI creation. Pro is for D5 Render, D5 Lite, and a fuller professional visualization workflow. Basic and Pro both offer 1× and 3× tiers.'],
+        ['How do monthly and yearly billing differ? What about upgrades and renewals?', 'Yearly billing is one payment for the year and does not auto-renew. After a monthly subscription is cancelled, benefits continue through the current period. Upgrades, renewals, and moving to a lower tier follow their own rules.'],
+        ['How are credits issued, when do they expire, and can I buy more?', 'Basic and Pro subscription credits are issued monthly. Unused credits expire under the plan rules. Extra credits can be bought during an active subscription and expire separately. Community cannot buy extra credits.'],
+        ['How do I get an invoice?', 'After a successful order, request an invoice from <a href="https://myspace.d5render.cn/bill" target="_blank" rel="noopener">D5 Account · Invoices</a>. For team purchases, confirm invoicing with sales.'],
+        ['What happens for existing Pro subscribers?', 'See the <a href="https://www.d5render.cn/news/d5-subscription-update-2026/" target="_blank" rel="noopener">D5 subscription update</a>.'],
+        ['How long does the launch bonus last? Does yearly billing lock it in?', 'The launch bonus runs through <strong>February 28, 2027</strong> (Beijing time, that day included), based on the batch actually issued. Yearly credits are still issued monthly and do not lock the bonus for the whole year. Credits already issued are not taken back early when the promotion ends.'],
+      ],
+      team: [
+        ['What are Basic and Pro seats?', 'They are seat types you can mix in Teams. A Basic seat includes individual Basic benefits. A Pro seat includes individual Pro benefits.'],
+        ['How is Teams different from an individual plan?', 'Teams adds multi-user projects and canvases, member and asset management, a shared credit pool, and quota allocation. Members focused on AI can use Basic seats; members who need professional visualization can use Pro seats.'],
+        ['How are team credits issued, shared, and topped up?', 'Plan credits and separately purchased credits are managed separately. Issuance, sharing, expiry, and bonuses follow the team credit policy.'],
+        ['How do I buy Teams? Are monthly billing, discounts, and invoices available?', 'Contact sales for a quote based on seats and collaboration needs. Monthly billing, discounts, and invoice type follow the plan sales confirms.'],
+        ['Will an existing team plan upgrade automatically? How does an individual join?', 'No. Legacy team plans and the workflow team plan use different credit and benefit rules, so upgrading is a separate process. Joining a team, connecting an old subscription, and any credit follow the migration notes and sales confirmation.'],
+      ],
+    },
+  };
+  function compareCell(value) {
+    const zh = state.lang === 'zh';
+    if (value === yes) return `<img src="assets/figma/check-circle.svg" alt="${zh ? '支持' : 'Included'}">`;
+    if (value === no) return `<img src="assets/figma/personal-close.svg" alt="${zh ? '不支持' : 'Not included'}">`;
+    return `<span class="compare-text">${value}</span>`;
+  }
   renderCompare = function () {
     const team = state.audience === 'team';
-    const c = P().compare;
-    // The provided Figma comparison has the same Render rows in both states.
-    const titles = team ? ['Pro', 'Team', 'Enterprise'] : ['Community', 'Basic', 'Pro'];
-    $('#compare').innerHTML = `<table class="compare-table">
-      <thead class="compare-head"><tr><th scope="col" class="lead"><span>${c.lead}</span></th>
-        ${titles.map(title => `<th scope="col" class="col"><span class="column-title">${title}</span></th>`).join('')}</tr></thead>
-      <tbody class="compare-body"><tr><th colspan="4" class="compare-group"><button type="button" data-compare-toggle aria-expanded="${comparisonExpanded}" aria-controls="compare-row-0 compare-row-1"><img src="assets/figma/caret-down.svg" alt="">${c.group}</button></th></tr>
-        ${c.rows.map((label, i) => `<tr id="compare-row-${i}" class="compare-row"${comparisonExpanded ? '' : ' hidden'}><th scope="row" class="lead">${label}</th>${titles.map(() => `<td class="col"><img src="assets/figma/check-circle.svg" alt="${state.lang === 'zh' ? '支持' : 'Included'}"></td>`).join('')}</tr>`).join('')}
-      </tbody></table>`;
+    const catalog = (team ? teamCompare : personalCompare)[state.lang];
+    const span = catalog.columns.length + 1;
+    const body = catalog.groups.map(([title, rows]) => `<tr><th colspan="${span}" class="compare-group">${title}</th></tr>` + rows.map(row => row.sub
+      ? `<tr class="compare-subgroup"><th colspan="${span}" scope="colgroup">${row.sub}</th></tr>`
+      : `<tr><th scope="row" class="lead">${row[0]}</th>${row.slice(1).map(value => `<td class="col">${compareCell(value)}</td>`).join('')}</tr>`).join('')).join('');
+    $('#compare').innerHTML = `<table class="compare-table${team ? ' is-team' : ''}">
+      <thead class="compare-head"><tr><th scope="col" class="lead"><span>${state.lang === 'zh' ? '功能与权益' : 'Features'}</span></th>
+        ${catalog.columns.map(title => `<th scope="col" class="col"><span class="column-title">${title}</span></th>`).join('')}</tr></thead>
+      <tbody class="compare-body">${body}</tbody></table>`;
+    renderFaq();
+  };
+  function renderFaq() {
+    const items = faqs[state.lang][state.audience === 'team' ? 'team' : 'personal'];
+    $('#faq-list').innerHTML = items.map(([question, answer]) => `<details><summary><span>${question}</span><img src="assets/figma/caret-down-faq.svg" alt=""></summary><p>${answer}</p></details>`).join('');
   };
 
   function persistPreviewState() {
@@ -261,8 +540,8 @@
     $('.billing').setAttribute('aria-hidden',String(team));
     $('.education').inert = team;
     $('.education').setAttribute('aria-hidden',String(team));
-    copy.zh['comparison.subtitle'] = team ? '详细对比个人与团队套餐及功能权益' : '详细对比个人创作套餐及功能权益';
-    copy.en['comparison.subtitle'] = team ? 'Individual & team plans, side by side' : 'Individual plans, side by side';
+    copy.zh['comparison.subtitle'] = team ? '详细对比个人专业版与团队版整体能力' : '详细对比个人创作套餐及功能权益';
+    copy.en['comparison.subtitle'] = team ? 'Pro and Teams, compared' : 'Individual plans, side by side';
     $('[data-i18n="comparison.subtitle"]').textContent = t('comparison.subtitle');
     $('.header-language').textContent = state.lang === 'zh' ? 'English' : '中文';
     persistPreviewState();
@@ -323,11 +602,6 @@
     if (target.hasAttribute('data-language-toggle')) {
       // Reuse the existing language events for all page copy.
       $(`.footer-legal [data-lang="${state.lang === 'zh' ? 'en' : 'zh'}"]`).click();
-    }
-    if (target.hasAttribute('data-compare-toggle')) {
-      comparisonExpanded = !comparisonExpanded;
-      target.setAttribute('aria-expanded',String(comparisonExpanded));
-      $$('.compare-row').forEach(row => { row.hidden = !comparisonExpanded; });
     }
     if (target.hasAttribute('data-billing-toggle')) {
       $('#announcer').textContent = ['basic','pro'].map(id => `${P()[id].name} · ${tierName(id)} · ${money(personalPrice(id))}${pricePeriod()}`).join('; ');

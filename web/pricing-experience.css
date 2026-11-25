@@ -102,10 +102,11 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .compare-table thead .col { width: 20.3704%; }
 .compare-table thead th { height: 96px; }
 .compare-table tbody .lead { padding: 14px 24px; }
-.compare-table .compare-group { padding: 0; height: 56px; }
-.compare-group button { display: flex; align-items: center; width: 100%; padding: 16px 20px; text-align: left; }
-.compare-group button[aria-expanded="false"] img { transform: rotate(-90deg); }
-.compare-group img { transition: transform 200ms; }
+.compare-table .compare-group { height: auto; padding: 16px 20px; }
+.compare-table.is-team thead .lead { width: 46%; }
+.compare-table.is-team thead .col { width: 27%; }
+.compare-table .compare-subgroup th { padding: 12px 24px; font-size: 13px; font-weight: 600; text-align: left; background: rgba(255,255,255,.04); }
+.compare-table .compare-text { font-size: 13px; line-height: 18px; }
 .compare-table tbody .col { padding: 14px 12px; }
 .compare-table tbody .col img { width: auto; height: auto; padding: 0; }
 .compare-table .column-title { display: inline-block; animation: column-in 400ms var(--motion-ease); }
