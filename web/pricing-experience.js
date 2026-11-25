@@ -547,33 +547,31 @@
     });
     return products;
   }
+  const themeIcons = {
+    'AI 创作': 'assets/figma/personal-ai.svg',
+    'AI creation': 'assets/figma/personal-ai.svg',
+    '连接': 'assets/figma/plugs-connected.svg',
+    'Connections': 'assets/figma/plugs-connected.svg',
+  };
   const collapsedCompare = new Set();
   renderCompare = function () {
     const team = state.audience === 'team';
     const catalog = (team ? teamCompare : personalCompare)[state.lang];
-    const span = catalog.columns.length + 1;
     const scope = team ? 'team' : 'personal';
-    const featureRow = (row, key, open) => `<tr class="compare-feature" data-compare-panel="${key}"${open ? '' : ' hidden'}><th scope="row" class="lead">${row[0]}</th>${row.slice(1).map(value => `<td class="col">${compareCell(value)}</td>`).join('')}</tr>`;
-    const themeButton = (label, key, open) => `<tr class="compare-theme-row"><th colspan="${span}" class="compare-theme"><button type="button" data-compare-toggle="${key}" aria-expanded="${open}"><img src="assets/figma/caret-down.svg" alt="">${label}</button></th></tr>`;
-    const body = nestCompare(catalog.groups).map((product, productIndex) => {
+    const line = (row, nested) => `<div class="compare-line${nested ? ' is-nested' : ''}"><span class="compare-label">${row[0]}</span>${row.slice(1).map(value => `<span class="compare-value">${compareCell(value)}</span>`).join('')}</div>`;
+    const cards = nestCompare(catalog.groups).map((product, productIndex) => {
+      const key = `${scope}-${productIndex}`;
+      const open = !collapsedCompare.has(key);
       const unnamed = product.themes.length === 1 && !product.themes[0].name;
-      if (unnamed) {
-        const key = `${scope}-${productIndex}`;
-        const open = !collapsedCompare.has(key);
-        return themeButton(product.name, key, open) + product.themes[0].rows.map(row => featureRow(row, key, open)).join('');
-      }
-      const label = `<tr class="compare-product-row"><th colspan="${span}" class="compare-product">${product.name}</th></tr>`;
-      const themes = product.themes.map((theme, themeIndex) => {
-        const key = `${scope}-${productIndex}-${themeIndex}`;
-        const open = !collapsedCompare.has(key);
-        return themeButton(theme.name, key, open) + theme.rows.map(row => featureRow(row, key, open)).join('');
-      }).join('');
-      return label + themes;
+      const inner = unnamed
+        ? product.themes[0].rows.map(row => line(row, false)).join('')
+        : product.themes.map(theme => {
+          const icon = themeIcons[theme.name];
+          return `<div class="compare-subhead">${icon ? `<img src="${icon}" alt="">` : ''}<span>${theme.name}</span></div>${theme.rows.map(row => line(row, true)).join('')}`;
+        }).join('');
+      return `<section class="compare-card"><button type="button" class="compare-card-toggle" data-compare-toggle="${key}" aria-expanded="${open}"><img src="assets/figma/compare-chevron.svg" alt="">${product.name}</button><div class="compare-card-body" data-compare-panel="${key}"${open ? '' : ' hidden'}>${inner}</div></section>`;
     }).join('');
-    $('#compare').innerHTML = `<table class="compare-table${team ? ' is-team' : ''}">
-      <thead class="compare-head"><tr><th scope="col" class="lead"><span>${state.lang === 'zh' ? '功能与权益' : 'Features'}</span></th>
-        ${catalog.columns.map(title => `<th scope="col" class="col"><span class="column-title">${title}</span></th>`).join('')}</tr></thead>
-      <tbody class="compare-body">${body}</tbody></table>`;
+    $('#compare').innerHTML = `<div class="compare-stack${team ? ' is-team' : ''}"><div class="compare-columns">${catalog.columns.map(title => `<span>${title}</span>`).join('')}</div>${cards}</div>`;
     renderFaq();
   };
   function renderFaq() {
