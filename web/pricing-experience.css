@@ -109,8 +109,14 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .compare-card-toggle { display: flex; align-items: center; gap: 4px; width: 100%; min-height: 56px; padding: 12px 16px; font-size: 16px; font-weight: 500; line-height: 1; text-align: left; }
 .compare-card-toggle img { transition: transform 200ms ease; }
 .compare-card-toggle[aria-expanded="false"] img { transform: rotate(-90deg); }
-.compare-subhead { display: flex; align-items: center; gap: 4px; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,.06); color: rgba(255,255,255,.6); font-size: 14px; font-weight: 500; line-height: 1; }
-.compare-subhead img { flex: none; }
+.compare-subhead { display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,.06); color: rgba(255,255,255,.6); font-size: 14px; font-weight: 500; line-height: 1; }
+.compare-theme-icon { display: flex; align-items: center; justify-content: center; flex: none; width: 24px; height: 24px; border-radius: 6px; }
+.compare-theme-icon img { flex: none; }
+.compare-theme-icon.is-grape { background: rgba(189,153,255,.3); }
+.compare-theme-icon.is-neutral { background: rgba(255,255,255,.2); }
+.compare-theme-icon.is-info { background: rgba(0,120,255,.32); }
+.compare-theme-icon.is-green { background: rgba(1,156,57,.24); }
+.compare-theme-icon.is-sky { background: rgba(125,203,255,.4); }
 .compare-line { min-height: 49px; border-bottom: 1px solid rgba(255,255,255,.1); }
 .compare-card-body .compare-line:last-child { border-bottom: 0; }
 .compare-label { padding: 16px 24px; font-size: 14px; font-weight: 500; line-height: normal; }

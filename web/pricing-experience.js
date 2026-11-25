@@ -280,7 +280,7 @@
           ['与 D5 Works 连接', '限时支持', '限时支持', yes],
           ['自定义 MCP 连接', yes, yes, yes],
         ]],
-        ['D5 Render · 场景与渲染', [
+        ['D5 Render · 场景构建', [
           ['实时渲染、环境与材质编辑', yes, yes, yes],
           ['地理天空和天气系统', yes, yes, yes],
           ['地形系统和海洋系统', yes, yes, yes],
@@ -295,7 +295,7 @@
           ['剖切工具', no, no, yes],
           ['项目合并', no, no, yes],
         ]],
-        ['D5 Render · 渲染输出与展示交付', [
+        ['D5 Render · 输出与展示', [
           ['图片和全景图渲染', '最高支持 16K', '最高支持 16K', '最高支持 16K'],
           ['基础视频输出格式', '最高支持 4K', '最高支持 4K', '最高支持 4K'],
           ['通道图渲染', yes, yes, yes],
@@ -311,7 +311,7 @@
           ['高级显示设置（高级显示、密码保护、富媒体热点与户型导航）', no, no, yes],
           ['分享链接设置（链接有效期、品牌水印配置、水印可见性管理）', no, no, yes],
         ]],
-        ['D5 Render · 云工作空间', [
+        ['D5 Render · 云端预设', [
           ['D5 Studio 个人预设', '5 个', '5 个', '不限'],
           ['D5 精选预设', no, no, yes],
         ]],
@@ -330,7 +330,7 @@
           ['云空间', '限量', '1× 10 GB；3× 10 GB', '1× 10 GB；3× 10 GB'],
         ]],
         ['工作流插件', [
-          {sub:'D5 Render 同步插件'},
+          {sub:'D5 Render 同步'},
           ['SketchUp 实时同步', yes, yes, yes],
           ['Rhino 实时同步', yes, yes, yes],
           ['3ds Max 实时同步', yes, yes, yes],
@@ -339,7 +339,7 @@
           ['Vectorworks 实时同步', yes, yes, yes],
           ['Revit', yes, yes, yes],
           ['Cinema 4D', yes, yes, yes],
-          {sub:'D5 Lite 同步插件'},
+          {sub:'D5 Lite 同步'},
           ['Lite for SketchUp', yes, yes, yes],
           ['Lite for Rhino', yes, yes, yes],
           ['Lite for Revit', yes, yes, yes],
@@ -375,7 +375,7 @@
           ['Connect to D5 Works', 'Limited-time', 'Limited-time', yes],
           ['Custom MCP connection', yes, yes, yes],
         ]],
-        ['D5 Render · Scenes and rendering', [
+        ['D5 Render · Scene building', [
           ['Real-time render, environment, and materials', yes, yes, yes],
           ['Geo sky and weather', yes, yes, yes],
           ['Terrain and ocean', yes, yes, yes],
@@ -390,7 +390,7 @@
           ['Section tool', no, no, yes],
           ['Project merge', no, no, yes],
         ]],
-        ['D5 Render · Output and delivery', [
+        ['D5 Render · Output and presentation', [
           ['Image and panorama render', 'Up to 16K', 'Up to 16K', 'Up to 16K'],
           ['Basic video output', 'Up to 4K', 'Up to 4K', 'Up to 4K'],
           ['Channel render', yes, yes, yes],
@@ -406,7 +406,7 @@
           ['Advanced display (password, rich hotspots, floorplan nav)', no, no, yes],
           ['Share-link settings (expiry, brand watermark, visibility)', no, no, yes],
         ]],
-        ['D5 Render · Cloud workspace', [
+        ['D5 Render · Cloud presets', [
           ['D5 Studio personal presets', '5', '5', 'Unlimited'],
           ['D5 curated presets', no, no, yes],
         ]],
@@ -425,7 +425,7 @@
           ['Cloud storage', 'Limited', '1× 10 GB; 3× 10 GB', '1× 10 GB; 3× 10 GB'],
         ]],
         ['Workflow plugins', [
-          {sub:'D5 Render sync plugins'},
+          {sub:'D5 Render sync'},
           ['SketchUp live sync', yes, yes, yes],
           ['Rhino live sync', yes, yes, yes],
           ['3ds Max live sync', yes, yes, yes],
@@ -434,7 +434,7 @@
           ['Vectorworks live sync', yes, yes, yes],
           ['Revit', yes, yes, yes],
           ['Cinema 4D', yes, yes, yes],
-          {sub:'D5 Lite sync plugins'},
+          {sub:'D5 Lite sync'},
           ['Lite for SketchUp', yes, yes, yes],
           ['Lite for Rhino', yes, yes, yes],
           ['Lite for Revit', yes, yes, yes],
@@ -554,10 +554,20 @@
     return products;
   }
   const themeIcons = {
-    'AI 创作': 'assets/figma/personal-ai.svg',
-    'AI creation': 'assets/figma/personal-ai.svg',
-    '连接': 'assets/figma/plugs-connected.svg',
-    'Connections': 'assets/figma/plugs-connected.svg',
+    'AI 创作': {src:'assets/figma/theme-ai.svg', tone:'is-grape'},
+    'AI creation': {src:'assets/figma/theme-ai.svg', tone:'is-grape'},
+    '连接': {src:'assets/figma/theme-plugs.svg', tone:'is-neutral'},
+    'Connections': {src:'assets/figma/theme-plugs.svg', tone:'is-neutral'},
+    '场景构建': {src:'assets/figma/theme-scene.svg', tone:'is-info'},
+    'Scene building': {src:'assets/figma/theme-scene.svg', tone:'is-info'},
+    '输出与展示': {src:'assets/figma/theme-output.svg', tone:'is-green'},
+    'Output and presentation': {src:'assets/figma/theme-output.svg', tone:'is-green'},
+    '云端预设': {src:'assets/figma/theme-studio.svg', tone:'is-sky'},
+    'Cloud presets': {src:'assets/figma/theme-studio.svg', tone:'is-sky'},
+    'D5 Render 同步': {src:'assets/figma/theme-workflow.svg', tone:'is-neutral'},
+    'D5 Render sync': {src:'assets/figma/theme-workflow.svg', tone:'is-neutral'},
+    'D5 Lite 同步': {src:'assets/figma/theme-workflow.svg', tone:'is-neutral'},
+    'D5 Lite sync': {src:'assets/figma/theme-workflow.svg', tone:'is-neutral'},
   };
   const collapsedCompare = new Set();
   renderCompare = function () {
@@ -573,7 +583,7 @@
         ? product.themes[0].rows.map(row => line(row, false)).join('')
         : product.themes.map(theme => {
           const icon = themeIcons[theme.name];
-          return `<div class="compare-subhead">${icon ? `<img src="${icon}" alt="">` : ''}<span>${theme.name}</span></div>${theme.rows.map(row => line(row, true)).join('')}`;
+          return `<div class="compare-subhead">${icon ? `<span class="compare-theme-icon ${icon.tone}"><img src="${icon.src}" alt=""></span>` : ''}<span>${theme.name}</span></div>${theme.rows.map(row => line(row, true)).join('')}`;
         }).join('');
       return `<section class="compare-card"><button type="button" class="compare-card-toggle" data-compare-toggle="${key}" aria-expanded="${open}"><img src="assets/figma/compare-chevron.svg" alt="">${product.name}</button><div class="compare-card-body" data-compare-panel="${key}"${open ? '' : ' hidden'}>${inner}</div></section>`;
     }).join('');
