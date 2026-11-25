@@ -102,13 +102,15 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .compare-table thead .col { width: 20.3704%; }
 .compare-table thead th { height: 96px; }
 .compare-table tbody .lead { padding: 14px 24px; }
-.compare-table .compare-group { height: auto; padding: 0; }
-.compare-group button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 14px 20px; text-align: left; }
-.compare-group button img { width: 16px; height: 16px; margin: 0; transition: transform 200ms ease; }
-.compare-group button[aria-expanded="false"] img { transform: rotate(-90deg); }
-.compare-heading { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; }
-.compare-heading strong { font-size: 20px; font-weight: 500; line-height: 24px; }
-.compare-sub { font-size: 13px; font-weight: 400; line-height: 18px; color: var(--text-60); }
+.compare-table .compare-product { padding: 16px 24px; border-bottom: 1px solid var(--border-6); font-size: 16px; font-weight: 600; line-height: normal; text-align: left; }
+.compare-table .compare-theme { padding: 0; border-bottom: 1px solid var(--border-6); }
+.compare-theme button { display: flex; align-items: center; gap: 8px; width: 100%; padding: 16px 20px; font-size: 20px; font-weight: 500; line-height: 24px; text-align: left; }
+.compare-theme button img { width: 24px; height: 24px; margin: 0; transition: transform 200ms ease; }
+.compare-theme button[aria-expanded="false"] img { transform: rotate(-90deg); }
+.compare-table tbody .compare-feature .lead { padding: 16px 24px; font-size: 14px; font-weight: 500; }
+.compare-tiers { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 12px; }
+.compare-tier { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; line-height: 18px; }
+.compare-tier .multiplier-badge { margin: 0; }
 .compare-table.is-team thead .lead { width: 46%; }
 .compare-table.is-team thead .col { width: 27%; }
 .compare-table .compare-subgroup th { padding: 12px 24px; font-size: 13px; font-weight: 600; text-align: left; background: rgba(255,255,255,.04); }
@@ -152,17 +154,14 @@ button, a, summary, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
 .plan-subnav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; padding: 24px 0 16px; background: transparent; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-8px); transition: opacity 220ms ease, transform 220ms var(--motion-ease), visibility 220ms; }
 .plan-subnav::before { content: ''; position: absolute; z-index: -1; left: 0; right: 0; top: 0; bottom: -120px; pointer-events: none; background: linear-gradient(to bottom, rgba(8,8,12,.34) 0%, rgba(8,8,12,.16) 46%, rgba(8,8,12,.05) 72%, transparent 100%); -webkit-backdrop-filter: blur(22px) saturate(1.15); backdrop-filter: blur(22px) saturate(1.15); -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 42%, transparent 100%); mask-image: linear-gradient(to bottom, #000 0%, #000 42%, transparent 100%); }
 body.is-plan-subnav .plan-subnav { opacity: 1; visibility: visible; pointer-events: auto; transform: none; }
-.plan-subnav-inner { width: var(--content-width); margin-inline: auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.plan-subnav-card { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border: 2px solid rgba(255,255,255,.25); border-radius: 16px; background: rgba(8,8,12,.88); box-shadow: 0 20px 44px rgba(0,0,0,.45), 0 8px 28px rgba(132,112,220,.16); translate: 0 -4px; }
-.plan-subnav-card.basic { background-image: url('assets/figma/personal-basic-glow.svg'); background-size: 100% 100%; background-repeat: no-repeat; }
-.plan-subnav-card.pro { border-color: #b0a5ff; background: rgba(16,10,24,.9); }
-.plan-subnav-card h2 { font-size: 16px; font-weight: 600; line-height: 22px; }
+.plan-subnav-inner { width: var(--content-width); margin-inline: auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 16px; }
+.plan-subnav-card { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; border: 2px solid var(--border-10); border-radius: 16px; background-color: rgba(0,0,0,.45); }
+.plan-subnav-card .plan-button { margin-top: auto; }
+.plan-subnav-card.basic { background-color: rgba(0,0,0,.45); background-image: url('assets/figma/personal-basic-glow.svg'); background-size: 100% 100%; background-repeat: no-repeat; }
+.plan-subnav-card h2 { font-size: 20px; font-weight: 600; line-height: 24px; }
 .plan-subnav .plan-price { height: auto; }
 .plan-subnav .price-value { font-size: 28px; line-height: 34px; letter-spacing: 0; }
 .plan-subnav .plan-savings { padding-top: 0; }
-.plan-subnav-card.community .plan-button { border-color: rgba(255,255,255,.4); background-color: rgba(255,255,255,.08); }
-.plan-subnav-card.basic .plan-button { background-color: #e6e6e6; }
-.plan-subnav-card.pro .plan-button { background-color: #a775ff; }
 .bonus-badge { flex: none; height: 28px; padding: 2px 8px 2px 16px; border-radius: 8px; background: linear-gradient(269deg, rgba(119,51,255,.4) .45%, rgba(188,32,255,0) 103%); color: #c9acff; font-size: 11px; font-weight: 500; line-height: 24px; white-space: nowrap; }
 .tier-toggle { position: relative; display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,.06); border-radius: 50%; background: rgba(255,255,255,.06); }
 .tier-toggle:hover { background: rgba(255,255,255,.16); }

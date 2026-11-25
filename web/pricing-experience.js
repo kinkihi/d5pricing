@@ -516,7 +516,36 @@
     const zh = state.lang === 'zh';
     if (value === yes) return `<img src="assets/figma/check-circle.svg" alt="${zh ? '支持' : 'Included'}">`;
     if (value === no) return `<img src="assets/figma/personal-close.svg" alt="${zh ? '不支持' : 'Not included'}">`;
+    const tiers = String(value).split(/\s*[;；]\s*/);
+    if (tiers.length > 1 && tiers.every(part => /^[13]×\s+\S/.test(part))) {
+      return `<span class="compare-tiers">${tiers.map(part => {
+        const match = part.match(/^([13]×)\s+(.+)$/);
+        return `<span class="compare-tier"><span class="multiplier-badge">${match[1]}</span><span>${match[2]}</span></span>`;
+      }).join('')}</span>`;
+    }
     return `<span class="compare-text">${value}</span>`;
+  }
+  function nestCompare(groups) {
+    const products = [];
+    groups.forEach(([title, rows]) => {
+      const [product, theme] = title.split(' · ');
+      const themes = [];
+      if (theme) themes.push({name: theme, rows});
+      else {
+        let current = {name: '', rows: []};
+        rows.forEach(row => {
+          if (row.sub) {
+            if (current.name || current.rows.length) themes.push(current);
+            current = {name: row.sub, rows: []};
+          } else current.rows.push(row);
+        });
+        if (current.name || current.rows.length) themes.push(current);
+      }
+      const previous = products[products.length - 1];
+      if (theme && previous && previous.name === product) previous.themes.push(...themes);
+      else products.push({name: product, themes});
+    });
+    return products;
   }
   const collapsedCompare = new Set();
   renderCompare = function () {
@@ -524,15 +553,22 @@
     const catalog = (team ? teamCompare : personalCompare)[state.lang];
     const span = catalog.columns.length + 1;
     const scope = team ? 'team' : 'personal';
-    const body = catalog.groups.map(([title, rows], index) => {
-      const key = `${scope}-${index}`;
-      const open = !collapsedCompare.has(key);
-      const [main, sub] = title.split(' · ');
-      const head = `<tr class="compare-group-row"><th colspan="${span}" class="compare-group"><button type="button" data-compare-toggle="${key}" aria-expanded="${open}"><img src="assets/figma/caret-down.svg" alt=""><span class="compare-heading"><strong>${main}</strong>${sub ? `<span class="compare-sub">${sub}</span>` : ''}</span></button></th></tr>`;
-      const panel = rows.map(row => row.sub
-        ? `<tr class="compare-subgroup" data-compare-panel="${key}"${open ? '' : ' hidden'}><th colspan="${span}" scope="colgroup">${row.sub}</th></tr>`
-        : `<tr data-compare-panel="${key}"${open ? '' : ' hidden'}><th scope="row" class="lead">${row[0]}</th>${row.slice(1).map(value => `<td class="col">${compareCell(value)}</td>`).join('')}</tr>`).join('');
-      return head + panel;
+    const featureRow = (row, key, open) => `<tr class="compare-feature" data-compare-panel="${key}"${open ? '' : ' hidden'}><th scope="row" class="lead">${row[0]}</th>${row.slice(1).map(value => `<td class="col">${compareCell(value)}</td>`).join('')}</tr>`;
+    const themeButton = (label, key, open) => `<tr class="compare-theme-row"><th colspan="${span}" class="compare-theme"><button type="button" data-compare-toggle="${key}" aria-expanded="${open}"><img src="assets/figma/caret-down.svg" alt="">${label}</button></th></tr>`;
+    const body = nestCompare(catalog.groups).map((product, productIndex) => {
+      const unnamed = product.themes.length === 1 && !product.themes[0].name;
+      if (unnamed) {
+        const key = `${scope}-${productIndex}`;
+        const open = !collapsedCompare.has(key);
+        return themeButton(product.name, key, open) + product.themes[0].rows.map(row => featureRow(row, key, open)).join('');
+      }
+      const label = `<tr class="compare-product-row"><th colspan="${span}" class="compare-product">${product.name}</th></tr>`;
+      const themes = product.themes.map((theme, themeIndex) => {
+        const key = `${scope}-${productIndex}-${themeIndex}`;
+        const open = !collapsedCompare.has(key);
+        return themeButton(theme.name, key, open) + theme.rows.map(row => featureRow(row, key, open)).join('');
+      }).join('');
+      return label + themes;
     }).join('');
     $('#compare').innerHTML = `<table class="compare-table${team ? ' is-team' : ''}">
       <thead class="compare-head"><tr><th scope="col" class="lead"><span>${state.lang === 'zh' ? '功能与权益' : 'Features'}</span></th>
