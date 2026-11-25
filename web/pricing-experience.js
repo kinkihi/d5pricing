@@ -1,5 +1,5 @@
 // Figma card content and reversible, interruption-safe audience transitions.
-// Personal: Figma 31951:32326. Teams: 32080:13484 within 32080:12530.
+// Personal: Figma 32143:12642. Teams: 32143:13817.
 // CNY prices: jjcyixi/d5pricing-beta/data.js. USD prices: 海外版本.html,
 // PERSONAL_TIERS (20261023-usd-r2); only prices are taken from that attachment.
 (() => {
@@ -9,8 +9,8 @@
   state.lang = params.get('lang') === 'en' ? 'en' : 'zh';
   state.personalTiers = Object.fromEntries(['basic','pro'].map(id => [id, params.get(`${id}Tier`) === 'advanced' ? 1 : 0]));
   const personalTiers = [
-    { names: {zh:'入门档',en:'Starter'}, credits:1500, baseCredits:1000, concurrency:4, image:'2K', video:'720p' },
-    { names: {zh:'进阶档',en:'Advanced'}, credits:4500, baseCredits:3000, concurrency:6, image:'4K', video:'4K' },
+    { names: {zh:'1×',en:'1×'}, credits:1500, concurrency:4, image:'2K', video:'720p' },
+    { names: {zh:'3×',en:'3×'}, credits:4500, concurrency:4, image:'2K', video:'720p' },
   ];
   const personalPrices = {
     zh: [
@@ -27,10 +27,17 @@
   const currencySymbol = () => state.lang === 'zh' ? '￥' : '$';
   const money = amount => `${currencySymbol()}${amount}`;
   const personalPrice = id => state.billing === 'annual' ? selectedPrices(id)[`${id}Annual`] / 12 : selectedPrices(id)[id];
-  const pricePeriod = () => state.billing === 'annual' ? (state.lang === 'zh' ? '/月，按年购买' : '/mo, billed yearly') : P().monthly;
+  const pricePeriod = () => state.lang === 'zh' ? '/月' : '/mo';
+  const purchaseLabel = () => state.billing === 'annual'
+    ? (state.lang === 'zh' ? '按年购买' : 'Buy yearly')
+    : (state.lang === 'zh' ? '按月购买' : 'Buy monthly');
   function annualSavings(id) {
     const prices = selectedPrices(id), saved = prices[id] * 12 - prices[`${id}Annual`];
-    return `<span class="saving-badge">${state.lang === 'zh' ? `每年省${money(saved)}` : `Save ${money(saved)}/year`}</span><span class="original-price">${state.lang === 'zh' ? '原月订阅价 ' : 'Monthly price '}<s>${state.lang === 'zh' ? '¥' : '$'}${prices[id]}</s>${state.lang === 'zh' ? '/月' : '/mo'}</span>`;
+    const yuan = state.lang === 'zh' ? '￥' : '$';
+    const mark = state.lang === 'zh' ? '¥' : '$';
+    return state.lang === 'zh'
+      ? `<span class="saving-badge">按年节省${yuan}${saved}</span><span class="original-price">原价 <s>${mark}${prices[id]}</s>/月，一次性支付${yuan}${prices[`${id}Annual`]}</span>`
+      : `<span class="saving-badge">Save ${yuan}${saved}/year</span><span class="original-price">Was <s>${mark}${prices[id]}</s>/mo, pay ${yuan}${prices[`${id}Annual`]} once</span>`;
   }
   const tierName = id => selectedTier(id).names[state.lang];
 
@@ -52,18 +59,20 @@
   });
   plans.zh.download = '开始体验';
   plans.en.download = 'Get started';
-  plans.zh.upgrade = '立即订阅';
-  plans.en.upgrade = 'Subscribe now';
+  plans.zh.free = '/免费开始';
+  plans.en.free = '/free to start';
+  plans.zh.upgrade = '按年购买';
+  plans.en.upgrade = 'Buy yearly';
   const renderFeatures = {
     zh: {
-      shared: ['免费建模插件同步','免费3000+素材','免费实时交互演示','免费实时渲染 16K 图片','免费实时渲染 4K 视频','免费全景漫游创建及分享'],
-      community: '更多 D5工作流免费功能可用', basic: '包含社区版 D5工作流功能',
-      pro: ['全品类 16,000+ 高品质素材','城市生成等高级场景构建功能','专业级图片.tga、.tif、.exr格式渲染','专业级视频多帧率及多格式渲染','实时空间漫游、XR 漫游创建及分享','实时云端像素推流、虚拟现实(VR)分享','完整 D5工作流功能可用'],
+      community: ['工作流同步插件','2100+ 免费素材','免费实时渲染 16K 图片','免费实时渲染 4K 视频','免费全景漫游创建及分享'],
+      basic: ['包含全部社区版权益','10GB 云空间'],
+      pro: ['包含全部基础版权益','10GB 云空间','16,000+ 专业素材','专业级图片与视频多格式渲染','城市生成等高级场景构建功能','空间漫游、XR 漫游、交互演示与 VR体验'],
     },
     en: {
-      shared: ['Free modeling plugin sync','3,000+ free assets','Free interactive demos','Free 16K image rendering','Free 4K video rendering','Free panorama tours & sharing'],
-      community: 'More free D5 workflow features', basic: 'Community D5 workflow included',
-      pro: ['16,000+ premium assets, all categories','Advanced scene & city building','Pro image formats: TGA, TIF, EXR','Pro video formats & frame rates','Spatial / XR tour creation & sharing','Cloud pixel streaming & VR sharing','All D5 workflow features'],
+      community: ['Workflow sync plugin','2,100+ free assets','Free real-time 16K images','Free real-time 4K video','Free panorama tours and sharing'],
+      basic: ['All Community benefits','10GB cloud storage'],
+      pro: ['All Basic benefits','10GB cloud storage','16,000+ professional assets','Pro image and video formats','Advanced scene tools, including city generation','Spatial tours, XR tours, interactive demos, and VR'],
     },
   };
   const personalIcon = name => `<img src="assets/figma/personal-${name}.svg" alt="" width="16" height="16">`;
@@ -74,47 +83,52 @@
       ? tooltipCopy(`约 ${credits / 2} 张图片或 ${credits / 12} 秒视频`, '按最低价估算：图像 2 积分/张，视频<br>（Seedance 2.0 Mini）12 积分/秒')
       : tooltipCopy(`About ${credits / 2} images or ${credits / 12}s of video`, 'Est. at minimum rates: 2 credits/image;<br>Seedance 2.0 Mini video: 12 credits/sec.');
   }
-  const personalFeature = (text, {unavailable = false, help = ''} = {}) => `<li${unavailable ? ' class="unavailable"' : ''}><span class="feature-check" aria-hidden="true">${personalIcon(unavailable ? 'close' : 'check')}</span><span class="feature-copy">${text}${help}</span></li>`;
+  const personalFeature = (text, {unavailable = false, help = '', bonus = ''} = {}) => `<li class="${[unavailable ? 'unavailable' : '', bonus ? 'has-badge' : ''].filter(Boolean).join(' ')}"><span class="feature-main"><span class="feature-check" aria-hidden="true">${personalIcon(unavailable ? 'close' : 'check')}</span><span class="feature-copy">${text}${help}</span></span>${bonus ? `<span class="bonus-badge">${bonus}</span>` : ''}</li>`;
   function aiFeatures(id) {
     const zh = state.lang === 'zh';
     if (id === 'community') return [
-      personalFeature(zh ? '免费 300 AI 积分领取' : 'Claim 300 free AI credits', {help:info(id,'credits',creditTip(300))}),
-      personalFeature(zh ? '支持体验部分 AI 模型' : 'Try selected AI models'),
-      personalFeature(zh ? '支持最高 1K 图片，480p 视频生成' : 'Up to 1K images & 480p video'),
-      personalFeature(zh ? '支持最多 2 个 AI 任务并发' : 'Up to 2 AI tasks at once'),
-      personalFeature(zh ? '不支持积分充值' : 'No credit top-ups', {unavailable:true}),
+      personalFeature(zh ? '一次性 300 积分' : '300 one-time credits', {help:info(id,'credits',creditTip(300))}),
+      personalFeature(zh ? '体验部分 AI 模型' : 'Try selected AI models'),
+      personalFeature(zh ? 'AI 生成最高 1K 图片，480p 视频' : 'AI up to 1K images and 480p video'),
+      personalFeature(zh ? '最多 2 个 AI 任务并发' : 'Up to 2 concurrent AI tasks'),
+      personalFeature(zh ? '不支持积分充值' : 'Credit top-ups unavailable', {unavailable:true}),
     ].join('');
     const tier = selectedTier(id);
-    const resolution = id === 'pro' ? {image:'4K',video:'4K'} : tier;
-    const help = creditTip(tier.credits);
+    const resolution = id === 'pro' ? {image:'4K',video:'4K'} : {image:'2K',video:'720p'};
+    const bonus = zh ? '限时加赠' : 'Limited bonus';
     return [
-      personalFeature(zh ? `每月 ${tier.credits} AI 积分` : `${tier.credits.toLocaleString('en-US')} AI credits/month`, {help:info(id,'credits',help)}),
-      ...(id === 'pro' ? [personalFeature(zh ? '工作流内指定 AI 功能不限次使用' : 'Selected workflow AI: unlimited', {help:info(id,'workflow',tooltipCopy(zh ? 'D5 Render 3.1 版本' : 'D5 Render 3.1', zh ? 'AI 氛围匹配、AI 后期、局部重绘等不限次使用' : 'Unlimited AI Atmosphere Match, AI post-processing, inpainting & more.'))})] : []),
+      personalFeature(zh ? `每月 ${tier.credits} AI 积分` : `${tier.credits.toLocaleString('en-US')} AI credits / month`, {help:info(id,'credits',creditTip(tier.credits)), bonus}),
       personalFeature(zh ? '支持全部 AI 模型' : 'All AI models'),
-      personalFeature(zh ? `支持最高 ${resolution.image} 图片，${resolution.video} 视频生成` : `Up to ${resolution.image} images & ${resolution.video} video`),
-      personalFeature(zh ? `支持最多 ${tier.concurrency} 个 AI 任务并发` : `Up to ${tier.concurrency} AI tasks at once`),
+      personalFeature(zh ? `AI 生成最高 ${resolution.image} 图片，${resolution.video} 视频` : `AI up to ${resolution.image} images and ${resolution.video} video`),
+      personalFeature(zh ? (id === 'basic' ? `最多 ${tier.concurrency} 个 AI 任务并行` : `支持最多 ${tier.concurrency} 个 AI 任务并发`) : `Up to ${tier.concurrency} concurrent AI tasks`),
+      ...(id === 'pro' ? [personalFeature(zh ? 'D5 渲染器内指定 AI 功能不限次使用' : 'Selected AI features in D5 Render, unlimited', {help:info(id,'workflow',tooltipCopy(zh ? 'D5 Render 3.1 版本' : 'D5 Render 3.1', zh ? 'AI 氛围匹配、AI 后期、局部重绘等不限次使用' : 'Unlimited AI Atmosphere Match, AI post-processing, inpainting, and more.'))})] : []),
     ].join('');
   }
   function featureSections(id) {
-    const copy = renderFeatures[state.lang];
-    const items = id === 'pro' ? copy.pro : [...copy.shared,copy[id]];
-    return `<section class="plan-feature-section render-features" aria-labelledby="${id}-render-title"><h3 id="${id}-render-title"><span class="feature-check" aria-hidden="true">${personalIcon('render')}</span>${state.lang === 'zh' ? '实时渲染' : 'Real-time rendering'}</h3><ul class="plan-list">${items.map(item => personalFeature(item)).join('')}</ul></section><section class="plan-feature-section ai-features" aria-labelledby="${id}-ai-title"><h3 id="${id}-ai-title"><span class="feature-check" aria-hidden="true">${personalIcon('ai')}</span>${state.lang === 'zh' ? 'AI 创作' : 'AI creation'}</h3><ul class="plan-list" data-ai-features="${id}">${aiFeatures(id)}</ul></section>`;
+    const items = renderFeatures[state.lang][id];
+    const zh = state.lang === 'zh';
+    const badge = id === 'community' ? '' : `<span class="multiplier-badge" data-multiplier-badge="${id}">${selectedTier(id).names[state.lang]}</span>`;
+    return `<section class="plan-feature-section ai-features" aria-labelledby="${id}-ai-title"><h3 id="${id}-ai-title"><span class="feature-check" aria-hidden="true">${personalIcon('ai')}</span>${zh ? 'AI 创作' : 'AI creation'}${badge}</h3><ul class="plan-list" data-ai-features="${id}">${aiFeatures(id)}</ul></section><section class="plan-feature-section workflow-features" aria-labelledby="${id}-workflow-title"><h3 id="${id}-workflow-title"><span class="feature-check" aria-hidden="true">${personalIcon('render')}</span>${zh ? '可视化工作流' : 'Visual workflow'}</h3><ul class="plan-list">${items.map(item => personalFeature(item)).join('')}</ul></section>`;
   }
-  const teamFeatures = {
+  const teamSeats = {
     zh: [
-      {id:'collaboration',title:'协作与管理',icon:'team-users',items:['支持团队基础 / 专业席位自由组合','支持自定义AI功能权限','支持团队成员及分组管理','支持团队数据看板','支持团队云资产管理']},
-      {id:'render',title:'专业表现席位',icon:'personal-render',items:['包含个人专业版功能权益','支持D5工作流项目多人编辑']},
-      {id:'ai',title:'AI 创作席位',icon:'team-ai',items:['包含个人基础版功能权益','团队共享 AI 积分']},
+      {id:'basic',title:'基础席位',icon:'team-ai',lines:['专注 AI 创作','包含个人基础版功能']},
+      {id:'pro',title:'专业席位',icon:'personal-render',lines:['完整可视化工作流','包含个人专业版功能']},
     ],
     en: [
-      {id:'collaboration',title:'Collaboration & management',icon:'team-users',items:['Mix Basic & Pro seats','Custom AI permissions','Member & group management','Team analytics dashboard','Cloud asset management']},
-      {id:'render',title:'Pro visualization seats',icon:'personal-render',items:['Individual Pro benefits included','Co-edit D5 workflow projects']},
-      {id:'ai',title:'AI creation seats',icon:'team-ai',items:['Individual Basic benefits included','Shared team AI credits']},
+      {id:'basic',title:'Basic seats',icon:'team-ai',lines:['Focused on AI creation','Includes individual Basic']},
+      {id:'pro',title:'Pro seats',icon:'personal-render',lines:['Full visual workflow','Includes individual Pro']},
     ],
   };
+  const teamCollab = {
+    zh: ['100 GB 团队云空间','团队共享 AI 积分池','支持团队AI 积分额度分配管理','支持团队成员及分组管理','支持团队数据看板','支持项目多人协作','支持团队云资产管理'],
+    en: ['100 GB team cloud storage','Shared team AI credit pool','Allocate team AI credit quotas','Member and group management','Team analytics dashboard','Multi-user project collaboration','Team cloud asset management'],
+  };
   function teamFeatureSections() {
-    const seatHelp = state.lang === 'zh' ? '可按成员的创作需求自由组合基础席位与专业席位；各席位权益见下方说明。' : 'Mix Basic and Pro seats to fit each member’s needs. See benefits below.';
-    return teamFeatures[state.lang].map(group => `<section class="plan-feature-section team-feature-section" aria-labelledby="team-${group.id}-title"><h3 id="team-${group.id}-title"><span class="feature-check" aria-hidden="true"><img src="assets/figma/${group.icon}.svg" alt="" width="16" height="16"></span>${group.title}</h3><ul class="plan-list">${group.items.map((item,index) => personalFeature(item, {help:group.id === 'collaboration' && index === 0 ? info('team','seats',seatHelp) : ''})).join('')}</ul></section>`).join('');
+    const zh = state.lang === 'zh';
+    const seatHelp = zh ? '可按成员的创作需求自由组合基础席位与专业席位；各席位权益见下方说明。' : 'Mix Basic and Pro seats for each member. Seat benefits are listed below.';
+    const seats = teamSeats[state.lang].map(seat => `<section class="seat-card" aria-labelledby="team-seat-${seat.id}"><h3 id="team-seat-${seat.id}"><span class="feature-check" aria-hidden="true"><img src="assets/figma/${seat.icon}.svg" alt="" width="16" height="16"></span>${seat.title}</h3><div class="seat-lines">${seat.lines.map(line => `<p>${line}</p>`).join('')}</div></section>`).join('');
+    return `<div class="team-mix"><span class="feature-check" aria-hidden="true"><img src="assets/figma/team-agreement.svg" alt="" width="14.3333" height="10.6667"></span><span>${zh ? '团队分工 自由组合' : 'Mix roles freely'}</span>${info('team','seats',seatHelp)}</div><div class="team-seats">${seats}</div><section class="plan-feature-section team-feature-section" aria-labelledby="team-collab-title"><h3 id="team-collab-title"><span class="feature-check" aria-hidden="true"><img src="assets/figma/team-users.svg" alt="" width="16" height="16"></span>${zh ? '协作与管理' : 'Collaboration & management'}</h3><ul class="plan-list">${teamCollab[state.lang].map(item => personalFeature(item)).join('')}</ul></section>`;
   }
 
   // Measure natural card heights on narrow screens, including translated copy.
@@ -128,7 +142,7 @@
       const section = card.querySelector(`.${name}`);
       return section.querySelector('h3').offsetHeight + section.querySelector('ul').offsetHeight + 16;
     }));
-    grid.style.setProperty('--render-section-height',`${sectionHeight('render-features')}px`);
+    grid.style.setProperty('--workflow-section-height',`${sectionHeight('workflow-features')}px`);
     grid.style.setProperty('--ai-section-height',`${sectionHeight('ai-features')}px`);
     const headers = cards.slice(0,3).map(card => card.querySelector('.personal-card-header').offsetHeight);
     grid.style.setProperty('--annual-header-extra',`${Math.max(0,Math.max(headers[1],headers[2]) - headers[0])}px`);
@@ -152,13 +166,14 @@
       <div class="personal-card-header"><div class="plan-top">
         <div class="plan-title"><div class="plan-name"><h2>${p[id].name}</h2></div></div>
         ${id === 'community' ? `<div class="plan-price"><span class="price-value">${money(0)}</span><span class="price-period">${p.free}</span></div>` : `
-        <div class="plan-tier"><span class="tier-name" data-personal-tier="${id}">${tierName(id)}</span><div class="price-tier-control">
+        <div class="plan-tier"><div class="price-tier-control">
           <div class="plan-price"><span class="price-value">${currencySymbol()}<span data-price="${id}">${personalPrice(id)}</span></span><span class="price-period" data-period>${period}</span></div>
-          <button type="button" class="tier-toggle" data-tier-toggle="${id}" aria-pressed="${state.personalTiers[id] === 1}" aria-label="${tierToggleLabel(id)}" aria-describedby="${id}-tier-tip"><span class="tier-arrow-window" aria-hidden="true"><span class="tier-arrow-track">${personalIcon('arrow-up')}${personalIcon('arrow-up')}</span></span></button>
-          <span class="feature-tooltip tier-tooltip" role="tooltip" popover="manual" id="${id}-tier-tip">${tierTooltipLabel(id)}</span>
+          <div class="multiplier${state.personalTiers[id] === 1 ? ' is-triple' : ''}" role="group" aria-label="${state.lang === 'zh' ? `${p[id].name}积分倍数` : `${p[id].name} credit multiplier`}">
+            ${[0,1].map(index => `<button type="button" class="multiplier-option" data-tier-set="${id}" data-tier-index="${index}" aria-pressed="${state.personalTiers[id] === index}">${personalTiers[index].names[state.lang]}</button>`).join('')}
+          </div>
         </div><div class="plan-savings" data-savings="${id}"${annual ? '' : ' hidden'}>${annualSavings(id)}</div></div>`}
       </div>
-      <button type="button" class="plan-button" data-select-plan="${id}">${id === 'community' ? p.download : p.upgrade}</button></div>
+      <button type="button" class="plan-button" data-select-plan="${id}" data-purchase="${id}">${id === 'community' ? p.download : purchaseLabel()}</button></div>
       ${featureSections(id)}
     </article>`;
     const zh = state.lang === 'zh';
@@ -178,27 +193,28 @@
     document.dispatchEvent(new Event('d5:shaders'));
   };
 
-  function tierToggleLabel(id) {
-    const next = personalTiers[1 - state.personalTiers[id]].names[state.lang];
-    return state.lang === 'zh' ? `${P()[id].name}：切换到${next}` : `${P()[id].name}: switch to ${next}`;
-  }
-  function tierTooltipLabel(id) {
-    return state.lang === 'zh' ? (state.personalTiers[id] ? '较低档位' : '更高档位') : (state.personalTiers[id] ? 'Lower tier' : 'Higher tier');
-  }
   syncTier = function () {
     $('#plan-grid').classList.toggle('is-annual',state.billing === 'annual');
     for (const id of ['basic','pro']) {
       animateNumber($(`[data-price="${id}"]`),personalPrice(id));
-      $(`[data-personal-tier="${id}"]`).textContent = tierName(id);
-      const toggle = $(`[data-tier-toggle="${id}"]`);
-      toggle.setAttribute('aria-pressed',String(state.personalTiers[id] === 1));
-      toggle.setAttribute('aria-label',tierToggleLabel(id));
-      $(`#${id}-tier-tip`).textContent = tierTooltipLabel(id);
+      const track = $(`.plan-card.${id} .multiplier`);
+      track.classList.toggle('is-triple',state.personalTiers[id] === 1);
+      $$(`[data-tier-set="${id}"]`).forEach(button => {
+        const selected = Number(button.dataset.tierIndex) === state.personalTiers[id];
+        button.setAttribute('aria-pressed',String(selected));
+      });
+      const badge = $(`[data-multiplier-badge="${id}"]`);
+      if (badge) badge.textContent = tierName(id);
+      const features = $(`[data-ai-features="${id}"]`);
+      if (features) features.innerHTML = aiFeatures(id);
       const savings = $(`[data-savings="${id}"]`);
       savings.innerHTML = annualSavings(id);
       savings.hidden = state.billing !== 'annual';
     }
     $$('[data-period]').forEach(el => { el.textContent = pricePeriod(); });
+    $$('[data-purchase]').forEach(el => {
+      if (el.dataset.purchase !== 'community') el.textContent = purchaseLabel();
+    });
   };
 
   let comparisonExpanded = true;
@@ -281,7 +297,7 @@
     const zh = state.lang === 'zh';
     const title = id === 'team' ? (zh ? '团队方案咨询' : 'Team plan consultation') : id === 'education' ? (zh ? 'D5 学生版申请' : 'D5 Student Plan application') : P()[id].name;
     let body;
-    if (id === 'team') body = `<p>${zh ? '按团队需求自由组合基础席位与专业席位，协作管理并共享 AI 积分。' : 'Mix Basic and Pro seats for your team, manage collaboration and share AI credits.'}</p><dl><dt>${teamFeatures[state.lang][1].title}</dt><dd>${teamFeatures[state.lang][1].items[0]}</dd><dt>${teamFeatures[state.lang][2].title}</dt><dd>${teamFeatures[state.lang][2].items[0]}</dd><dt>${zh ? 'AI 积分' : 'AI credits'}</dt><dd>${zh ? '团队共享' : 'Shared across the team'}</dd></dl><p>${zh ? '当前为方案预览，咨询入口尚未接入。' : 'This preview is not connected to the sales consultation service yet.'}</p>`;
+    if (id === 'team') body = `<p>${zh ? '按团队需求自由组合基础席位与专业席位，协作管理并共享 AI 积分。' : 'Mix Basic and Pro seats for your team, manage collaboration, and share AI credits.'}</p><dl>${teamSeats[state.lang].map(seat => `<dt>${seat.title}</dt><dd>${seat.lines[0]}</dd>`).join('')}<dt>${zh ? 'AI 积分' : 'AI credits'}</dt><dd>${zh ? '团队共享' : 'Shared across the team'}</dd></dl><p>${zh ? '当前为方案预览，咨询入口尚未接入。' : 'This preview is not connected to the sales consultation service yet.'}</p>`;
     else if (id === 'education') body = `<p>${zh ? '专为高校在校生推出的特别权益方案，助力教与学。申请入口将在正式上线后开放。' : 'Special benefits for university and college students to support teaching and learning. Applications will open with the official release.'}</p>`;
     else body = `${id === 'community' ? '' : `<p class="dialog-tier">${tierName(id)}</p>`}<div class="dialog-price">${money(id === 'community' ? 0 : personalPrice(id))} <span class="price-period">${id === 'community' ? P().free : pricePeriod()}</span></div>${id !== 'community' && state.billing === 'annual' ? `<div class="plan-savings">${annualSavings(id)}</div><p class="annual-total">${zh ? `按年支付 ${money(selectedPrices(id)[`${id}Annual`])}/年` : `Billed yearly: ${money(selectedPrices(id)[`${id}Annual`])}/year`}</p>` : ''}<p>${zh ? '已选好你的创作方案。当前为交互预览，购买与账号服务尚未接入，不会创建订单。' : 'Your plan is selected. Checkout and account services are not connected in this preview; no order is created.'}</p>`;
     dialog.innerHTML = `<button type="button" class="dialog-close" data-close-dialog aria-label="${zh ? '关闭' : 'Close'}">${zh ? '关闭' : 'Close'}</button><h2 id="pricing-dialog-title">${title}</h2>${body}<button class="plan-button" type="button" data-close-dialog>${zh ? '继续了解方案' : 'Keep exploring'}</button>`;
@@ -291,12 +307,13 @@
   document.addEventListener('click',event => {
     const target = event.target.closest('button,a');
     if (!target) return;
-    if (target.hasAttribute('data-tier-toggle')) {
+    if (target.hasAttribute('data-tier-set')) {
       hideTooltip();
-      const id = target.dataset.tierToggle;
-      state.personalTiers[id] = 1 - state.personalTiers[id];
+      const id = target.dataset.tierSet;
+      const next = Number(target.dataset.tierIndex);
+      if (state.personalTiers[id] === next) return;
+      state.personalTiers[id] = next;
       syncTier();
-      $(`[data-ai-features="${id}"]`).innerHTML = aiFeatures(id);
       persistPreviewState();
       $('#announcer').textContent = `${P()[id].name} · ${tierName(id)} · ${money(personalPrice(id))}${pricePeriod()}`;
     }
