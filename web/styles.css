@@ -75,9 +75,9 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .credit-info img { flex: none; width: 16px; height: 16px; padding: 1.5px; }
 .credit-info strong { font-size: 16px; font-weight: 500; line-height: 26px; }
 .credit-info > span { font-size: 14px; line-height: 22px; color: var(--text-80); }
-.rolling-number { display: inline-flex; align-items: flex-start; height: 1.15em; font-variant-numeric: tabular-nums; letter-spacing: 0; line-height: 1.15; vertical-align: baseline; }
-.number-wheel { display: inline-block; flex: none; width: 1ch; height: 1.15em; overflow: hidden; }
-.number-wheel-track { display: flex; flex-direction: column; }
+.rolling-number { display: inline-flex; align-items: flex-start; height: 1.15em; overflow: hidden; font-variant-numeric: tabular-nums; letter-spacing: 0; line-height: 1.15; vertical-align: baseline; }
+.number-wheel { position: relative; display: inline-block; flex: none; width: 1ch; height: 1.15em; overflow: hidden; vertical-align: top; }
+.number-wheel-track { position: absolute; top: 0; left: 0; display: flex; flex-direction: column; width: 100%; }
 .number-wheel-track > span { display: block; height: 1.15em; line-height: 1.15em; flex: none; }
 
 .plan-slider { position: relative; height: 32px; border: 1px solid var(--border-10); border-radius: 8px; background: rgba(255, 255, 255, .06); -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px); overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: pointer; }
@@ -143,6 +143,10 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .compare-table tbody tr > :first-child { border-left: 1px solid var(--border-10); }
 .compare-table tbody tr > :last-child { border-right-color: var(--border-10); }
 .compare-table .compare-group { padding: 16px 20px; border-top: 1px solid var(--border-10); border-radius: 8px 8px 0 0; font-size: 20px; font-weight: 500; line-height: 24px; text-align: left; }
+.compare-table .compare-subgroup th { padding: 12px 24px; border-bottom: 1px solid var(--border-6); font-size: 13px; font-weight: 600; line-height: 20px; text-align: left; color: var(--text-80, rgba(255,255,255,.8)); background: rgba(255,255,255,.03); }
+.compare-table .compare-text { display: inline-block; max-width: 16em; font-size: 13px; line-height: 18px; }
+.compare-table.is-team thead .lead { width: 46%; }
+.compare-table.is-team thead .col { width: 27%; }
 .compare-group img { display: inline-block; width: 24px; height: 24px; margin-right: 8px; vertical-align: middle; }
 .compare-table tbody .lead { padding: 16px 24px; font-size: 14px; font-weight: 500; line-height: normal; text-align: left; }
 .compare-table tbody .col { padding: 14px 12px; text-align: center; }
@@ -164,6 +168,8 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .faq-list summary img { flex: none; width: 24px; height: 24px; margin: -1px 0; transition: transform .2s ease; }
 .faq-list details[open] summary img { transform: rotate(180deg); }
 .faq-list details p { padding: 0 24px 24px; font-size: 14px; line-height: 22px; color: var(--text-60); }
+.faq-list details a { color: #c9acff; text-decoration: underline; text-underline-offset: 2px; }
+.faq-list details strong { color: var(--text, #fff); font-weight: 600; }
 
 /* ---------- Footer (reference site) ---------- */
 .reference-footer { padding: 80px max(32px, 50vw - 600px) 0; background: #1c1c21; color: var(--text-60); font-size: 14px; }

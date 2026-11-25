@@ -10,8 +10,8 @@
   <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/d5-icon-16.png?v=20261022-3">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/d5-icon-32.png?v=20261022-3">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/d5-icon-180.png?v=20261022-3">
-  <link rel="stylesheet" href="styles.css?v=20261022-2">
-  <link rel="stylesheet" href="pricing-experience.css?v=20261027-5">
+  <link rel="stylesheet" href="styles.css?v=20261125-9">
+  <link rel="stylesheet" href="pricing-experience.css?v=20261125-10">
 </head>
 <body>
   <div class="pricing-sky" aria-hidden="true"><canvas data-aura-glow></canvas></div>
@@ -39,6 +39,7 @@
         </div>
       </div>
       <div class="plan-grid" id="plan-grid" role="tabpanel" aria-labelledby="tab-personal" tabindex="0"></div>
+      <div class="plan-subnav" id="plan-subnav" aria-hidden="true"></div>
       <div class="education">
         <div class="education-inner">
           <strong data-i18n="education.title">D5 for Education</strong>
@@ -61,11 +62,7 @@
     <section class="faq" id="faq" aria-labelledby="faq-title">
       <div class="container faq-inner">
         <div class="faq-title"><h2 id="faq-title" data-i18n="faq.title">常见问题</h2></div>
-        <div class="faq-list">
-          <details><summary><span data-i18n="faq.q1">D5 Pro 可以升级到 D5 团队版吗？</span><img src="assets/figma/caret-down-faq.svg" alt=""></summary><p data-i18n="faq.a1">团队版面向需要协作与统一管理的团队，具体开放时间和升级方式以后续产品公告为准。</p></details>
-          <details><summary><span data-i18n="faq.q2">D5 社区版授权可以做什么？</span><img src="assets/figma/caret-down-faq.svg" alt=""></summary><p data-i18n="faq.a2">社区版适合个人体验 D5 的 AI 创作能力，生成内容不可用于商业用途。</p></details>
-          <details><summary><span data-i18n="faq.q3">如何获取发票？</span><img src="assets/figma/caret-down-faq.svg" alt=""></summary><p data-i18n="faq.a3">完成购买后，可在账户订单页面申请和下载发票。</p></details>
-        </div>
+        <div class="faq-list" id="faq-list"></div>
       </div>
     </section>
   </main>
@@ -97,7 +94,7 @@
 
   <div class="sr-only" id="announcer" role="status" aria-live="polite"></div>
   <script src="app.js?v=20261028-2"></script>
-  <script src="pricing-experience.js?v=20261028-3"></script>
+  <script src="pricing-experience.js?v=20261125-10"></script>
   <script type="module" src="hero-aura.mjs?v=20261022-5"></script>
   <script type="module" src="shader-backgrounds.mjs?v=20261027-4"></script>
 </body>
