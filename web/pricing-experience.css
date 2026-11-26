@@ -336,10 +336,10 @@ html[data-theme="light"] .pricing-sky {
 }
 html[data-theme="light"] .header-theme:hover,
 html[data-theme="light"] .header-language:hover { background: rgba(22, 21, 28, .04); }
-html[data-theme="light"] .segmented { border-width: 1px; background: #fff; }
-html[data-theme="light"] .tab-indicator,
+html[data-theme="light"] .segmented { border-width: 1px; border-color: rgba(22, 21, 28, .06); background: rgba(22, 21, 28, .04); }
+html[data-theme="light"] .tab-indicator { background: #fff; }
 html[data-theme="light"] .segmented button[aria-pressed="true"],
-html[data-theme="light"] .segmented button[aria-selected="true"] { background: #fff; }
+html[data-theme="light"] .segmented button[aria-selected="true"] { background: transparent; }
 html[data-theme="light"] .toggle { background: rgba(22, 21, 28, .16); }
 html[data-theme="light"] .billing b,
 html[data-theme="light"] .pro .plan-button,
