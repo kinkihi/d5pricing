@@ -338,7 +338,8 @@ html[data-theme="light"] .header-theme:hover,
 html[data-theme="light"] .header-language:hover { background: rgba(22, 21, 28, .04); }
 html[data-theme="light"] .segmented { border-width: 1px; background: #fff; }
 html[data-theme="light"] .tab-indicator,
-html[data-theme="light"] .segmented button[aria-pressed="true"] { background: rgba(22, 21, 28, .05); }
+html[data-theme="light"] .segmented button[aria-pressed="true"],
+html[data-theme="light"] .segmented button[aria-selected="true"] { background: #fff; }
 html[data-theme="light"] .toggle { background: rgba(22, 21, 28, .16); }
 html[data-theme="light"] .billing b,
 html[data-theme="light"] .pro .plan-button,
@@ -369,7 +370,7 @@ html[data-theme="light"] .price-tier-control { background: rgba(22, 21, 28, .04)
 html[data-theme="light"] .tier-name { color: rgba(22, 21, 28, .56); }
 html[data-theme="light"] .multiplier { background: rgba(22, 21, 28, .04); border-color: rgba(22, 21, 28, .06); }
 html[data-theme="light"] .multiplier-option { color: #16151c; }
-html[data-theme="light"] .multiplier-option[aria-pressed="true"] { background: rgba(22, 21, 28, .06); box-shadow: none; }
+html[data-theme="light"] .multiplier-option[aria-pressed="true"] { background: #fff; box-shadow: none; }
 html[data-theme="light"] .multiplier.is-triple .multiplier-option[aria-pressed="true"] { background: #af82ff; color: #fff; box-shadow: none; }
 html[data-theme="light"] .multiplier-badge { background: rgba(22, 21, 28, .06); color: rgba(22, 21, 28, .75); }
 html[data-theme="light"] .saving-badge,
