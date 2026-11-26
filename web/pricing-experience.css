@@ -173,7 +173,9 @@ html[data-theme="light"] .theme-icon-moon { display: block; }
 .price-tier-control .plan-price { flex-wrap: nowrap; min-width: 0; }
 .price-tier-control .price-period { white-space: nowrap; }
 .price-tier-control .price-value { flex-shrink: 0; letter-spacing: 0; }
-.plan-savings { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 4px 8px; align-self: start; min-width: 0; min-height: 0; padding: 8px 4px 0; overflow: hidden; font-size: 12px; font-weight: 500; line-height: 16px; }
+.plan-savings { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; align-self: start; min-width: 0; min-height: 0; padding: 8px 4px 0; overflow: hidden; font-size: 12px; font-weight: 500; line-height: 16px; }
+.personal-card .plan-savings,
+.plan-subnav-card .plan-savings { padding-left: 16px; }
 .plan-savings.is-off { visibility: hidden; }
 .plan-subnav .plan-savings.is-off { display: none; }
 .saving-badge { flex-shrink: 0; padding: 2px 8px; border-radius: 9999px; background: rgba(119,43,255,.3); color: #c9acff; }
@@ -251,6 +253,8 @@ body.is-plan-subnav .plan-subnav { opacity: 1; visibility: visible; pointer-even
   .personal-card-header { padding: 22px; }
   .plan-feature-section { padding-inline: 16px; }
   .price-tier-control { gap: 8px; padding-left: 8px; }
+  .personal-card .plan-savings,
+  .plan-subnav-card .plan-savings { padding-left: 8px; }
   .price-tier-control .price-value { font-size: 28px; }
   .price-tier-control .price-period { font-size: 12px; }
   .plan-grid .plan-list li { font-size: 13px; }
