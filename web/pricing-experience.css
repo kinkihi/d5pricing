@@ -368,7 +368,7 @@ html[data-theme="light"] .seat-card p { color: rgba(22, 21, 28, .78); }
 html[data-theme="light"] .seat-card h3 { color: #16151c; border-bottom-color: rgba(22, 21, 28, .06); }
 html[data-theme="light"] .price-tier-control { background: rgba(22, 21, 28, .04); }
 html[data-theme="light"] .tier-name { color: rgba(22, 21, 28, .56); }
-html[data-theme="light"] .multiplier { background: rgba(22, 21, 28, .04); border-color: rgba(22, 21, 28, .06); }
+html[data-theme="light"] .multiplier { background: rgba(22, 21, 28, .04); border-color: rgba(22, 21, 28, .03); }
 html[data-theme="light"] .multiplier-option { color: #16151c; }
 html[data-theme="light"] .multiplier-option[aria-pressed="true"] { background: #fff; box-shadow: none; }
 html[data-theme="light"] .multiplier.is-triple .multiplier-option[aria-pressed="true"] { background: #af82ff; color: #fff; box-shadow: none; }
