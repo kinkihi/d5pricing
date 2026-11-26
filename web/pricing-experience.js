@@ -108,7 +108,7 @@
     const items = renderFeatures[state.lang][id];
     const zh = state.lang === 'zh';
     const badge = id === 'community' ? '' : `<span class="multiplier-badge" data-multiplier-badge="${id}">${selectedTier(id).names[state.lang]}</span>`;
-    return `<section class="plan-feature-section ai-features" aria-labelledby="${id}-ai-title"><h3 id="${id}-ai-title"><span class="feature-check" aria-hidden="true">${personalIcon('ai')}</span>${zh ? 'AI 创作' : 'AI creation'}${badge}</h3><ul class="plan-list" data-ai-features="${id}">${aiFeatures(id)}</ul></section><section class="plan-feature-section workflow-features" aria-labelledby="${id}-workflow-title"><h3 id="${id}-workflow-title"><span class="feature-check" aria-hidden="true">${personalIcon('render')}</span>${zh ? '可视化工作流' : 'Visual workflow'}</h3><ul class="plan-list">${items.map(item => personalFeature(item)).join('')}</ul></section>`;
+    return `<section class="plan-feature-section ai-features" aria-labelledby="${id}-ai-title"><h3 id="${id}-ai-title"><span class="feature-check" aria-hidden="true">${personalIcon('ai')}</span>${zh ? 'AI 创作' : 'AI creation'}${badge}</h3><ul class="plan-list" data-ai-features="${id}">${aiFeatures(id)}</ul></section><section class="plan-feature-section workflow-features" aria-labelledby="${id}-workflow-title"><h3 id="${id}-workflow-title"><span class="feature-check" aria-hidden="true">${personalIcon('render')}</span>${zh ? '实时渲染' : 'Visual workflow'}</h3><ul class="plan-list">${items.map(item => personalFeature(item)).join('')}</ul></section>`;
   }
   const teamSeats = {
     zh: [
