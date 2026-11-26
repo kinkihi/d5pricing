@@ -330,8 +330,8 @@ html[data-theme="light"] {
 html[data-theme="light"] body { background: #fff; color: #16151c; }
 html[data-theme="light"] .pricing-sky {
   background:
-    radial-gradient(ellipse 68% 38% at 22% 0%, transparent 34%, rgba(156, 154, 168, .22) 53%, rgba(196, 200, 208, .14) 66%, transparent 85%),
-    radial-gradient(ellipse 58% 36% at 80% 5%, transparent 25%, rgba(168, 182, 194, .18) 48%, rgba(206, 214, 222, .12) 66%, transparent 90%),
+    radial-gradient(ellipse 68% 38% at 22% 0%, transparent 34%, rgba(176, 174, 188, .12) 53%, rgba(214, 216, 222, .08) 66%, transparent 85%),
+    radial-gradient(ellipse 58% 36% at 80% 5%, transparent 25%, rgba(186, 198, 208, .10) 48%, rgba(220, 226, 232, .07) 66%, transparent 90%),
     #fff;
 }
 html[data-theme="light"] .header-theme:hover,

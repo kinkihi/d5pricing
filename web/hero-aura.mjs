@@ -62,15 +62,16 @@ void main() {
   float lowerFade = 1.0 - smoothstep(0.32, 0.84, uv.y);
   // The title remains the brightest element as the light passes behind it.
   vec2 title = (uv - vec2(0.5, 0.38)) / vec2(0.34, 0.16);
-  float titleShade = 1.0 - 0.40 * exp(-dot(title, title));
+  // Light mode only softens the title shadow; the folds themselves stay.
+  float titleShade = 1.0 - (u_light > 0.5 ? 0.18 : 0.40) * exp(-dot(title, title));
   float shade = edgeFade * lowerFade * titleShade;
   vec3 color = (vec3(0.009, 0.010, 0.015) + curtains) * shade;
   if (u_light > 0.5) {
-    // Same folds on white: a cool veil, fading to white toward the page.
+    // Same folds on white, lifted into a bright cool veil.
     float peak = max(curtains.r, max(curtains.g, curtains.b));
     vec3 hue = curtains / max(peak, 0.001);
     float strength = peak * shade;
-    color = clamp(vec3(1.0) - strength * 0.82 + hue * strength * 0.38, 0.0, 1.0);
+    color = clamp(vec3(1.0) - strength * 0.34 + hue * strength * 0.12, 0.0, 1.0);
   }
   // Subpixel, time-independent dithering prevents banding without glitter.
   color += (hash(gl_FragCoord.xy) - 0.5) / 255.0;
