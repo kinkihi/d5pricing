@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#000000">
+  <script>
+    (function () {
+      try {
+        var query = new URLSearchParams(location.search).get('theme');
+        var saved = localStorage.getItem('d5-theme');
+        var theme = query === 'light' || query === 'dark' ? query : (saved === 'light' ? 'light' : 'dark');
+        document.documentElement.dataset.theme = theme;
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', theme === 'light' ? '#f4f3f8' : '#000000');
+      } catch (e) {}
+    })();
+  </script>
   <meta name="description" content="选择适合你的 D5 方案，比较个人版本、AI 用量与设计工作流权益。">
   <title>D5 · 选择你的创作方案</title>
   <link rel="icon" type="image/x-icon" href="assets/icons/d5-favicon.ico?v=20261022-3" sizes="16x16 32x32 48x48">
@@ -11,12 +23,23 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/d5-icon-32.png?v=20261022-3">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/d5-icon-180.png?v=20261022-3">
   <link rel="stylesheet" href="styles.css?v=20261125-9">
-  <link rel="stylesheet" href="pricing-experience.css?v=20261125-10">
+  <link rel="stylesheet" href="pricing-experience.css?v=20261126-1">
 </head>
 <body>
   <div class="pricing-sky" aria-hidden="true"><canvas data-aura-glow></canvas></div>
   <header class="global-nav">
-    <button class="header-language" type="button" data-language-toggle>English</button>
+    <div class="header-actions">
+      <button class="header-theme" type="button" data-theme-toggle aria-pressed="false" aria-label="切换为亮色">
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="header-language" type="button" data-language-toggle>English</button>
+    </div>
   </header>
 
   <main id="main">
@@ -94,7 +117,7 @@
 
   <div class="sr-only" id="announcer" role="status" aria-live="polite"></div>
   <script src="app.js?v=20261028-2"></script>
-  <script src="pricing-experience.js?v=20261125-10"></script>
+  <script src="pricing-experience.js?v=20261126-1"></script>
   <script type="module" src="hero-aura.mjs?v=20261022-5"></script>
   <script type="module" src="shader-backgrounds.mjs?v=20261027-4"></script>
 </body>

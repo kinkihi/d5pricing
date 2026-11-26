@@ -595,9 +595,27 @@
     $('#faq-list').innerHTML = items.map(([question, answer]) => `<details><summary><span>${question}</span><img src="assets/figma/caret-down-faq.svg" alt=""></summary><p>${answer}</p></details>`).join('');
   };
 
+  function syncThemeControl() {
+    const light = document.documentElement.dataset.theme === 'light';
+    const button = $('[data-theme-toggle]');
+    if (button) {
+      const zh = state.lang === 'zh';
+      button.setAttribute('aria-pressed', String(light));
+      button.setAttribute('aria-label', light ? (zh ? '切换为暗色' : 'Switch to dark mode') : (zh ? '切换为亮色' : 'Switch to light mode'));
+    }
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', light ? '#f4f3f8' : '#000000');
+  }
+  function applyTheme(theme) {
+    document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+    try { localStorage.setItem('d5-theme', document.documentElement.dataset.theme); } catch (e) {}
+    syncThemeControl();
+  }
+
   function persistPreviewState() {
     const url = new URL(location.href);
     for (const key of ['audience','billing','lang']) url.searchParams.set(key,state[key]);
+    url.searchParams.set('theme', document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
     for (const id of ['basic','pro']) {
       if (state.personalTiers[id]) url.searchParams.set(`${id}Tier`,'advanced');
       else url.searchParams.delete(`${id}Tier`);
@@ -630,6 +648,7 @@
     copy.en['comparison.subtitle'] = team ? 'Pro and Teams, compared' : 'Individual plans, side by side';
     $('[data-i18n="comparison.subtitle"]').textContent = t('comparison.subtitle');
     $('.header-language').textContent = state.lang === 'zh' ? 'English' : '中文';
+    syncThemeControl();
     persistPreviewState();
     syncPlanSubnav();
   }
@@ -693,6 +712,10 @@
       else collapsedCompare.delete(key);
       target.setAttribute('aria-expanded', String(!open));
       $$(`[data-compare-panel="${key}"]`).forEach(row => { row.hidden = open; });
+    }
+    if (target.hasAttribute('data-theme-toggle')) {
+      applyTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
+      persistPreviewState();
     }
     if (target.hasAttribute('data-language-toggle')) {
       // Reuse the existing language events for all page copy.
@@ -788,5 +811,6 @@
   document.addEventListener('transitionend',event => {
     if (activeTooltip && event.target === activeTooltip.button.closest('.plan-card')) positionTooltip();
   });
+  applyTheme(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
   renderAll();
 })();
