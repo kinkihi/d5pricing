@@ -64,7 +64,7 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .plan-name h2 { font-size: 32px; font-weight: 500; line-height: 40px; }
 .tag { max-width: 100%; padding: 8px; border-radius: 8px; background: #30a46c; font-size: 11px; font-weight: 600; line-height: normal; color: #fff; }
 .plan-price { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; min-height: 40px; }
-.price-value { font-size: 32px; font-weight: 600; line-height: normal; white-space: nowrap; }
+.price-value { display: inline-flex; align-items: baseline; font-size: 32px; font-weight: 600; line-height: 1; white-space: nowrap; }
 .price-period { font-size: 14px; line-height: 22px; color: var(--text-80); }
 .plan-info { display: flex; flex-direction: column; gap: 8px; font-size: 16px; font-weight: 500; line-height: 26px; }
 
@@ -75,10 +75,12 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .credit-info img { flex: none; width: 16px; height: 16px; padding: 1.5px; }
 .credit-info strong { font-size: 16px; font-weight: 500; line-height: 26px; }
 .credit-info > span { font-size: 14px; line-height: 22px; color: var(--text-80); }
-.rolling-number { display: inline-flex; align-items: flex-start; height: 1.15em; overflow: hidden; font-variant-numeric: tabular-nums; letter-spacing: 0; line-height: 1.15; vertical-align: baseline; }
-.number-wheel { position: relative; display: inline-block; flex: none; width: 1ch; height: 1.15em; overflow: hidden; vertical-align: top; }
-.number-wheel-track { position: absolute; top: 0; left: 0; display: flex; flex-direction: column; width: 100%; }
-.number-wheel-track > span { display: block; height: 1.15em; line-height: 1.15em; flex: none; }
+.rolling-number { display: inline-flex; align-items: baseline; height: auto; overflow: visible; font-variant-numeric: tabular-nums; letter-spacing: 0; line-height: 1; vertical-align: baseline; }
+.number-wheel { position: relative; display: inline-block; flex: none; width: 1ch; min-width: 0; overflow: visible; line-height: 1; vertical-align: baseline; }
+.number-wheel-strut { visibility: hidden; line-height: 1; }
+.number-wheel-window { position: absolute; inset: 0; overflow: hidden; }
+.number-wheel-track { position: absolute; top: 0; left: 0; display: flex; flex-direction: column; width: 100%; height: 2em; }
+.number-wheel-track > span { display: block; height: 1em; line-height: 1; flex: none; }
 
 .plan-slider { position: relative; height: 32px; border: 1px solid var(--border-10); border-radius: 8px; background: rgba(255, 255, 255, .06); -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px); overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: pointer; }
 .slider-fill { position: absolute; inset: 0 auto 0 0; width: clamp(0%, var(--progress), 100%); border-radius: 7px 3px 3px 7px; background: rgba(255, 255, 255, .2); -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px); transition: width .18s cubic-bezier(.2, .8, .2, 1); }
@@ -119,7 +121,7 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .education-inner { display: flex; flex: 1; align-items: center; justify-content: center; gap: 16px; min-width: 0; padding: 8px 40px; border-radius: 8px; }
 .education strong { font-size: 16px; font-weight: 600; line-height: normal; white-space: nowrap; }
 .education span { font-size: 14px; line-height: 22px; white-space: nowrap; }
-.education a { padding: 12px; border: 1px solid var(--border-6); border-radius: 4px; background: rgba(255, 255, 255, .06); font-size: 14px; line-height: 1; white-space: nowrap; -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px); }
+.education a { padding: 12px; border: 1px solid var(--border-6); border-radius: 8px; background: rgba(255, 255, 255, .06); font-size: 14px; line-height: 1; white-space: nowrap; -webkit-backdrop-filter: blur(50px); backdrop-filter: blur(50px); }
 
 /* ---------- Sections ---------- */
 .section { padding-bottom: 120px; }

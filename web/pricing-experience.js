@@ -9,8 +9,8 @@
   state.lang = params.get('lang') === 'en' ? 'en' : 'zh';
   state.personalTiers = Object.fromEntries(['basic','pro'].map(id => [id, params.get(`${id}Tier`) === 'advanced' ? 1 : 0]));
   const personalTiers = [
-    { names: {zh:'1×',en:'1×'}, credits:1500, concurrency:4, image:'2K', video:'720p' },
-    { names: {zh:'3×',en:'3×'}, credits:4500, concurrency:4, image:'2K', video:'720p' },
+    { names: {zh:'1×',en:'1×'}, credits:1000, concurrency:4, image:'2K', video:'720p' },
+    { names: {zh:'3×',en:'3×'}, credits:4000, concurrency:4, image:'2K', video:'720p' },
   ];
   const personalPrices = {
     zh: [
@@ -24,7 +24,7 @@
   };
   const selectedTier = id => personalTiers[state.personalTiers[id]];
   const selectedPrices = id => personalPrices[state.lang][state.personalTiers[id]];
-  const currencySymbol = () => state.lang === 'zh' ? '￥' : '$';
+  const currencySymbol = () => state.lang === 'zh' ? '¥' : '$';
   const money = amount => `${currencySymbol()}${amount}`;
   const personalPrice = id => state.billing === 'annual' ? selectedPrices(id)[`${id}Annual`] / 12 : selectedPrices(id)[id];
   const pricePeriod = () => state.lang === 'zh' ? '/月' : '/mo';
@@ -80,10 +80,10 @@
   const tooltipCopy = (title, detail) => `<span class="tooltip-title">${title}</span><span class="tooltip-detail">${detail}</span>`;
   function creditTip(credits) {
     return state.lang === 'zh'
-      ? tooltipCopy(`约 ${credits / 2} 张图片或 ${credits / 12} 秒视频`, '按最低价估算：图像 2 积分/张，视频<br>（Seedance 2.0 Mini）12 积分/秒')
-      : tooltipCopy(`About ${credits / 2} images or ${credits / 12}s of video`, 'Est. at minimum rates: 2 credits/image;<br>Seedance 2.0 Mini video: 12 credits/sec.');
+      ? tooltipCopy(`约 ${credits / 2} 张图片或 ${Math.round(credits / 12)} 秒视频`, '按最低价估算：图像 2 积分/张，视频<br>（Seedance 2.0 Mini）12 积分/秒')
+      : tooltipCopy(`About ${credits / 2} images or ${Math.round(credits / 12)}s of video`, 'Est. at minimum rates: 2 credits/image;<br>Seedance 2.0 Mini video: 12 credits/sec.');
   }
-  const personalFeature = (text, {unavailable = false, help = '', bonus = ''} = {}) => `<li class="${[unavailable ? 'unavailable' : '', bonus ? 'has-badge' : ''].filter(Boolean).join(' ')}"><span class="feature-main"><span class="feature-check" aria-hidden="true">${personalIcon(unavailable ? 'close' : 'check')}</span><span class="feature-copy">${text}${help}</span></span>${bonus ? `<span class="bonus-badge">${bonus}</span>` : ''}</li>`;
+  const personalFeature = (text, {unavailable = false, help = '', bonus = ''} = {}) => `<li class="${[unavailable ? 'unavailable' : '', bonus ? 'has-badge' : ''].filter(Boolean).join(' ')}"><span class="feature-main"><span class="feature-check" aria-hidden="true">${personalIcon(unavailable ? 'close' : 'check')}</span><span class="feature-copy">${text}${help}</span></span>${bonus ? `<span class="bonus-badge"><span class="bonus-gift" aria-hidden="true"></span>${bonus}</span>` : ''}</li>`;
   function aiFeatures(id) {
     const zh = state.lang === 'zh';
     if (id === 'community') return [
@@ -95,7 +95,7 @@
     ].join('');
     const tier = selectedTier(id);
     const resolution = id === 'pro' ? {image:'4K',video:'4K'} : {image:'2K',video:'720p'};
-    const bonus = zh ? '限时加赠' : 'Limited bonus';
+    const bonus = zh ? '限时加赠 +500' : 'Limited bonus +500';
     return [
       personalFeature(zh ? `每月 ${tier.credits} AI 积分` : `${tier.credits.toLocaleString('en-US')} AI credits / month`, {help:info(id,'credits',creditTip(tier.credits)), bonus}),
       personalFeature(zh ? '支持全部 AI 模型' : 'All AI models'),
@@ -108,7 +108,7 @@
     const items = renderFeatures[state.lang][id];
     const zh = state.lang === 'zh';
     const badge = id === 'community' ? '' : `<span class="multiplier-badge" data-multiplier-badge="${id}">${selectedTier(id).names[state.lang]}</span>`;
-    return `<section class="plan-feature-section ai-features" aria-labelledby="${id}-ai-title"><h3 id="${id}-ai-title"><span class="feature-check" aria-hidden="true">${personalIcon('ai')}</span>${zh ? 'AI 创作' : 'AI creation'}${badge}</h3><ul class="plan-list" data-ai-features="${id}">${aiFeatures(id)}</ul></section><section class="plan-feature-section workflow-features" aria-labelledby="${id}-workflow-title"><h3 id="${id}-workflow-title"><span class="feature-check" aria-hidden="true">${personalIcon('render')}</span>${zh ? '可视化工作流' : 'Visual workflow'}</h3><ul class="plan-list">${items.map(item => personalFeature(item)).join('')}</ul></section>`;
+    return `<section class="plan-feature-section ai-features" aria-labelledby="${id}-ai-title"><h3 id="${id}-ai-title"><span class="feature-check" aria-hidden="true">${personalIcon('ai')}</span>${zh ? 'AI 创作' : 'AI creation'}${badge}</h3><ul class="plan-list" data-ai-features="${id}">${aiFeatures(id)}</ul></section><section class="plan-feature-section workflow-features" aria-labelledby="${id}-workflow-title"><h3 id="${id}-workflow-title"><span class="feature-check" aria-hidden="true">${personalIcon('render')}</span>${zh ? '实时渲染' : 'Visual workflow'}</h3><ul class="plan-list">${items.map(item => personalFeature(item)).join('')}</ul></section>`;
   }
   const teamSeats = {
     zh: [
@@ -595,9 +595,27 @@
     $('#faq-list').innerHTML = items.map(([question, answer]) => `<details><summary><span>${question}</span><img src="assets/figma/caret-down-faq.svg" alt=""></summary><p>${answer}</p></details>`).join('');
   };
 
+  function syncThemeControl() {
+    const light = document.documentElement.dataset.theme === 'light';
+    const button = $('[data-theme-toggle]');
+    if (button) {
+      const zh = state.lang === 'zh';
+      button.setAttribute('aria-pressed', String(light));
+      button.setAttribute('aria-label', light ? (zh ? '切换为暗色' : 'Switch to dark mode') : (zh ? '切换为亮色' : 'Switch to light mode'));
+    }
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', light ? '#ffffff' : '#000000');
+  }
+  function applyTheme(theme) {
+    document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+    try { localStorage.setItem('d5-theme', document.documentElement.dataset.theme); } catch (e) {}
+    syncThemeControl();
+  }
+
   function persistPreviewState() {
     const url = new URL(location.href);
     for (const key of ['audience','billing','lang']) url.searchParams.set(key,state[key]);
+    url.searchParams.set('theme', document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
     for (const id of ['basic','pro']) {
       if (state.personalTiers[id]) url.searchParams.set(`${id}Tier`,'advanced');
       else url.searchParams.delete(`${id}Tier`);
@@ -630,6 +648,7 @@
     copy.en['comparison.subtitle'] = team ? 'Pro and Teams, compared' : 'Individual plans, side by side';
     $('[data-i18n="comparison.subtitle"]').textContent = t('comparison.subtitle');
     $('.header-language').textContent = state.lang === 'zh' ? 'English' : '中文';
+    syncThemeControl();
     persistPreviewState();
     syncPlanSubnav();
   }
@@ -693,6 +712,10 @@
       else collapsedCompare.delete(key);
       target.setAttribute('aria-expanded', String(!open));
       $$(`[data-compare-panel="${key}"]`).forEach(row => { row.hidden = open; });
+    }
+    if (target.hasAttribute('data-theme-toggle')) {
+      applyTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
+      persistPreviewState();
     }
     if (target.hasAttribute('data-language-toggle')) {
       // Reuse the existing language events for all page copy.
@@ -788,5 +811,6 @@
   document.addEventListener('transitionend',event => {
     if (activeTooltip && event.target === activeTooltip.button.closest('.plan-card')) positionTooltip();
   });
+  applyTheme(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
   renderAll();
 })();

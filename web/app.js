@@ -148,10 +148,16 @@ function addLane(el, number, position, presence = 1) {
   const wheel = document.createElement('span');
   wheel.className = 'number-wheel';
   wheel.setAttribute('aria-hidden', 'true');
+  const strut = document.createElement('span');
+  strut.className = 'number-wheel-strut';
+  strut.textContent = '0';
+  const windowEl = document.createElement('span');
+  windowEl.className = 'number-wheel-window';
   const track = document.createElement('span');
   track.className = 'number-wheel-track';
   track.append(document.createElement('span'), document.createElement('span'));
-  wheel.append(track);
+  windowEl.append(track);
+  wheel.append(strut, windowEl);
   el.prepend(wheel);
   const lane = { wheel, track, position, presence };
   number.lanes.push(lane); // Units first: existing places stay right-aligned.
