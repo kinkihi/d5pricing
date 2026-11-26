@@ -13,6 +13,7 @@ precision highp float;
 uniform vec2 u_resolution;
 uniform float u_time;
 uniform float u_seed;
+uniform float u_light;
 
 float hash(vec2 p) {
   p = fract(p * vec2(123.34, 456.21));
@@ -54,16 +55,23 @@ void main() {
   float b = curtain(y - foldB, 0.055);
   float c = curtain(y - foldC, 0.075);
   // Gray-violet, steel blue and a neutral pearl accent keep chroma restrained.
-  vec3 color = vec3(0.009, 0.010, 0.015);
-  color += vec3(0.275, 0.258, 0.335) * a;
-  color += vec3(0.210, 0.263, 0.300) * b;
-  color += vec3(0.170, 0.167, 0.193) * c;
+  vec3 curtains = vec3(0.275, 0.258, 0.335) * a
+                + vec3(0.210, 0.263, 0.300) * b
+                + vec3(0.170, 0.167, 0.193) * c;
   float edgeFade = 0.68 + 0.32 * sin(x * 3.14159);
   float lowerFade = 1.0 - smoothstep(0.32, 0.84, uv.y);
   // The title remains the brightest element as the light passes behind it.
   vec2 title = (uv - vec2(0.5, 0.38)) / vec2(0.34, 0.16);
   float titleShade = 1.0 - 0.40 * exp(-dot(title, title));
-  color *= edgeFade * lowerFade * titleShade;
+  float shade = edgeFade * lowerFade * titleShade;
+  vec3 color = (vec3(0.009, 0.010, 0.015) + curtains) * shade;
+  if (u_light > 0.5) {
+    // Same folds on white: a cool veil, fading to white toward the page.
+    float peak = max(curtains.r, max(curtains.g, curtains.b));
+    vec3 hue = curtains / max(peak, 0.001);
+    float strength = peak * shade;
+    color = clamp(vec3(1.0) - strength * 0.82 + hue * strength * 0.38, 0.0, 1.0);
+  }
   // Subpixel, time-independent dithering prevents banding without glitter.
   color += (hash(gl_FragCoord.xy) - 0.5) / 255.0;
   gl_FragColor = vec4(max(color, vec3(0.0)), 1.0);
@@ -101,6 +109,7 @@ function draw() {
   gl.uniform2f(uniforms.resolution, width, height);
   gl.uniform1f(uniforms.time, time);
   gl.uniform1f(uniforms.seed, seed);
+  gl.uniform1f(uniforms.light, document.documentElement.dataset.theme === 'light' ? 1 : 0);
   gl.drawArrays(gl.TRIANGLES, 0, 3);
   canvas.dataset.rendered = 'true';
 }
@@ -148,7 +157,7 @@ function initialize() {
     const position = gl.getAttribLocation(program, 'a_position');
     gl.enableVertexAttribArray(position);
     gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-    uniforms = {resolution:gl.getUniformLocation(program,'u_resolution'), time:gl.getUniformLocation(program,'u_time'), seed:gl.getUniformLocation(program,'u_seed')};
+    uniforms = {resolution:gl.getUniformLocation(program,'u_resolution'), time:gl.getUniformLocation(program,'u_time'), seed:gl.getUniformLocation(program,'u_seed'), light:gl.getUniformLocation(program,'u_light')};
     ready = true;
     draw();
     syncMotion();
@@ -163,6 +172,7 @@ function initialize() {
 
 if (canvas) {
   new ResizeObserver(draw).observe(canvas);
+  new MutationObserver(draw).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
   new IntersectionObserver(entries => {visible = entries[0].isIntersecting; syncMotion();}, {rootMargin:'80px'}).observe(canvas);
   reducedMotion.addEventListener('change', syncMotion);
   document.addEventListener('visibilitychange', syncMotion);

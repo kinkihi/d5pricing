@@ -604,7 +604,7 @@
       button.setAttribute('aria-label', light ? (zh ? '切换为暗色' : 'Switch to dark mode') : (zh ? '切换为亮色' : 'Switch to light mode'));
     }
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', light ? '#f4f3f8' : '#000000');
+    if (meta) meta.setAttribute('content', light ? '#ffffff' : '#000000');
   }
   function applyTheme(theme) {
     document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
