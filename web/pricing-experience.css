@@ -201,7 +201,8 @@ body.is-plan-subnav .plan-subnav { opacity: 1; visibility: visible; pointer-even
 .plan-subnav-inner.is-team .plan-subnav-card { width: calc((100% - 2 * var(--card-gap)) / 3); background: #0e0f16; }
 .plan-subnav-card.team .price-value { font-size: 24px; line-height: 32px; letter-spacing: -2px; }
 .plan-subnav-card.team .plan-button { background: #656ad9; border: 1px solid var(--border-6); color: #fff; }
-.bonus-badge { flex: none; height: 28px; padding: 2px 8px 2px 16px; border-radius: 8px; background: linear-gradient(269deg, rgba(119,51,255,.4) .45%, rgba(188,32,255,0) 103%); color: #c9acff; font-size: 11px; font-weight: 500; line-height: 24px; white-space: nowrap; }
+.bonus-badge { display: inline-flex; align-items: center; gap: 4px; flex: none; height: 28px; padding: 2px 8px 2px 16px; border-radius: 8px; background: linear-gradient(269deg, rgba(119,51,255,.4) .45%, rgba(188,32,255,0) 103%); color: #c9acff; font-size: 11px; font-weight: 500; line-height: normal; white-space: nowrap; }
+.bonus-gift { flex: none; width: 12px; height: 12px; background: currentColor; -webkit-mask: url("assets/figma/gift.svg") center / 10px 11px no-repeat; mask: url("assets/figma/gift.svg") center / 10px 11px no-repeat; }
 .tier-toggle { position: relative; display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,.06); border-radius: 50%; background: rgba(255,255,255,.06); }
 .tier-toggle:hover { background: rgba(255,255,255,.16); }
 .tier-toggle img { display: block; transition: transform 200ms ease; }
