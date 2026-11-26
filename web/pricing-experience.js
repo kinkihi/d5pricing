@@ -83,7 +83,7 @@
       ? tooltipCopy(`约 ${credits / 2} 张图片或 ${Math.round(credits / 12)} 秒视频`, '按最低价估算：图像 2 积分/张，视频<br>（Seedance 2.0 Mini）12 积分/秒')
       : tooltipCopy(`About ${credits / 2} images or ${Math.round(credits / 12)}s of video`, 'Est. at minimum rates: 2 credits/image;<br>Seedance 2.0 Mini video: 12 credits/sec.');
   }
-  const personalFeature = (text, {unavailable = false, help = '', bonus = ''} = {}) => `<li class="${[unavailable ? 'unavailable' : '', bonus ? 'has-badge' : ''].filter(Boolean).join(' ')}"><span class="feature-main"><span class="feature-check" aria-hidden="true">${personalIcon(unavailable ? 'close' : 'check')}</span><span class="feature-copy">${text}${help}</span></span>${bonus ? `<span class="bonus-badge"><span class="bonus-gift" aria-hidden="true"></span>${bonus}</span>` : ''}</li>`;
+  const personalFeature = (text, {unavailable = false, help = '', bonus = ''} = {}) => `<li class="${[unavailable ? 'unavailable' : '', bonus ? 'has-badge' : ''].filter(Boolean).join(' ')}"><span class="feature-main"><span class="feature-check" aria-hidden="true">${personalIcon(unavailable ? 'close' : 'check')}</span><span class="feature-copy">${text}${help}</span></span>${bonus}</li>`;
   function aiFeatures(id) {
     const zh = state.lang === 'zh';
     if (id === 'community') return [
@@ -95,7 +95,11 @@
     ].join('');
     const tier = selectedTier(id);
     const resolution = id === 'pro' ? {image:'4K',video:'4K'} : {image:'2K',video:'720p'};
-    const bonus = zh ? '限时加赠 +500' : 'Limited bonus +500';
+    const bonusLabel = zh ? '限时加赠 +500' : 'Limited bonus +500';
+    const bonusTip = zh
+      ? '首发赠分截至 <strong>2027 年 2 月 28 日（含当日，北京时间）</strong>。按实际发放批次判断。年付积分仍按月发放，不锁定全年赠分；已发赠分不因活动结束提前收回。'
+      : 'The launch bonus runs through <strong>February 28, 2027</strong> (Beijing time, that day included), based on the batch actually issued. Yearly credits are still issued monthly and do not lock the bonus for the whole year. Credits already issued are not taken back early when the promotion ends.';
+    const bonus = `<button type="button" class="bonus-badge" aria-describedby="${id}-bonus-tip"><span class="bonus-gift" aria-hidden="true"></span>${bonusLabel}</button><span class="feature-tooltip" role="tooltip" popover="manual" id="${id}-bonus-tip"><span>${bonusTip}</span></span>`;
     return [
       personalFeature(zh ? `每月 ${tier.credits} AI 积分` : `${tier.credits.toLocaleString('en-US')} AI credits / month`, {help:info(id,'credits',creditTip(tier.credits)), bonus}),
       personalFeature(zh ? '支持全部 AI 模型' : 'All AI models'),
@@ -727,7 +731,7 @@
     if (target.hasAttribute('data-billing-toggle') || target.hasAttribute('data-lang')) persistPreviewState();
   });
   // Top-layer tooltips stay above animated cards and fit within the viewport.
-  const tooltipTrigger = '.feature-info-button,.tier-toggle';
+  const tooltipTrigger = '.feature-info-button,.bonus-badge,.tier-toggle';
   let activeTooltip = null, pendingTooltip = null, tooltipTimer, tooltipDelay, tooltipExpiry;
   function hideTooltip() {
     clearTimeout(tooltipTimer);
@@ -744,7 +748,9 @@
     if (teamCard) tip.style.maxWidth = `${Math.min(256,teamCard.width - 32,innerWidth - 32)}px`;
     const anchor = button.getBoundingClientRect(), box = tip.getBoundingClientRect();
     const tier = button.matches('.tier-toggle');
-    const preferredLeft = teamCard || tier ? anchor.left + (anchor.width - box.width) / 2 : anchor.left;
+    const preferredLeft = button.matches('.bonus-badge')
+      ? anchor.right - box.width
+      : teamCard || tier ? anchor.left + (anchor.width - box.width) / 2 : anchor.left;
     const minLeft = Math.max(16,teamCard ? teamCard.left + 16 : 16);
     const maxLeft = Math.min(innerWidth - box.width - 16,teamCard ? teamCard.right - box.width - 16 : innerWidth);
     const left = Math.max(minLeft,Math.min(preferredLeft,maxLeft));
@@ -801,7 +807,7 @@
     if (event.target.matches(tooltipTrigger)) hideTooltip();
   });
   document.addEventListener('click',event => {
-    const button = event.target.closest('.feature-info-button');
+    const button = event.target.closest('.feature-info-button,.bonus-badge');
     if (button) showTooltip(button);
     else if (!event.target.closest('.feature-tooltip')) hideTooltip();
   });
