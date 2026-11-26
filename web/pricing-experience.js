@@ -24,7 +24,7 @@
   };
   const selectedTier = id => personalTiers[state.personalTiers[id]];
   const selectedPrices = id => personalPrices[state.lang][state.personalTiers[id]];
-  const currencySymbol = () => state.lang === 'zh' ? '￥' : '$';
+  const currencySymbol = () => state.lang === 'zh' ? '¥' : '$';
   const money = amount => `${currencySymbol()}${amount}`;
   const personalPrice = id => state.billing === 'annual' ? selectedPrices(id)[`${id}Annual`] / 12 : selectedPrices(id)[id];
   const pricePeriod = () => state.lang === 'zh' ? '/月' : '/mo';

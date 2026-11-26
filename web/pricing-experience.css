@@ -51,7 +51,7 @@ html[data-theme="light"] .theme-icon-moon { display: block; }
 .plan-grid .plan-name { min-height: 24px; flex-wrap: nowrap; }
 .plan-grid .plan-name h2 { font-size: 20px; font-weight: 600; line-height: 24px; }
 .plan-grid .plan-price { height: 40px; }
-.plan-grid .price-value { font-size: 32px; letter-spacing: -2px; line-height: 39px; }
+.plan-grid .price-value { font-size: 32px; letter-spacing: -2px; line-height: 1; }
 .plan-grid .tag { padding: 4px 8px; font-size: 12px; line-height: 16px; font-weight: 600; background: #153e2b; white-space: nowrap; }
 .plan-grid .plan-list li { display: flex; align-items: center; gap: 4px; padding: 0; min-height: 32px; line-height: 20px; font-weight: 500; color: rgba(255,255,255,.9); }
 .plan-grid .feature-check { display: grid; place-items: center; flex: 0 0 32px; width: 32px; min-width: 32px; max-width: 32px; height: 32px; overflow: hidden; }
@@ -193,7 +193,7 @@ body.is-plan-subnav .plan-subnav { opacity: 1; visibility: visible; pointer-even
 .plan-subnav-card.basic { background-color: rgba(0,0,0,.45); background-image: url('assets/figma/personal-basic-glow.svg'); background-size: 100% 100%; background-repeat: no-repeat; }
 .plan-subnav-card h2 { font-size: 20px; font-weight: 600; line-height: 24px; }
 .plan-subnav .plan-price { height: auto; }
-.plan-subnav .price-value { font-size: 28px; line-height: 34px; letter-spacing: 0; }
+.plan-subnav .price-value { font-size: 28px; line-height: 1; letter-spacing: 0; }
 .plan-subnav .plan-savings { padding-top: 0; }
 .plan-subnav-inner.is-team { display: flex; justify-content: center; }
 .plan-subnav-inner.is-team .plan-subnav-card { width: calc((100% - 2 * var(--card-gap)) / 3); background: #0e0f16; }
@@ -265,7 +265,7 @@ body.is-plan-subnav .plan-subnav { opacity: 1; visibility: visible; pointer-even
   .plan-subnav { padding: 16px 0 12px; }
   .plan-subnav-inner { display: flex; width: 100%; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-inline: 16px; }
   .plan-subnav-card { flex: 0 0 min(300px, 84vw); scroll-snap-align: start; padding: 12px; gap: 8px; }
-  .plan-subnav .price-value { font-size: 22px; line-height: 28px; white-space: nowrap; }
+  .plan-subnav .price-value { font-size: 22px; line-height: 1; white-space: nowrap; }
   .plan-subnav .multiplier-option { min-width: 28px; height: 28px; padding: 4px; font-size: 12px; }
   .plan-subnav-inner.is-team { display: block; overflow: visible; }
   .plan-subnav-inner.is-team .plan-subnav-card { width: 100%; }
